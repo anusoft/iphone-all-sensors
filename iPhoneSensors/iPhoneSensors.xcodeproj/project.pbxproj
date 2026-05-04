@@ -1,0 +1,606 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10001 /* iPhoneSensorsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20001 /* iPhoneSensorsApp.swift */; };
+		A10002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20002 /* ContentView.swift */; };
+		A10003 /* SensorCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20003 /* SensorCategory.swift */; };
+		A10004 /* SensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20004 /* SensorManager.swift */; };
+		A10005 /* MotionSensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20005 /* MotionSensorManager.swift */; };
+		A10006 /* LocationSensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20006 /* LocationSensorManager.swift */; };
+		A10007 /* EnvironmentSensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20007 /* EnvironmentSensorManager.swift */; };
+		A10008 /* SystemSensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20008 /* SystemSensorManager.swift */; };
+		A10009 /* HealthSensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20009 /* HealthSensorManager.swift */; };
+		A10010 /* ConnectivitySensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20010 /* ConnectivitySensorManager.swift */; };
+		A10011 /* CameraSensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20011 /* CameraSensorManager.swift */; };
+		A10012 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20012 /* DashboardView.swift */; };
+		A10013 /* MotionDashboardCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20013 /* MotionDashboardCards.swift */; };
+		A10014 /* LocationDashboardCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20014 /* LocationDashboardCards.swift */; };
+		A10015 /* EnvironmentDashboardCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20015 /* EnvironmentDashboardCards.swift */; };
+		A10016 /* SystemDashboardCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20016 /* SystemDashboardCards.swift */; };
+		A10017 /* ConnectivityDashboardCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20017 /* ConnectivityDashboardCards.swift */; };
+		A10018 /* CameraDashboardCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20018 /* CameraDashboardCards.swift */; };
+		A10019 /* SensorComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20019 /* SensorComponents.swift */; };
+		A10020 /* AccelerometerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20020 /* AccelerometerDetailView.swift */; };
+		A10021 /* GyroscopeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20021 /* GyroscopeDetailView.swift */; };
+		A10022 /* MagnetometerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20022 /* MagnetometerDetailView.swift */; };
+		A10023 /* DeviceMotionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20023 /* DeviceMotionDetailView.swift */; };
+		A10024 /* PedometerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20024 /* PedometerDetailView.swift */; };
+		A10025 /* AltimeterDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20025 /* AltimeterDetailView.swift */; };
+		A10026 /* ActivityDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20026 /* ActivityDetailView.swift */; };
+		A10027 /* LocationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20027 /* LocationDetailView.swift */; };
+		A10028 /* HeadingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20028 /* HeadingDetailView.swift */; };
+		A10029 /* BarometerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20029 /* BarometerDetailView.swift */; };
+		A10030 /* ProximityDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20030 /* ProximityDetailView.swift */; };
+		A10031 /* LightDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20031 /* LightDetailView.swift */; };
+		A10032 /* BatteryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20032 /* BatteryDetailView.swift */; };
+		A10033 /* ProcessorDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20033 /* ProcessorDetailView.swift */; };
+		A10034 /* MemoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20034 /* MemoryDetailView.swift */; };
+		A10035 /* DiskDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20035 /* DiskDetailView.swift */; };
+		A10036 /* ThermalDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20036 /* ThermalDetailView.swift */; };
+		A10037 /* BluetoothDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20037 /* BluetoothDetailView.swift */; };
+		A10038 /* NetworkDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20038 /* NetworkDetailView.swift */; };
+		A10039 /* CameraDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20039 /* CameraDetailView.swift */; };
+		A10040 /* TorchDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20040 /* TorchDetailView.swift */; };
+		A10041 /* SystemInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20041 /* SystemInfoView.swift */; };
+		A10042 /* EnvironmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20042 /* EnvironmentView.swift */; };
+		A10043 /* HealthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20043 /* HealthView.swift */; };
+		A10044 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20044 /* Assets.xcassets */; };
+		A10045 /* PermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20047 /* PermissionManager.swift */; };
+		A10046 /* PermissionGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20048 /* PermissionGate.swift */; };
+		A10047 /* PermissionRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20049 /* PermissionRequestView.swift */; };
+		A10048 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20050 /* LocalizationManager.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A20001 /* iPhoneSensorsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPhoneSensorsApp.swift; sourceTree = "<group>"; };
+		A20002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A20003 /* SensorCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorCategory.swift; sourceTree = "<group>"; };
+		A20004 /* SensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorManager.swift; sourceTree = "<group>"; };
+		A20005 /* MotionSensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionSensorManager.swift; sourceTree = "<group>"; };
+		A20006 /* LocationSensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSensorManager.swift; sourceTree = "<group>"; };
+		A20007 /* EnvironmentSensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentSensorManager.swift; sourceTree = "<group>"; };
+		A20008 /* SystemSensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSensorManager.swift; sourceTree = "<group>"; };
+		A20009 /* HealthSensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthSensorManager.swift; sourceTree = "<group>"; };
+		A20010 /* ConnectivitySensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivitySensorManager.swift; sourceTree = "<group>"; };
+		A20011 /* CameraSensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSensorManager.swift; sourceTree = "<group>"; };
+		A20012 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		A20013 /* MotionDashboardCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionDashboardCards.swift; sourceTree = "<group>"; };
+		A20014 /* LocationDashboardCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDashboardCards.swift; sourceTree = "<group>"; };
+		A20015 /* EnvironmentDashboardCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentDashboardCards.swift; sourceTree = "<group>"; };
+		A20016 /* SystemDashboardCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemDashboardCards.swift; sourceTree = "<group>"; };
+		A20017 /* ConnectivityDashboardCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivityDashboardCards.swift; sourceTree = "<group>"; };
+		A20018 /* CameraDashboardCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraDashboardCards.swift; sourceTree = "<group>"; };
+		A20019 /* SensorComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorComponents.swift; sourceTree = "<group>"; };
+		A20020 /* AccelerometerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccelerometerDetailView.swift; sourceTree = "<group>"; };
+		A20021 /* GyroscopeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GyroscopeDetailView.swift; sourceTree = "<group>"; };
+		A20022 /* MagnetometerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MagnetometerDetailView.swift; sourceTree = "<group>"; };
+		A20023 /* DeviceMotionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceMotionDetailView.swift; sourceTree = "<group>"; };
+		A20024 /* PedometerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PedometerDetailView.swift; sourceTree = "<group>"; };
+		A20025 /* AltimeterDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AltimeterDetailView.swift; sourceTree = "<group>"; };
+		A20026 /* ActivityDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityDetailView.swift; sourceTree = "<group>"; };
+		A20027 /* LocationDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailView.swift; sourceTree = "<group>"; };
+		A20028 /* HeadingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadingDetailView.swift; sourceTree = "<group>"; };
+		A20029 /* BarometerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarometerDetailView.swift; sourceTree = "<group>"; };
+		A20030 /* ProximityDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProximityDetailView.swift; sourceTree = "<group>"; };
+		A20031 /* LightDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightDetailView.swift; sourceTree = "<group>"; };
+		A20032 /* BatteryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryDetailView.swift; sourceTree = "<group>"; };
+		A20033 /* ProcessorDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessorDetailView.swift; sourceTree = "<group>"; };
+		A20034 /* MemoryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryDetailView.swift; sourceTree = "<group>"; };
+		A20035 /* DiskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskDetailView.swift; sourceTree = "<group>"; };
+		A20036 /* ThermalDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThermalDetailView.swift; sourceTree = "<group>"; };
+		A20037 /* BluetoothDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothDetailView.swift; sourceTree = "<group>"; };
+		A20038 /* NetworkDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDetailView.swift; sourceTree = "<group>"; };
+		A20039 /* CameraDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraDetailView.swift; sourceTree = "<group>"; };
+		A20040 /* TorchDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorchDetailView.swift; sourceTree = "<group>"; };
+		A20041 /* SystemInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemInfoView.swift; sourceTree = "<group>"; };
+		A20042 /* EnvironmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentView.swift; sourceTree = "<group>"; };
+		A20043 /* HealthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthView.swift; sourceTree = "<group>"; };
+		A20044 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A20045 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A20046 /* iPhoneSensors.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iPhoneSensors.entitlements; sourceTree = "<group>"; };
+		A20047 /* PermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionManager.swift; sourceTree = "<group>"; };
+		A20048 /* PermissionGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionGate.swift; sourceTree = "<group>"; };
+		A20049 /* PermissionRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionRequestView.swift; sourceTree = "<group>"; };
+		A20050 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
+		A30001 /* iPhoneSensors.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iPhoneSensors.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A50001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A60001 = {
+			isa = PBXGroup;
+			children = (
+				A60002 /* iPhoneSensors */,
+				A60011 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A60002 /* iPhoneSensors */ = {
+			isa = PBXGroup;
+			children = (
+				A60003 /* App */,
+				A60004 /* Views */,
+				A60008 /* Services */,
+				A60009 /* Models */,
+				A60010 /* Resources */,
+				A20044 /* Assets.xcassets */,
+				A20045 /* Info.plist */,
+				A20046 /* iPhoneSensors.entitlements */,
+			);
+			path = iPhoneSensors;
+			sourceTree = "<group>";
+		};
+		A60003 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A20001 /* iPhoneSensorsApp.swift */,
+				A20002 /* ContentView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A60004 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A60005 /* Dashboard */,
+				A60006 /* Sensors */,
+				A60007 /* Components */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A60005 /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				A20012 /* DashboardView.swift */,
+				A20013 /* MotionDashboardCards.swift */,
+				A20014 /* LocationDashboardCards.swift */,
+				A20015 /* EnvironmentDashboardCards.swift */,
+				A20016 /* SystemDashboardCards.swift */,
+				A20017 /* ConnectivityDashboardCards.swift */,
+				A20018 /* CameraDashboardCards.swift */,
+				A20041 /* SystemInfoView.swift */,
+				A20042 /* EnvironmentView.swift */,
+				A20043 /* HealthView.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		A60006 /* Sensors */ = {
+			isa = PBXGroup;
+			children = (
+				A20020 /* AccelerometerDetailView.swift */,
+				A20021 /* GyroscopeDetailView.swift */,
+				A20022 /* MagnetometerDetailView.swift */,
+				A20023 /* DeviceMotionDetailView.swift */,
+				A20024 /* PedometerDetailView.swift */,
+				A20025 /* AltimeterDetailView.swift */,
+				A20026 /* ActivityDetailView.swift */,
+				A20027 /* LocationDetailView.swift */,
+				A20028 /* HeadingDetailView.swift */,
+				A20029 /* BarometerDetailView.swift */,
+				A20030 /* ProximityDetailView.swift */,
+				A20031 /* LightDetailView.swift */,
+				A20032 /* BatteryDetailView.swift */,
+				A20033 /* ProcessorDetailView.swift */,
+				A20034 /* MemoryDetailView.swift */,
+				A20035 /* DiskDetailView.swift */,
+				A20036 /* ThermalDetailView.swift */,
+				A20037 /* BluetoothDetailView.swift */,
+				A20038 /* NetworkDetailView.swift */,
+				A20039 /* CameraDetailView.swift */,
+				A20040 /* TorchDetailView.swift */,
+			);
+			path = Sensors;
+			sourceTree = "<group>";
+		};
+		A60007 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A20019 /* SensorComponents.swift */,
+				A20048 /* PermissionGate.swift */,
+				A20049 /* PermissionRequestView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		A60008 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A20004 /* SensorManager.swift */,
+				A20005 /* MotionSensorManager.swift */,
+				A20006 /* LocationSensorManager.swift */,
+				A20007 /* EnvironmentSensorManager.swift */,
+				A20008 /* SystemSensorManager.swift */,
+				A20009 /* HealthSensorManager.swift */,
+				A20010 /* ConnectivitySensorManager.swift */,
+				A20011 /* CameraSensorManager.swift */,
+				A20047 /* PermissionManager.swift */,
+				A20050 /* LocalizationManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A60009 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A20003 /* SensorCategory.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A60010 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		A60011 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A30001 /* iPhoneSensors.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A70001 /* iPhoneSensors */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A90003 /* Build configuration list for PBXNativeTarget "iPhoneSensors" */;
+			buildPhases = (
+				A80001 /* Sources */,
+				A50001 /* Frameworks */,
+				A80002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = iPhoneSensors;
+			productName = iPhoneSensors;
+			productReference = A30001 /* iPhoneSensors.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A40001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = A90001 /* Build configuration list for PBXProject "iPhoneSensors" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A60001;
+			productRefGroup = A60011 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A70001 /* iPhoneSensors */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A80002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10044 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A80001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10001 /* iPhoneSensorsApp.swift in Sources */,
+				A10002 /* ContentView.swift in Sources */,
+				A10003 /* SensorCategory.swift in Sources */,
+				A10004 /* SensorManager.swift in Sources */,
+				A10005 /* MotionSensorManager.swift in Sources */,
+				A10006 /* LocationSensorManager.swift in Sources */,
+				A10007 /* EnvironmentSensorManager.swift in Sources */,
+				A10008 /* SystemSensorManager.swift in Sources */,
+				A10009 /* HealthSensorManager.swift in Sources */,
+				A10010 /* ConnectivitySensorManager.swift in Sources */,
+				A10011 /* CameraSensorManager.swift in Sources */,
+				A10012 /* DashboardView.swift in Sources */,
+				A10013 /* MotionDashboardCards.swift in Sources */,
+				A10014 /* LocationDashboardCards.swift in Sources */,
+				A10015 /* EnvironmentDashboardCards.swift in Sources */,
+				A10016 /* SystemDashboardCards.swift in Sources */,
+				A10017 /* ConnectivityDashboardCards.swift in Sources */,
+				A10018 /* CameraDashboardCards.swift in Sources */,
+				A10019 /* SensorComponents.swift in Sources */,
+				A10020 /* AccelerometerDetailView.swift in Sources */,
+				A10021 /* GyroscopeDetailView.swift in Sources */,
+				A10022 /* MagnetometerDetailView.swift in Sources */,
+				A10023 /* DeviceMotionDetailView.swift in Sources */,
+				A10024 /* PedometerDetailView.swift in Sources */,
+				A10025 /* AltimeterDetailView.swift in Sources */,
+				A10026 /* ActivityDetailView.swift in Sources */,
+				A10027 /* LocationDetailView.swift in Sources */,
+				A10028 /* HeadingDetailView.swift in Sources */,
+				A10029 /* BarometerDetailView.swift in Sources */,
+				A10030 /* ProximityDetailView.swift in Sources */,
+				A10031 /* LightDetailView.swift in Sources */,
+				A10032 /* BatteryDetailView.swift in Sources */,
+				A10033 /* ProcessorDetailView.swift in Sources */,
+				A10034 /* MemoryDetailView.swift in Sources */,
+				A10035 /* DiskDetailView.swift in Sources */,
+				A10036 /* ThermalDetailView.swift in Sources */,
+				A10037 /* BluetoothDetailView.swift in Sources */,
+				A10038 /* NetworkDetailView.swift in Sources */,
+				A10039 /* CameraDetailView.swift in Sources */,
+				A10040 /* TorchDetailView.swift in Sources */,
+				A10041 /* SystemInfoView.swift in Sources */,
+				A10042 /* EnvironmentView.swift in Sources */,
+				A10043 /* HealthView.swift in Sources */,
+				A10045 /* PermissionManager.swift in Sources */,
+				A10046 /* PermissionGate.swift in Sources */,
+				A10047 /* PermissionRequestView.swift in Sources */,
+				A10048 /* LocalizationManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A90004 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A90005 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A90006 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = iPhoneSensors/iPhoneSensors.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D62Y8JVXB9;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iPhoneSensors/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "All Sensors";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app uses Bluetooth to discover and display nearby devices.";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app uses Bluetooth to discover and display nearby devices.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app accesses the camera to display camera capabilities and sensor information.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "This app uses Face ID for biometric authentication testing.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app uses the local network to display network connectivity information.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app uses your location to display GPS coordinates and compass heading.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app uses your location to display GPS coordinates and compass heading.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app accesses the microphone to display audio input information.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "This app uses motion sensors to display accelerometer, gyroscope, and device motion data.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.1moby.iPhoneSensors;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A90007 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = iPhoneSensors/iPhoneSensors.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D62Y8JVXB9;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iPhoneSensors/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "All Sensors";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app uses Bluetooth to discover and display nearby devices.";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app uses Bluetooth to discover and display nearby devices.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app accesses the camera to display camera capabilities and sensor information.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "This app uses Face ID for biometric authentication testing.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app uses the local network to display network connectivity information.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app uses your location to display GPS coordinates and compass heading.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app uses your location to display GPS coordinates and compass heading.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app accesses the microphone to display audio input information.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "This app uses motion sensors to display accelerometer, gyroscope, and device motion data.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.1moby.iPhoneSensors;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A90001 /* Build configuration list for PBXProject "iPhoneSensors" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A90004 /* Debug */,
+				A90005 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A90003 /* Build configuration list for PBXNativeTarget "iPhoneSensors" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A90006 /* Debug */,
+				A90007 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A40001 /* Project object */;
+}
