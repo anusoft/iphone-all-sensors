@@ -9,6 +9,8 @@ Built with **SwiftUI** and powered by **Xiaomi MiMo 2.5 Pro** AI assistant.
 ![SwiftUI](https://img.shields.io/badge/Framework-SwUI-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
+**🌐 Languages:** **English** | [ไทย (Thai)](README-th.md) | [中文 (Chinese)](README-zh.md) | [日本語 (Japanese)](README-ja.md) | [한국어 (Korean)](README-ko.md) | [Español (Spanish)](README-es.md) | [Français (French)](README-fr.md) | [Deutsch (German)](README-de.md) | [Português (Portuguese)](README-pt.md) | [العربية (Arabic)](README-ar.md)
+
 ## Features
 
 ### Sensors Supported

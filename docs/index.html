@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Sensors - iPhone Sensor Viewer</title>
+    <meta name="description" content="Comprehensive iOS app displaying real-time data from all iPhone sensors. Built with SwiftUI and powered by Xiaomi MiMo 2.5 Pro.">
+    <meta name="keywords" content="iPhone, sensors, iOS, SwiftUI, accelerometer, gyroscope, GPS, compass, CoreMotion, CoreLocation">
+    <meta property="og:title" content="All Sensors - iPhone Sensor Viewer">
+    <meta property="og:description" content="Display real-time data from all iPhone sensors with beautiful UI">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --card: #141414;
+            --card-hover: #1a1a1a;
+            --text: #e5e5e5;
+            --text-secondary: #a3a3a3;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --green: #22c55e;
+            --purple: #a855f7;
+            --orange: #f97316;
+            --cyan: #06b6d4;
+            --red: #ef4444;
+            --yellow: #eab308;
+            --border: #262626;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, var(--accent-glow) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, #a3a3a3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--card-hover);
+            transform: translateY(-2px);
+        }
+
+        .stats {
+            display: flex;
+            gap: 3rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .sensor-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+
+        .sensor-card:hover {
+            background: var(--card-hover);
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .sensor-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .sensor-card h3 {
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .sensor-card p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .feature p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .lang-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .lang-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .lang-btn:hover {
+            background: var(--card-hover);
+            border-color: var(--accent);
+        }
+
+        .lang-flag {
+            font-size: 1.5rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .tech-badge {
+            padding: 0.5rem 1rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(59, 130, 246, 0.1));
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            color: var(--purple);
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-content">
+            <span class="badge">📱 Open Source iOS App</span>
+            <h1>All Sensors</h1>
+            <p class="subtitle">Display real-time data from all 21+ iPhone sensors with beautiful visualizations. Built with SwiftUI.</p>
+            <div class="cta-group">
+                <a href="https://github.com/anusoft/iphone-all-sensors" class="btn btn-primary">
+                    ⭐ View on GitHub
+                </a>
+                <a href="https://github.com/anusoft/iphone-all-sensors/archive/refs/heads/main.zip" class="btn btn-secondary">
+                    📥 Download
+                </a>
+            </div>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">21+</div>
+                    <div class="stat-label">Sensors</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">10</div>
+                    <div class="stat-label">Languages</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">5.6k</div>
+                    <div class="stat-label">Lines of Code</div>
+                </div>
+            </div>
+            <div class="ai-badge">
+                🤖 Powered by Xiaomi MiMo 2.5 Pro
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">Sensors</h2>
+        <p class="section-subtitle">Access every sensor available on iPhone</p>
+        <div class="sensor-grid">
+            <div class="sensor-card">
+                <div class="sensor-icon" style="background: rgba(59, 130, 246, 0.1);">🎯</div>
+                <h3>Accelerometer</h3>
+                <p>Measure acceleration forces in X, Y, Z axes</p>
+            </div>
+            <div class="sensor-card">
+                <div class="sensor-icon" style="background: rgba(168, 85, 247, 0.1);">🌀</div>
+                <h3>Gyroscope</h3>
+                <p>Track rotation rate and orientation</p>
+            </div>
+            <div class="sensor-card">
+                <div class="sensor-icon" style="background: rgba(234, 179, 8, 0.1);">🧭</div>
+                <h3>Magnetometer</h3>
+                <p>Detect magnetic fields and compass direction</p>
+            </div>
+            <div class="sensor-card">
+                <div class="sensor-icon" style="background: rgba(6, 182, 212, 0.1);">📍</div>
+                <h3>GPS Location</h3>
+                <p>Coordinates, altitude, speed, and course</p>
+            </div>
+            <div class="sensor-card">
+                <div class="sensor-icon" style="background: rgba(34, 197, 94, 0.1);">🚶</div>
+                <h3>Pedometer</h3>
+                <p>Step counting, distance, floors climbed</p>
+            </div>
+            <div class="sensor-card">
+                <div class="sensor-icon" style="background: rgba(249, 115, 22, 0.1);">🌡️</div>
+                <h3>Barometer</h3>
+                <p>Atmospheric pressure and relative altitude</p>
+            </div>
+            <div class="sensor-card">
+                <div class="sensor-icon" style="background: rgba(239, 68, 68, 0.1);">❤️</div>
+                <h3>Activity Recognition</h3>
+                <p>Detect walking, running, cycling, driving</p>
+            </div>
+            <div class="sensor-card">
+                <div class="sensor-icon" style="background: rgba(59, 130, 246, 0.1);">📡</div>
+                <h3>Bluetooth</h3>
+                <p>Scan and discover nearby BLE devices</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: var(--card); border-radius: 24px; margin: 0 1rem;">
+        <h2 class="section-title">Features</h2>
+        <p class="section-subtitle">Built with modern iOS development practices</p>
+        <div class="feature-grid">
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Real-time Data</h3>
+                <p>Live updates as you move your device</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎨</div>
+                <h3>Beautiful UI</h3>
+                <p>Gauges, 3D visualizations, animated compass</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔐</div>
+                <h3>Permission Flow</h3>
+                <p>Guided onboarding explaining each permission</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔍</div>
+                <h3>Search</h3>
+                <p>Find any sensor quickly</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🌍</div>
+                <h3>Multi-language</h3>
+                <p>10 languages supported</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🌙</div>
+                <h3>Dark Mode</h3>
+                <p>Native dark mode support</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">Languages</h2>
+        <p class="section-subtitle">Read documentation in your language</p>
+        <div class="lang-grid">
+            <a href="https://github.com/anusoft/iphone-all-sensors/blob/main/README.md" class="lang-btn">
+                <span class="lang-flag">🇺🇸</span>
+                <span>English</span>
+            </a>
+            <a href="https://github.com/anusoft/iphone-all-sensors/blob/main/README-th.md" class="lang-btn">
+                <span class="lang-flag">🇹🇭</span>
+                <span>ไทย</span>
+            </a>
+            <a href="https://github.com/anusoft/iphone-all-sensors/blob/main/README-zh.md" class="lang-btn">
+                <span class="lang-flag">🇨🇳</span>
+                <span>中文</span>
+            </a>
+            <a href="https://github.com/anusoft/iphone-all-sensors/blob/main/README-ja.md" class="lang-btn">
+                <span class="lang-flag">🇯🇵</span>
+                <span>日本語</span>
+            </a>
+            <a href="https://github.com/anusoft/iphone-all-sensors/blob/main/README-ko.md" class="lang-btn">
+                <span class="lang-flag">🇰🇷</span>
+                <span>한국어</span>
+            </a>
+            <a href="https://github.com/anusoft/iphone-all-sensors/blob/main/README-es.md" class="lang-btn">
+                <span class="lang-flag">🇪🇸</span>
+                <span>Español</span>
+            </a>
+            <a href="https://github.com/anusoft/iphone-all-sensors/blob/main/README-fr.md" class="lang-btn">
+                <span class="lang-flag">🇫🇷</span>
+                <span>Français</span>
+            </a>
+            <a href="https://github.com/anusoft/iphone-all-sensors/blob/main/README-de.md" class="lang-btn">
+                <span class="lang-flag">🇩🇪</span>
+                <span>Deutsch</span>
+            </a>
+            <a href="https://github.com/anusoft/iphone-all-sensors/blob/main/README-pt.md" class="lang-btn">
+                <span class="lang-flag">🇧🇷</span>
+                <span>Português</span>
+            </a>
+            <a href="https://github.com/anusoft/iphone-all-sensors/blob/main/README-ar.md" class="lang-btn">
+                <span class="lang-flag">🇸🇦</span>
+                <span>العربية</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="section" style="text-align: center;">
+        <h2 class="section-title">Tech Stack</h2>
+        <div class="tech-stack">
+            <span class="tech-badge">SwiftUI</span>
+            <span class="tech-badge">CoreMotion</span>
+            <span class="tech-badge">CoreLocation</span>
+            <span class="tech-badge">CoreBluetooth</span>
+            <span class="tech-badge">AVFoundation</span>
+            <span class="tech-badge">HealthKit</span>
+            <span class="tech-badge">Swift 5.9</span>
+            <span class="tech-badge">iOS 17+</span>
+        </div>
+    </section>
+
+    <footer>
+        <p>Built with 🤖 <strong>Xiaomi MiMo 2.5 Pro</strong> AI Assistant</p>
+        <p style="margin-top: 0.5rem;">
+            <a href="https://github.com/anusoft/iphone-all-sensors">GitHub</a> · 
+            <a href="https://github.com/anusoft/iphone-all-sensors/blob/main/LICENSE">MIT License</a> · 
+            <a href="https://github.com/anusoft/iphone-all-sensors/blob/main/CONTRIBUTING.md">Contributing</a>
+        </p>
+    </footer>
+</body>
+</html>
