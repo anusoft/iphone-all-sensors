@@ -69,7 +69,7 @@ actor LoggingCoordinator {
         let writer: any LogWriter
         switch format {
         case .jsonl: writer = JSONLogWriter(url: url)
-        case .csv:   writer = JSONLogWriter(url: url)   // TEMP — replaced in Task 2.3
+        case .csv:   writer = CSVLogWriter(url: url, options: .default)
         case .sqlite:
             if stream == .continuous {
                 let p = (try? ensureContinuousPool()) ?? (try! DatabasePool(path: ":memory:"))
