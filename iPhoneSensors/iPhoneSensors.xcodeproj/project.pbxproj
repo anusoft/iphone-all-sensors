@@ -17,6 +17,7 @@
 		362D55BF2001768A5964E603 /* LoggingConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9676E7662B9D9AC7E10AAC /* LoggingConfigurationTests.swift */; };
 		38BEE6F8F5B67FFBAC998C55 /* JSONLogWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AB305E371227B6B1778E38 /* JSONLogWriter.swift */; };
 		38DBF935D6C89EB00077DE5C /* LogFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B14182F5B60F60AF8FD957 /* LogFormat.swift */; };
+		3D28CA1DFF34E55AE256869E /* LogStorageRotationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAF3AE39F3DE845BCD78BB4 /* LogStorageRotationTests.swift */; };
 		3FBE03A3D73A42464DFC257A /* LogWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16447308C00155CADFCF41D7 /* LogWriter.swift */; };
 		4B5FCC46FE55BED5741331FF /* LogStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC53B5C7301DA9E76759A58 /* LogStream.swift */; };
 		567A7657B342B57C17CFB926 /* SensorPayloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDF764D65243C574012269C /* SensorPayloadTests.swift */; };
@@ -183,6 +184,7 @@
 		BFB05EE7AC57F8E507059D80 /* LoggingService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingService.swift; sourceTree = "<group>"; };
 		CD9676E7662B9D9AC7E10AAC /* LoggingConfigurationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingConfigurationTests.swift; sourceTree = "<group>"; };
 		E9E58D9F43A870BD554E69B0 /* DatabaseSchemaTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DatabaseSchemaTests.swift; sourceTree = "<group>"; };
+		EFAF3AE39F3DE845BCD78BB4 /* LogStorageRotationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogStorageRotationTests.swift; sourceTree = "<group>"; };
 		EFDF764D65243C574012269C /* SensorPayloadTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorPayloadTests.swift; sourceTree = "<group>"; };
 		F5ED6A2C38BDA9102677340C /* iPhoneSensorsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iPhoneSensorsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7BEA810FC635A7BD9C9A3AC /* SensorID.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorID.swift; sourceTree = "<group>"; };
@@ -227,6 +229,7 @@
 				B2AE95106B086DBB5871FA97 /* SQLiteLogWriterTests.swift */,
 				82BA27E755BB656809C5DA54 /* CSVLogWriterTests.swift */,
 				A179785AC4D9C75D245A168B /* SessionLifecycleTests.swift */,
+				EFAF3AE39F3DE845BCD78BB4 /* LogStorageRotationTests.swift */,
 			);
 			path = iPhoneSensorsTests;
 			sourceTree = SOURCE_ROOT;
@@ -618,6 +621,7 @@
 				6E68B2DAE8A343A10A2234D7 /* SQLiteLogWriterTests.swift in Sources */,
 				109D7681C08C8BDBE51123D6 /* CSVLogWriterTests.swift in Sources */,
 				2635A6E36E2C4926A87A3E2D /* SessionLifecycleTests.swift in Sources */,
+				3D28CA1DFF34E55AE256869E /* LogStorageRotationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
