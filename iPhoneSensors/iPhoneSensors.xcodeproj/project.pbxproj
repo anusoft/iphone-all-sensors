@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		039FB6FCE6DB59CF8E7076A3 /* SensorSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28DA6F957E5C92CD4E67730B /* SensorSample.swift */; };
 		1F40F03A419D45E54DE4EDAB /* FormatOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BA3C0863ED650591E6FFDD /* FormatOptions.swift */; };
+		362D55BF2001768A5964E603 /* LoggingConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9676E7662B9D9AC7E10AAC /* LoggingConfigurationTests.swift */; };
 		38DBF935D6C89EB00077DE5C /* LogFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B14182F5B60F60AF8FD957 /* LogFormat.swift */; };
 		4B5FCC46FE55BED5741331FF /* LogStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC53B5C7301DA9E76759A58 /* LogStream.swift */; };
 		567A7657B342B57C17CFB926 /* SensorPayloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDF764D65243C574012269C /* SensorPayloadTests.swift */; };
 		5A2EF99ACBE5C105449F3C4C /* LogFormatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A3431A40FBA3DF65A7A324 /* LogFormatTests.swift */; };
 		76A1F144BBE63C97784D8237 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFC68EB14A90DE7865932DBE /* Foundation.framework */; };
+		8E7C8D12B5D7E75D06DB8DD4 /* LoggingConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B90DA5947AD3DC86360DF6A /* LoggingConfiguration.swift */; };
 		9A6AC5BBFCD1F11160934A0C /* SensorPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7E63FB86C8D5FCEA00BB74 /* SensorPayload.swift */; };
 		A10001 /* iPhoneSensorsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20001 /* iPhoneSensorsApp.swift */; };
 		A10002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20002 /* ContentView.swift */; };
@@ -81,7 +84,9 @@
 		04BA3C0863ED650591E6FFDD /* FormatOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FormatOptions.swift; sourceTree = "<group>"; };
 		1CC53B5C7301DA9E76759A58 /* LogStream.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogStream.swift; sourceTree = "<group>"; };
 		28A3431A40FBA3DF65A7A324 /* LogFormatTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogFormatTests.swift; sourceTree = "<group>"; };
+		28DA6F957E5C92CD4E67730B /* SensorSample.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorSample.swift; sourceTree = "<group>"; };
 		2E7E63FB86C8D5FCEA00BB74 /* SensorPayload.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorPayload.swift; sourceTree = "<group>"; };
+		5B90DA5947AD3DC86360DF6A /* LoggingConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingConfiguration.swift; sourceTree = "<group>"; };
 		657018A9A78479B1694B4F1E /* SmokeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
 		71F8A2FB8054F8FD6B7B6FD7 /* SensorIDTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorIDTests.swift; sourceTree = "<group>"; };
 		A20001 /* iPhoneSensorsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPhoneSensorsApp.swift; sourceTree = "<group>"; };
@@ -136,6 +141,7 @@
 		A30001 /* iPhoneSensors.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iPhoneSensors.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4B14182F5B60F60AF8FD957 /* LogFormat.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogFormat.swift; sourceTree = "<group>"; };
 		AFC68EB14A90DE7865932DBE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		CD9676E7662B9D9AC7E10AAC /* LoggingConfigurationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingConfigurationTests.swift; sourceTree = "<group>"; };
 		EFDF764D65243C574012269C /* SensorPayloadTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorPayloadTests.swift; sourceTree = "<group>"; };
 		F5ED6A2C38BDA9102677340C /* iPhoneSensorsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iPhoneSensorsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7BEA810FC635A7BD9C9A3AC /* SensorID.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorID.swift; sourceTree = "<group>"; };
@@ -168,6 +174,7 @@
 				71F8A2FB8054F8FD6B7B6FD7 /* SensorIDTests.swift */,
 				28A3431A40FBA3DF65A7A324 /* LogFormatTests.swift */,
 				EFDF764D65243C574012269C /* SensorPayloadTests.swift */,
+				CD9676E7662B9D9AC7E10AAC /* LoggingConfigurationTests.swift */,
 			);
 			path = iPhoneSensorsTests;
 			sourceTree = SOURCE_ROOT;
@@ -188,6 +195,8 @@
 				1CC53B5C7301DA9E76759A58 /* LogStream.swift */,
 				04BA3C0863ED650591E6FFDD /* FormatOptions.swift */,
 				2E7E63FB86C8D5FCEA00BB74 /* SensorPayload.swift */,
+				28DA6F957E5C92CD4E67730B /* SensorSample.swift */,
+				5B90DA5947AD3DC86360DF6A /* LoggingConfiguration.swift */,
 			);
 			name = Logging;
 			path = iPhoneSensors/Models/Logging;
@@ -488,6 +497,8 @@
 				4B5FCC46FE55BED5741331FF /* LogStream.swift in Sources */,
 				1F40F03A419D45E54DE4EDAB /* FormatOptions.swift in Sources */,
 				9A6AC5BBFCD1F11160934A0C /* SensorPayload.swift in Sources */,
+				039FB6FCE6DB59CF8E7076A3 /* SensorSample.swift in Sources */,
+				8E7C8D12B5D7E75D06DB8DD4 /* LoggingConfiguration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -499,6 +510,7 @@
 				FED114EB00C8FE3AF1C9C1B2 /* SensorIDTests.swift in Sources */,
 				5A2EF99ACBE5C105449F3C4C /* LogFormatTests.swift in Sources */,
 				567A7657B342B57C17CFB926 /* SensorPayloadTests.swift in Sources */,
+				362D55BF2001768A5964E603 /* LoggingConfigurationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
