@@ -1,4 +1,5 @@
 import Foundation
+import GRDB
 
 actor LoggingCoordinator {
     struct WriterKey: Hashable { let sensorID: SensorID; let stream: LogStream; let format: LogFormat }
@@ -7,10 +8,18 @@ actor LoggingCoordinator {
     private let configStore: LoggingConfigStore
     private var writers: [WriterKey: any LogWriter] = [:]
     private var lastWritten: [SensorID: [LogStream: UInt64]] = [:]   // monotonicNs
+    private var continuousPool: DatabasePool?
 
     init(storage: LogStorageManager, configStore: LoggingConfigStore) {
         self.storage = storage
         self.configStore = configStore
+    }
+
+    private func ensureContinuousPool() throws -> DatabasePool {
+        if let p = continuousPool { return p }
+        let p = try DatabaseSchema.openPool(at: storage.continuousSQLiteURL())
+        continuousPool = p
+        return p
     }
 
     func start() async {
@@ -61,7 +70,17 @@ actor LoggingCoordinator {
         switch format {
         case .jsonl: writer = JSONLogWriter(url: url)
         case .csv:   writer = JSONLogWriter(url: url)   // TEMP — replaced in Task 2.3
-        case .sqlite: writer = JSONLogWriter(url: url)  // TEMP — replaced in Task 2.2
+        case .sqlite:
+            if stream == .continuous {
+                let p = (try? ensureContinuousPool()) ?? (try! DatabasePool(path: ":memory:"))
+                writer = SQLiteLogWriter(pool: p, sensorID: id, sessionID: nil)
+            } else {
+                // session pool will be set in Task 2.4. For now, fall back to in-memory
+                // so the coordinator never crashes if a session-stream sqlite write
+                // happens before SessionManager is wired.
+                let p = (try? ensureContinuousPool()) ?? (try! DatabasePool(path: ":memory:"))
+                writer = SQLiteLogWriter(pool: p, sensorID: id, sessionID: nil)
+            }
         }
         writers[key] = writer
         return writer

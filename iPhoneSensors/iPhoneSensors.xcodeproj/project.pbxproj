@@ -19,7 +19,9 @@
 		4B5FCC46FE55BED5741331FF /* LogStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC53B5C7301DA9E76759A58 /* LogStream.swift */; };
 		567A7657B342B57C17CFB926 /* SensorPayloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDF764D65243C574012269C /* SensorPayloadTests.swift */; };
 		5A2EF99ACBE5C105449F3C4C /* LogFormatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A3431A40FBA3DF65A7A324 /* LogFormatTests.swift */; };
+		6CFD81477117C230DCCF0627 /* SQLiteLogWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DB2481498C9464D585A5310 /* SQLiteLogWriter.swift */; };
 		6E12817281492FE92EC28387 /* SensorLogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E3ECD4A7CFAED3DF1CA362 /* SensorLogEntry.swift */; };
+		6E68B2DAE8A343A10A2234D7 /* SQLiteLogWriterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AE95106B086DBB5871FA97 /* SQLiteLogWriterTests.swift */; };
 		76A1F144BBE63C97784D8237 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFC68EB14A90DE7865932DBE /* Foundation.framework */; };
 		8E7C8D12B5D7E75D06DB8DD4 /* LoggingConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B90DA5947AD3DC86360DF6A /* LoggingConfiguration.swift */; };
 		9A6AC5BBFCD1F11160934A0C /* SensorPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7E63FB86C8D5FCEA00BB74 /* SensorPayload.swift */; };
@@ -116,6 +118,7 @@
 		719B516DBF49963C98554453 /* LogStoragePathsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogStoragePathsTests.swift; sourceTree = "<group>"; };
 		71F8A2FB8054F8FD6B7B6FD7 /* SensorIDTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorIDTests.swift; sourceTree = "<group>"; };
 		78E085E14C6C14504C50B19C /* LogStorageManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogStorageManager.swift; sourceTree = "<group>"; };
+		7DB2481498C9464D585A5310 /* SQLiteLogWriter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SQLiteLogWriter.swift; sourceTree = "<group>"; };
 		881FC36FAD1F231118C14020 /* SensorLogSession.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorLogSession.swift; sourceTree = "<group>"; };
 		A20001 /* iPhoneSensorsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPhoneSensorsApp.swift; sourceTree = "<group>"; };
 		A20002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -169,6 +172,7 @@
 		A30001 /* iPhoneSensors.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iPhoneSensors.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4B14182F5B60F60AF8FD957 /* LogFormat.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogFormat.swift; sourceTree = "<group>"; };
 		AFC68EB14A90DE7865932DBE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B2AE95106B086DBB5871FA97 /* SQLiteLogWriterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SQLiteLogWriterTests.swift; sourceTree = "<group>"; };
 		BFB05EE7AC57F8E507059D80 /* LoggingService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingService.swift; sourceTree = "<group>"; };
 		CD9676E7662B9D9AC7E10AAC /* LoggingConfigurationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingConfigurationTests.swift; sourceTree = "<group>"; };
 		E9E58D9F43A870BD554E69B0 /* DatabaseSchemaTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DatabaseSchemaTests.swift; sourceTree = "<group>"; };
@@ -212,6 +216,7 @@
 				4411AE2D68C774D24A5397C6 /* JSONLogWriterTests.swift */,
 				66433F054CC0C3994CB0BBB7 /* LoggingCoordinatorTests.swift */,
 				E9E58D9F43A870BD554E69B0 /* DatabaseSchemaTests.swift */,
+				B2AE95106B086DBB5871FA97 /* SQLiteLogWriterTests.swift */,
 			);
 			path = iPhoneSensorsTests;
 			sourceTree = SOURCE_ROOT;
@@ -229,6 +234,7 @@
 			children = (
 				16447308C00155CADFCF41D7 /* LogWriter.swift */,
 				31AB305E371227B6B1778E38 /* JSONLogWriter.swift */,
+				7DB2481498C9464D585A5310 /* SQLiteLogWriter.swift */,
 			);
 			name = Writers;
 			path = iPhoneSensors/Services/Logging/Writers;
@@ -577,6 +583,7 @@
 				6E12817281492FE92EC28387 /* SensorLogEntry.swift in Sources */,
 				DC656192B65A38CA90CECA0B /* SensorLogSession.swift in Sources */,
 				ECC35A4E0C1EDBB33835AB3E /* DatabaseSchema.swift in Sources */,
+				6CFD81477117C230DCCF0627 /* SQLiteLogWriter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -594,6 +601,7 @@
 				A690E991EB9C73419E1C1ACD /* JSONLogWriterTests.swift in Sources */,
 				A27EC14DE73457245629B18F /* LoggingCoordinatorTests.swift in Sources */,
 				9DEC0AB6C2FEE6BA727938C6 /* DatabaseSchemaTests.swift in Sources */,
+				6E68B2DAE8A343A10A2234D7 /* SQLiteLogWriterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
