@@ -57,6 +57,7 @@
 		A10047 /* PermissionRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20049 /* PermissionRequestView.swift */; };
 		A10048 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20050 /* LocalizationManager.swift */; };
 		C1A3AD6FF9DD9F8E82618779 /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657018A9A78479B1694B4F1E /* SmokeTests.swift */; };
+		CA1E96100A7910FBE22282D7 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = C792843E1C0D187A3CFB8747 /* GRDB */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -131,6 +132,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA1E96100A7910FBE22282D7 /* GRDB in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,6 +327,9 @@
 			dependencies = (
 			);
 			name = iPhoneSensors;
+			packageProductDependencies = (
+				C792843E1C0D187A3CFB8747 /* GRDB */,
+			);
 			productName = iPhoneSensors;
 			productReference = A30001 /* iPhoneSensors.app */;
 			productType = "com.apple.product-type.application";
@@ -366,6 +371,9 @@
 				Base,
 			);
 			mainGroup = A60001;
+			packageReferences = (
+				2E38194F9E378D163241D6EC /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+			);
 			productRefGroup = A60011 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -734,6 +742,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2E38194F9E378D163241D6EC /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C792843E1C0D187A3CFB8747 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2E38194F9E378D163241D6EC /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A40001 /* Project object */;
 }

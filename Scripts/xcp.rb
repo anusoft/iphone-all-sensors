@@ -53,9 +53,13 @@ when 'add-package'
     dep.product_name = product
     dep.package = ref
     target.package_product_dependencies << dep
-    target.frameworks_build_phase.add_file_reference(
-      project.frameworks_group.new_product_ref_for_target(product, target)
-    ) rescue nil
+  end
+  # Ensure the frameworks build phase has a PBXBuildFile whose product_ref is
+  # the SPM product dependency (this is what tells the linker to link GRDB).
+  unless target.frameworks_build_phase.files.any? { |bf| bf.product_ref == dep }
+    build_file = project.new(Xcodeproj::Project::Object::PBXBuildFile)
+    build_file.product_ref = dep
+    target.frameworks_build_phase.files << build_file
   end
 when 'add-test-target'
   name = ARGV.shift
