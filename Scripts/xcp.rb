@@ -4,6 +4,7 @@
 #   ruby Scripts/xcp.rb add-target iPhoneSensorsTests
 #   ruby Scripts/xcp.rb add-package https://github.com/groue/GRDB.swift 7.0.0 GRDB iPhoneSensors
 require 'xcodeproj'
+require 'pathname'
 
 PROJ_PATH = File.expand_path('../iPhoneSensors/iPhoneSensors.xcodeproj', __dir__)
 project = Xcodeproj::Project.open(PROJ_PATH)
@@ -13,9 +14,15 @@ case cmd
 when 'add-files'
   target_name = ARGV.shift
   target = project.targets.find { |t| t.name == target_name } or abort "no target #{target_name}"
-  ARGV.each do |rel|
-    abs = File.expand_path(File.join(File.dirname(PROJ_PATH), rel))
+  # Paths are passed relative to the repo root (i.e. they begin with
+  # "iPhoneSensors/..."). Group paths in the project are relative to the
+  # project file's parent directory, which is also the repo's "iPhoneSensors"
+  # folder, so we strip the leading "iPhoneSensors/" before computing groups.
+  proj_dir = File.dirname(PROJ_PATH)
+  ARGV.each do |raw_rel|
+    abs = File.expand_path(raw_rel)
     abort "missing #{abs}" unless File.exist?(abs)
+    rel = Pathname.new(abs).relative_path_from(Pathname.new(proj_dir)).to_s
     parts = rel.split('/')
     subpath = File.join(parts[0..-2])
     group = project.main_group.find_subpath(subpath, true)
@@ -26,6 +33,28 @@ when 'add-files'
     unless target.source_build_phase.files_references.include?(file_ref)
       target.source_build_phase.add_file_reference(file_ref)
     end
+  end
+when 'remove-files'
+  # Remove file references from the project (and from any target's source/resources
+  # build phases). Pass paths relative to the repo root.
+  proj_dir = File.dirname(PROJ_PATH)
+  ARGV.each do |raw_rel|
+    abs = File.expand_path(raw_rel)
+    rel = Pathname.new(abs).relative_path_from(Pathname.new(proj_dir)).to_s
+    parts = rel.split('/')
+    subpath = File.join(parts[0..-2])
+    group = project.main_group.find_subpath(subpath, false)
+    next unless group
+    file_ref = group.files.find { |f| f.path == parts.last }
+    next unless file_ref
+    project.targets.each do |t|
+      [t.source_build_phase, t.resources_build_phase].each do |phase|
+        phase.files.dup.each do |bf|
+          phase.remove_build_file(bf) if bf.file_ref == file_ref
+        end
+      end
+    end
+    file_ref.remove_from_project
   end
 when 'add-resource'
   target_name = ARGV.shift

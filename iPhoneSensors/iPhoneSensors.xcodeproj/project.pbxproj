@@ -10,7 +10,6 @@
 		76A1F144BBE63C97784D8237 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFC68EB14A90DE7865932DBE /* Foundation.framework */; };
 		A10001 /* iPhoneSensorsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20001 /* iPhoneSensorsApp.swift */; };
 		A10002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20002 /* ContentView.swift */; };
-		A10003 /* SensorCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20003 /* SensorCategory.swift */; };
 		A10004 /* SensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20004 /* SensorManager.swift */; };
 		A10005 /* MotionSensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20005 /* MotionSensorManager.swift */; };
 		A10006 /* LocationSensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20006 /* LocationSensorManager.swift */; };
@@ -56,8 +55,10 @@
 		A10046 /* PermissionGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20048 /* PermissionGate.swift */; };
 		A10047 /* PermissionRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20049 /* PermissionRequestView.swift */; };
 		A10048 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20050 /* LocalizationManager.swift */; };
+		A7B15E3127C68F71B78B982C /* SensorID.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7BEA810FC635A7BD9C9A3AC /* SensorID.swift */; };
 		C1A3AD6FF9DD9F8E82618779 /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657018A9A78479B1694B4F1E /* SmokeTests.swift */; };
 		CA1E96100A7910FBE22282D7 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = C792843E1C0D187A3CFB8747 /* GRDB */; };
+		FED114EB00C8FE3AF1C9C1B2 /* SensorIDTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F8A2FB8054F8FD6B7B6FD7 /* SensorIDTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,9 +73,9 @@
 
 /* Begin PBXFileReference section */
 		657018A9A78479B1694B4F1E /* SmokeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
+		71F8A2FB8054F8FD6B7B6FD7 /* SensorIDTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorIDTests.swift; sourceTree = "<group>"; };
 		A20001 /* iPhoneSensorsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPhoneSensorsApp.swift; sourceTree = "<group>"; };
 		A20002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		A20003 /* SensorCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorCategory.swift; sourceTree = "<group>"; };
 		A20004 /* SensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorManager.swift; sourceTree = "<group>"; };
 		A20005 /* MotionSensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionSensorManager.swift; sourceTree = "<group>"; };
 		A20006 /* LocationSensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSensorManager.swift; sourceTree = "<group>"; };
@@ -125,6 +126,7 @@
 		A30001 /* iPhoneSensors.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iPhoneSensors.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFC68EB14A90DE7865932DBE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		F5ED6A2C38BDA9102677340C /* iPhoneSensorsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iPhoneSensorsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7BEA810FC635A7BD9C9A3AC /* SensorID.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorID.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				657018A9A78479B1694B4F1E /* SmokeTests.swift */,
+				71F8A2FB8054F8FD6B7B6FD7 /* SensorIDTests.swift */,
 			);
 			path = iPhoneSensorsTests;
 			sourceTree = SOURCE_ROOT;
@@ -162,6 +165,15 @@
 			);
 			name = iOS;
 			sourceTree = "<group>";
+		};
+		91DD307B07744E5AF15DD83B /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				F7BEA810FC635A7BD9C9A3AC /* SensorID.swift */,
+			);
+			name = Logging;
+			path = iPhoneSensors/Models/Logging;
+			sourceTree = SOURCE_ROOT;
 		};
 		A60001 = {
 			isa = PBXGroup;
@@ -282,7 +294,7 @@
 		A60009 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				A20003 /* SensorCategory.swift */,
+				91DD307B07744E5AF15DD83B /* Logging */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -409,7 +421,6 @@
 			files = (
 				A10001 /* iPhoneSensorsApp.swift in Sources */,
 				A10002 /* ContentView.swift in Sources */,
-				A10003 /* SensorCategory.swift in Sources */,
 				A10004 /* SensorManager.swift in Sources */,
 				A10005 /* MotionSensorManager.swift in Sources */,
 				A10006 /* LocationSensorManager.swift in Sources */,
@@ -454,6 +465,7 @@
 				A10046 /* PermissionGate.swift in Sources */,
 				A10047 /* PermissionRequestView.swift in Sources */,
 				A10048 /* LocalizationManager.swift in Sources */,
+				A7B15E3127C68F71B78B982C /* SensorID.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -462,6 +474,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C1A3AD6FF9DD9F8E82618779 /* SmokeTests.swift in Sources */,
+				FED114EB00C8FE3AF1C9C1B2 /* SensorIDTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
