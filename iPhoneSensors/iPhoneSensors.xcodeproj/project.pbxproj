@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		76A1F144BBE63C97784D8237 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFC68EB14A90DE7865932DBE /* Foundation.framework */; };
 		A10001 /* iPhoneSensorsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20001 /* iPhoneSensorsApp.swift */; };
 		A10002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20002 /* ContentView.swift */; };
 		A10003 /* SensorCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20003 /* SensorCategory.swift */; };
@@ -55,9 +56,21 @@
 		A10046 /* PermissionGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20048 /* PermissionGate.swift */; };
 		A10047 /* PermissionRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20049 /* PermissionRequestView.swift */; };
 		A10048 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20050 /* LocalizationManager.swift */; };
+		C1A3AD6FF9DD9F8E82618779 /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657018A9A78479B1694B4F1E /* SmokeTests.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		4BC5D129F222D58D722F83A2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A40001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A70001;
+			remoteInfo = iPhoneSensors;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		657018A9A78479B1694B4F1E /* SmokeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
 		A20001 /* iPhoneSensorsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPhoneSensorsApp.swift; sourceTree = "<group>"; };
 		A20002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A20003 /* SensorCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorCategory.swift; sourceTree = "<group>"; };
@@ -109,6 +122,8 @@
 		A20049 /* PermissionRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionRequestView.swift; sourceTree = "<group>"; };
 		A20050 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
 		A30001 /* iPhoneSensors.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iPhoneSensors.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AFC68EB14A90DE7865932DBE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		F5ED6A2C38BDA9102677340C /* iPhoneSensorsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iPhoneSensorsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,14 +134,40 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B6C790D25256786B6967F693 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				76A1F144BBE63C97784D8237 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		57E98C255E8C202B9D8B722B /* iPhoneSensorsTests */ = {
+			isa = PBXGroup;
+			children = (
+				657018A9A78479B1694B4F1E /* SmokeTests.swift */,
+			);
+			path = iPhoneSensorsTests;
+			sourceTree = SOURCE_ROOT;
+		};
+		66960F04831598D04D95A5D9 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				AFC68EB14A90DE7865932DBE /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
 		A60001 = {
 			isa = PBXGroup;
 			children = (
 				A60002 /* iPhoneSensors */,
 				A60011 /* Products */,
+				E78B278E88A0D101AF6BBDE0 /* Frameworks */,
+				57E98C255E8C202B9D8B722B /* iPhoneSensorsTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -255,8 +296,17 @@
 			isa = PBXGroup;
 			children = (
 				A30001 /* iPhoneSensors.app */,
+				F5ED6A2C38BDA9102677340C /* iPhoneSensorsTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		E78B278E88A0D101AF6BBDE0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				66960F04831598D04D95A5D9 /* iOS */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -278,6 +328,24 @@
 			productName = iPhoneSensors;
 			productReference = A30001 /* iPhoneSensors.app */;
 			productType = "com.apple.product-type.application";
+		};
+		DED310FE3586A185A1FE1539 /* iPhoneSensorsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9A334324700A69030BFC3C70 /* Build configuration list for PBXNativeTarget "iPhoneSensorsTests" */;
+			buildPhases = (
+				D6168F47D29C3DDF8DE7902C /* Sources */,
+				B6C790D25256786B6967F693 /* Frameworks */,
+				11F958C9879027B78B26DAF8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				477367EA1C2EFF76EA7C1F0E /* PBXTargetDependency */,
+			);
+			name = iPhoneSensorsTests;
+			productName = iPhoneSensorsTests;
+			productReference = F5ED6A2C38BDA9102677340C /* iPhoneSensorsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -303,11 +371,19 @@
 			projectRoot = "";
 			targets = (
 				A70001 /* iPhoneSensors */,
+				DED310FE3586A185A1FE1539 /* iPhoneSensorsTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		11F958C9879027B78B26DAF8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A80002 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -373,9 +449,42 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D6168F47D29C3DDF8DE7902C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C1A3AD6FF9DD9F8E82618779 /* SmokeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		477367EA1C2EFF76EA7C1F0E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = iPhoneSensors;
+			target = A70001 /* iPhoneSensors */;
+			targetProxy = 4BC5D129F222D58D722F83A2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		8D8CC279180EBD07B8C4E8E9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.allsensors.iPhoneSensorsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/iPhoneSensors.app/iPhoneSensors";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		A90004 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -579,9 +688,33 @@
 			};
 			name = Release;
 		};
+		B7C182BB8D45692EB843CE7C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.allsensors.iPhoneSensorsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/iPhoneSensors.app/iPhoneSensors";
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9A334324700A69030BFC3C70 /* Build configuration list for PBXNativeTarget "iPhoneSensorsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D8CC279180EBD07B8C4E8E9 /* Release */,
+				B7C182BB8D45692EB843CE7C /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A90001 /* Build configuration list for PBXProject "iPhoneSensors" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

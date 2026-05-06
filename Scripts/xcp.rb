@@ -17,10 +17,15 @@ when 'add-files'
     abs = File.expand_path(File.join(File.dirname(PROJ_PATH), rel))
     abort "missing #{abs}" unless File.exist?(abs)
     parts = rel.split('/')
-    group = project.main_group.find_subpath(File.join(parts[0..-2]), true)
+    subpath = File.join(parts[0..-2])
+    group = project.main_group.find_subpath(subpath, true)
     group.set_source_tree('SOURCE_ROOT')
+    group.path = subpath if group.path.nil?
+    group.name = nil if group.name == subpath
     file_ref = group.files.find { |f| f.path == parts.last } || group.new_reference(parts.last)
-    target.source_build_phase.files_references << file_ref unless target.source_build_phase.files_references.include?(file_ref)
+    unless target.source_build_phase.files_references.include?(file_ref)
+      target.source_build_phase.add_file_reference(file_ref)
+    end
   end
 when 'add-resource'
   target_name = ARGV.shift
@@ -60,6 +65,7 @@ when 'add-test-target'
     bc.build_settings['TEST_HOST'] = '$(BUILT_PRODUCTS_DIR)/iPhoneSensors.app/iPhoneSensors'
     bc.build_settings['BUNDLE_LOADER'] = '$(TEST_HOST)'
     bc.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "com.allsensors.#{name}"
+    bc.build_settings['PRODUCT_NAME'] = '$(TARGET_NAME)'
     bc.build_settings['SWIFT_VERSION'] = '5.0'
     bc.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '17.0'
     bc.build_settings['GENERATE_INFOPLIST_FILE'] = 'YES'
