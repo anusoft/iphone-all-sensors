@@ -11,6 +11,7 @@
 		1043ED939DD839AE2D8BEFCE /* LoggingConfigStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56058C4BF0225270B8C2678C /* LoggingConfigStoreTests.swift */; };
 		109D7681C08C8BDBE51123D6 /* CSVLogWriterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BA27E755BB656809C5DA54 /* CSVLogWriterTests.swift */; };
 		1F40F03A419D45E54DE4EDAB /* FormatOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BA3C0863ED650591E6FFDD /* FormatOptions.swift */; };
+		2635A6E36E2C4926A87A3E2D /* SessionLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A179785AC4D9C75D245A168B /* SessionLifecycleTests.swift */; };
 		2753911E7EFBFFC999E2FAE9 /* LoggingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE59DD0CC363B0DA9B9980 /* LoggingCoordinator.swift */; };
 		282CCB9E36465E4D406B69F6 /* LogStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E085E14C6C14504C50B19C /* LogStorageManager.swift */; };
 		362D55BF2001768A5964E603 /* LoggingConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9676E7662B9D9AC7E10AAC /* LoggingConfigurationTests.swift */; };
@@ -21,6 +22,7 @@
 		567A7657B342B57C17CFB926 /* SensorPayloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDF764D65243C574012269C /* SensorPayloadTests.swift */; };
 		58311120EFBDAE52B7BED3C4 /* CSVLogWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A5AA4F8CCBB1D1D6C2326C /* CSVLogWriter.swift */; };
 		5A2EF99ACBE5C105449F3C4C /* LogFormatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A3431A40FBA3DF65A7A324 /* LogFormatTests.swift */; };
+		5D07D4454CD45BA63C37A4FD /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FE86079943BF19E6C9FCB9 /* SessionManager.swift */; };
 		6CFD81477117C230DCCF0627 /* SQLiteLogWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DB2481498C9464D585A5310 /* SQLiteLogWriter.swift */; };
 		6E12817281492FE92EC28387 /* SensorLogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E3ECD4A7CFAED3DF1CA362 /* SensorLogEntry.swift */; };
 		6E68B2DAE8A343A10A2234D7 /* SQLiteLogWriterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AE95106B086DBB5871FA97 /* SQLiteLogWriterTests.swift */; };
@@ -123,6 +125,7 @@
 		7DB2481498C9464D585A5310 /* SQLiteLogWriter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SQLiteLogWriter.swift; sourceTree = "<group>"; };
 		82BA27E755BB656809C5DA54 /* CSVLogWriterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CSVLogWriterTests.swift; sourceTree = "<group>"; };
 		881FC36FAD1F231118C14020 /* SensorLogSession.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorLogSession.swift; sourceTree = "<group>"; };
+		A179785AC4D9C75D245A168B /* SessionLifecycleTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SessionLifecycleTests.swift; sourceTree = "<group>"; };
 		A20001 /* iPhoneSensorsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPhoneSensorsApp.swift; sourceTree = "<group>"; };
 		A20002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A20004 /* SensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorManager.swift; sourceTree = "<group>"; };
@@ -183,6 +186,7 @@
 		EFDF764D65243C574012269C /* SensorPayloadTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorPayloadTests.swift; sourceTree = "<group>"; };
 		F5ED6A2C38BDA9102677340C /* iPhoneSensorsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iPhoneSensorsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7BEA810FC635A7BD9C9A3AC /* SensorID.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorID.swift; sourceTree = "<group>"; };
+		F7FE86079943BF19E6C9FCB9 /* SessionManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		FE05FF706F49B07AEF568AF9 /* DatabaseSchema.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DatabaseSchema.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -222,6 +226,7 @@
 				E9E58D9F43A870BD554E69B0 /* DatabaseSchemaTests.swift */,
 				B2AE95106B086DBB5871FA97 /* SQLiteLogWriterTests.swift */,
 				82BA27E755BB656809C5DA54 /* CSVLogWriterTests.swift */,
+				A179785AC4D9C75D245A168B /* SessionLifecycleTests.swift */,
 			);
 			path = iPhoneSensorsTests;
 			sourceTree = SOURCE_ROOT;
@@ -414,6 +419,7 @@
 				68AE59DD0CC363B0DA9B9980 /* LoggingCoordinator.swift */,
 				BFB05EE7AC57F8E507059D80 /* LoggingService.swift */,
 				FE05FF706F49B07AEF568AF9 /* DatabaseSchema.swift */,
+				F7FE86079943BF19E6C9FCB9 /* SessionManager.swift */,
 			);
 			name = Logging;
 			path = iPhoneSensors/Services/Logging;
@@ -591,6 +597,7 @@
 				ECC35A4E0C1EDBB33835AB3E /* DatabaseSchema.swift in Sources */,
 				6CFD81477117C230DCCF0627 /* SQLiteLogWriter.swift in Sources */,
 				58311120EFBDAE52B7BED3C4 /* CSVLogWriter.swift in Sources */,
+				5D07D4454CD45BA63C37A4FD /* SessionManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -610,6 +617,7 @@
 				9DEC0AB6C2FEE6BA727938C6 /* DatabaseSchemaTests.swift in Sources */,
 				6E68B2DAE8A343A10A2234D7 /* SQLiteLogWriterTests.swift in Sources */,
 				109D7681C08C8BDBE51123D6 /* CSVLogWriterTests.swift in Sources */,
+				2635A6E36E2C4926A87A3E2D /* SessionLifecycleTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,10 +9,17 @@ actor LoggingCoordinator {
     private var writers: [WriterKey: any LogWriter] = [:]
     private var lastWritten: [SensorID: [LogStream: UInt64]] = [:]   // monotonicNs
     private var continuousPool: DatabasePool?
+    private var activeSessionID: UUID?
+    private var sessionPool: DatabasePool?
 
     init(storage: LogStorageManager, configStore: LoggingConfigStore) {
         self.storage = storage
         self.configStore = configStore
+    }
+
+    func setActiveSession(_ id: UUID?, pool: DatabasePool?) {
+        self.activeSessionID = id
+        self.sessionPool = pool
     }
 
     private func ensureContinuousPool() throws -> DatabasePool {
@@ -31,10 +38,10 @@ actor LoggingCoordinator {
         for stream in LogStream.allCases {
             let pcfg: PerStreamConfig = (stream == .continuous) ? cfg.continuous : cfg.session
             guard case let .on(format, intervalMs, _) = pcfg else { continue }
-            // Phase 1: only continuous stream is "live"; sessions still do nothing until SessionManager arrives.
-            if stream == .session { continue }
+            // Session stream is gated on an active session; otherwise we drop.
+            if stream == .session && activeSessionID == nil { continue }
             if !shouldWrite(sample, stream: stream, intervalMs: intervalMs) { continue }
-            let writer = await writer(for: sample.sensorID, stream: stream, format: format)
+            guard let writer = await writer(for: sample.sensorID, stream: stream, format: format) else { continue }
             await writer.write(sample)
         }
     }
@@ -55,7 +62,7 @@ actor LoggingCoordinator {
         return true
     }
 
-    private func writer(for id: SensorID, stream: LogStream, format: LogFormat) async -> any LogWriter {
+    private func writer(for id: SensorID, stream: LogStream, format: LogFormat) async -> (any LogWriter)? {
         let key = WriterKey(sensorID: id, stream: stream, format: format)
         if let w = writers[key] { return w }
         let url: URL
@@ -64,7 +71,10 @@ actor LoggingCoordinator {
             url = (try? storage.continuousFileURL(for: id, format: format, day: Date()))
                 ?? storage.rootURL.appendingPathComponent("\(id.rawValue).\(format.fileExtension)")
         case .session:
-            url = storage.rootURL.appendingPathComponent("session-placeholder.\(format.fileExtension)")
+            guard let sid = activeSessionID,
+                  let fileURL = try? storage.sessionFileURL(sid, sensor: id, format: format)
+            else { return nil }
+            url = fileURL
         }
         let writer: any LogWriter
         switch format {
@@ -75,11 +85,11 @@ actor LoggingCoordinator {
                 let p = (try? ensureContinuousPool()) ?? (try! DatabasePool(path: ":memory:"))
                 writer = SQLiteLogWriter(pool: p, sensorID: id, sessionID: nil)
             } else {
-                // session pool will be set in Task 2.4. For now, fall back to in-memory
-                // so the coordinator never crashes if a session-stream sqlite write
-                // happens before SessionManager is wired.
-                let p = (try? ensureContinuousPool()) ?? (try! DatabasePool(path: ":memory:"))
-                writer = SQLiteLogWriter(pool: p, sensorID: id, sessionID: nil)
+                // Session-stream SQLite writes route to the active session pool.
+                // Ingest gate ensures activeSessionID != nil, but sessionPool may be
+                // unset if the caller hasn't wired it — drop in that case.
+                guard let p = sessionPool, let sid = activeSessionID else { return nil }
+                writer = SQLiteLogWriter(pool: p, sensorID: id, sessionID: sid)
             }
         }
         writers[key] = writer

@@ -1,0 +1,33 @@
+import XCTest
+import GRDB
+@testable import iPhoneSensors
+
+final class SessionLifecycleTests: XCTestCase {
+    func testStartAndStop() async throws {
+        let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let storage = LogStorageManager(rootURL: tmp)
+        let mgr = SessionManager(storage: storage)
+        let session = try await mgr.startSession(note: "trial")
+        let active = await mgr.activeSessionID
+        XCTAssertNotNil(active)
+        try await mgr.stopSession()
+        let after = await mgr.activeSessionID
+        XCTAssertNil(after)
+
+        // Verify ended_at written
+        let url = try storage.sessionSQLiteURL(session.id)
+        let pool = try DatabasePool(path: url.path)
+        let s = try await pool.read { try SensorLogSession.fetchOne($0) }
+        XCTAssertNotNil(s?.endedAt)
+    }
+    func testResumeDetectsUnfinished() async throws {
+        let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let storage = LogStorageManager(rootURL: tmp)
+        let mgr1 = SessionManager(storage: storage)
+        let s = try await mgr1.startSession(note: nil)
+        // Simulate kill: don't call stop.
+        let mgr2 = SessionManager(storage: storage)
+        let unfinished = try await mgr2.unfinishedSessions()
+        XCTAssertTrue(unfinished.contains { $0.id == s.id })
+    }
+}
