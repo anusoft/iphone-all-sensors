@@ -13,6 +13,22 @@ class SensorManager: ObservableObject {
 
     let healthKitEnabled = false
     @Published var isStarted = false
+    @Published var isThrottled: Bool = false {
+        didSet {
+            guard oldValue != isThrottled else { return }
+            let value = isThrottled
+            let coord = loggingCoordinator
+            Task { await coord?.setThrottled(value) }
+        }
+    }
+
+    /// Strong reference (actor weak refs are awkward; both objects live for app lifetime).
+    var loggingCoordinator: LoggingCoordinator?
+
+    /// Update the throttle state. Forwards changes to the logging coordinator.
+    func updateThrottleState(_ value: Bool) {
+        self.isThrottled = value
+    }
 
     func startAllSensors() {
         guard !isStarted else {

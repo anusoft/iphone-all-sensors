@@ -28,6 +28,11 @@ final class LoggingService: ObservableObject {
         bus.attach(publisher)
     }
 
+    /// Wire the `SensorManager`'s throttle state into the coordinator.
+    func attachThrottleSource(_ sensorManager: SensorManager) {
+        sensorManager.loggingCoordinator = coordinator
+    }
+
     /// Smoke helper for tests / preview.
     func enableContinuousAccelerometer() {
         configStore.set(LoggingConfiguration(

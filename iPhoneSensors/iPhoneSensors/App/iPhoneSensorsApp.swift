@@ -23,6 +23,7 @@ struct iPhoneSensorsApp: App {
                     await loggingService.bootstrap()
                     loggingService.enableContinuousAccelerometer()
                     loggingService.attach(sensorManager.motionManager.samplePublisher.eraseToAnyPublisher())
+                    loggingService.attachThrottleSource(sensorManager)
                 }
         }
     }

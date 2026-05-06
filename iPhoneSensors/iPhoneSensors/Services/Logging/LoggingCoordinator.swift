@@ -11,6 +11,9 @@ actor LoggingCoordinator {
     private var continuousPool: DatabasePool?
     private var activeSessionID: UUID?
     private var sessionPool: DatabasePool?
+    private var throttled = false
+    private var flushTick = 0
+    private let storageCapBytesDefault: Int64 = 1024 * 1024 * 1024  // 1 GB
 
     init(storage: LogStorageManager, configStore: LoggingConfigStore) {
         self.storage = storage
@@ -20,6 +23,10 @@ actor LoggingCoordinator {
     func setActiveSession(_ id: UUID?, pool: DatabasePool?) {
         self.activeSessionID = id
         self.sessionPool = pool
+    }
+
+    func setThrottled(_ value: Bool) {
+        self.throttled = value
     }
 
     private func ensureContinuousPool() throws -> DatabasePool {
@@ -40,6 +47,8 @@ actor LoggingCoordinator {
             guard case let .on(format, intervalMs, _) = pcfg else { continue }
             // Session stream is gated on an active session; otherwise we drop.
             if stream == .session && activeSessionID == nil { continue }
+            // When throttled, drop session writes; only continuous proceeds.
+            if throttled && stream == .session { continue }
             if !shouldWrite(sample, stream: stream, intervalMs: intervalMs) { continue }
             guard let writer = await writer(for: sample.sensorID, stream: stream, format: format) else { continue }
             await writer.write(sample)
@@ -48,6 +57,12 @@ actor LoggingCoordinator {
 
     func flushAll() async {
         for w in writers.values { await w.flush() }
+        flushTick &+= 1
+        if flushTick % 100 == 0 {
+            let capMB = await MainActor.run { UserDefaults.standard.integer(forKey: "logger.storageCapMB") }
+            let cap = capMB > 0 ? Int64(capMB) * 1024 * 1024 : storageCapBytesDefault
+            _ = storage.enforceCapDeletingContinuousIfOver(targetBytes: cap)
+        }
     }
 
     private func shouldWrite(_ s: SensorSample, stream: LogStream, intervalMs: Int) -> Bool {
