@@ -77,6 +77,7 @@
 		C83340220CE29A48FE20E8CE /* LogStoragePathsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719B516DBF49963C98554453 /* LogStoragePathsTests.swift */; };
 		CA1E96100A7910FBE22282D7 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = C792843E1C0D187A3CFB8747 /* GRDB */; };
 		D6A913C7DFFB498BE01C0B99 /* SensorEventBus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343C0ACC130BB19B2ADBA475 /* SensorEventBus.swift */; };
+		F64720ED9B96924C552A0AF8 /* LoggingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB05EE7AC57F8E507059D80 /* LoggingService.swift */; };
 		FED114EB00C8FE3AF1C9C1B2 /* SensorIDTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F8A2FB8054F8FD6B7B6FD7 /* SensorIDTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -161,6 +162,7 @@
 		A30001 /* iPhoneSensors.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iPhoneSensors.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4B14182F5B60F60AF8FD957 /* LogFormat.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogFormat.swift; sourceTree = "<group>"; };
 		AFC68EB14A90DE7865932DBE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		BFB05EE7AC57F8E507059D80 /* LoggingService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingService.swift; sourceTree = "<group>"; };
 		CD9676E7662B9D9AC7E10AAC /* LoggingConfigurationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingConfigurationTests.swift; sourceTree = "<group>"; };
 		EFDF764D65243C574012269C /* SensorPayloadTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorPayloadTests.swift; sourceTree = "<group>"; };
 		F5ED6A2C38BDA9102677340C /* iPhoneSensorsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iPhoneSensorsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -385,6 +387,7 @@
 				83595DB8D34A1F52FCB04988 /* Writers */,
 				343C0ACC130BB19B2ADBA475 /* SensorEventBus.swift */,
 				68AE59DD0CC363B0DA9B9980 /* LoggingCoordinator.swift */,
+				BFB05EE7AC57F8E507059D80 /* LoggingService.swift */,
 			);
 			name = Logging;
 			path = iPhoneSensors/Services/Logging;
@@ -553,6 +556,7 @@
 				38BEE6F8F5B67FFBAC998C55 /* JSONLogWriter.swift in Sources */,
 				D6A913C7DFFB498BE01C0B99 /* SensorEventBus.swift in Sources */,
 				2753911E7EFBFFC999E2FAE9 /* LoggingCoordinator.swift in Sources */,
+				F64720ED9B96924C552A0AF8 /* LoggingService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

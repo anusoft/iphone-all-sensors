@@ -4,6 +4,7 @@ import SwiftUI
 struct iPhoneSensorsApp: App {
     @StateObject private var sensorManager = SensorManager()
     @StateObject private var locManager = LocalizationManager()
+    @StateObject private var loggingService = LoggingService()
 
     var body: some Scene {
         WindowGroup {
@@ -17,6 +18,12 @@ struct iPhoneSensorsApp: App {
                 .environmentObject(sensorManager.connectivityManager)
                 .environmentObject(sensorManager.cameraManager)
                 .environmentObject(locManager)
+                .environmentObject(loggingService)
+                .task {
+                    await loggingService.bootstrap()
+                    loggingService.enableContinuousAccelerometer()
+                    loggingService.attach(sensorManager.motionManager.samplePublisher.eraseToAnyPublisher())
+                }
         }
     }
 }

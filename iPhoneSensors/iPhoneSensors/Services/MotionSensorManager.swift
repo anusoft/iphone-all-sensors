@@ -64,6 +64,10 @@ class MotionSensorManager: ObservableObject {
     @Published var isAltimeterAvailable = false
     @Published var isActivityAvailable = false
 
+    /// Stream of sensor samples for the logging pipeline.
+    /// Phase 1 wires accelerometer only; other sensors land in Phase 2 (Task 2.7.1).
+    let samplePublisher = PassthroughSubject<SensorSample, Never>()
+
     private var isStarted = false
     private var accUpdateCount = 0
     private var gyroUpdateCount = 0
@@ -124,6 +128,9 @@ class MotionSensorManager: ObservableObject {
             self.accX = data.acceleration.x
             self.accY = data.acceleration.y
             self.accZ = data.acceleration.z
+            self.samplePublisher.send(SensorSample(
+                sensorID: .accelerometer,
+                payload: .acceleration(x: data.acceleration.x, y: data.acceleration.y, z: data.acceleration.z)))
             if self.accUpdateCount <= 3 || self.accUpdateCount % 100 == 0 {
                 print("[Motion] 📊 Acc[\(self.accUpdateCount)]: x=\(String(format: "%.3f", data.acceleration.x)) y=\(String(format: "%.3f", data.acceleration.y)) z=\(String(format: "%.3f", data.acceleration.z))")
             }
