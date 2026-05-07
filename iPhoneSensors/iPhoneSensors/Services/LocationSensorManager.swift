@@ -29,6 +29,9 @@ class LocationSensorManager: NSObject, ObservableObject, CLLocationManagerDelega
     @Published var isAuthorized = false
     @Published var authorizationDescription: String = "Not Determined"
 
+    /// Stream of sensor samples for the logging pipeline.
+    let samplePublisher = PassthroughSubject<SensorSample, Never>()
+
     private var isStarted = false
     private var locationUpdateCount = 0
     private var headingUpdateCount = 0
@@ -91,6 +94,19 @@ class LocationSensorManager: NSObject, ObservableObject, CLLocationManagerDelega
             self.courseAccuracy = location.courseAccuracy
             self.floor = location.floor?.level
             self.timestamp = location.timestamp
+            self.samplePublisher.send(SensorSample(
+                sensorID: .gps,
+                payload: .location(LocationPayload(
+                    lat: location.coordinate.latitude,
+                    lon: location.coordinate.longitude,
+                    alt: location.altitude,
+                    speed: location.speed,
+                    course: location.course,
+                    horizAccuracy: location.horizontalAccuracy,
+                    vertAccuracy: location.verticalAccuracy,
+                    speedAccuracy: location.speedAccuracy,
+                    courseAccuracy: location.courseAccuracy,
+                    floor: location.floor?.level))))
             if self.locationUpdateCount <= 5 || self.locationUpdateCount % 20 == 0 {
                 print("[Location] 📍 #\(self.locationUpdateCount): \(String(format: "%.6f", location.coordinate.latitude)), \(String(format: "%.6f", location.coordinate.longitude)) alt:\(String(format: "%.1f", location.altitude))m hAcc:\(String(format: "%.1f", location.horizontalAccuracy))m")
             }
@@ -106,6 +122,12 @@ class LocationSensorManager: NSObject, ObservableObject, CLLocationManagerDelega
             self.magneticHeading = newHeading.magneticHeading
             self.trueHeading = newHeading.trueHeading
             self.headingTimestamp = newHeading.timestamp
+            self.samplePublisher.send(SensorSample(
+                sensorID: .heading,
+                payload: .heading(
+                    trueHeading: newHeading.trueHeading >= 0 ? newHeading.trueHeading : nil,
+                    magneticHeading: newHeading.magneticHeading,
+                    accuracy: newHeading.headingAccuracy)))
             if self.headingUpdateCount <= 5 || self.headingUpdateCount % 20 == 0 {
                 print("[Location] 🧭 #\(self.headingUpdateCount): true=\(String(format: "%.1f", newHeading.trueHeading))° mag=\(String(format: "%.1f", newHeading.magneticHeading))° acc=\(String(format: "%.1f", newHeading.headingAccuracy))°")
             }

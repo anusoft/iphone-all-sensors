@@ -25,6 +25,12 @@ class EnvironmentSensorManager: ObservableObject {
     @Published var isAudioSessionActive = false
     @Published var audioVolume: Float = 0
 
+    /// Stream of sensor samples for the logging pipeline.
+    /// Note: altimeter samples are emitted by `MotionSensorManager` (single source of truth).
+    let samplePublisher = PassthroughSubject<SensorSample, Never>()
+
+    private var observersRegistered = false
+
     func startUpdates() {
         print("[Environment] ── Starting Environment Sensors ──")
 
@@ -46,11 +52,17 @@ class EnvironmentSensorManager: ObservableObject {
 
         screenBrightness = UIScreen.main.brightness
         print("[Environment] Screen brightness: \(screenBrightness)")
+        samplePublisher.send(SensorSample(
+            sensorID: .brightness,
+            payload: .brightness(level: Double(UIScreen.main.brightness))))
 
         UIDevice.current.isProximityMonitoringEnabled = true
         isProximityMonitoringEnabled = UIDevice.current.isProximityMonitoringEnabled
         proximityState = UIDevice.current.proximityState
         print("[Environment] Proximity monitoring enabled: \(isProximityMonitoringEnabled)")
+        samplePublisher.send(SensorSample(
+            sensorID: .proximity,
+            payload: .proximity(near: UIDevice.current.proximityState)))
 
         if let device = AVCaptureDevice.default(for: .video) {
             isTorchAvailable = device.hasTorch
@@ -61,13 +73,78 @@ class EnvironmentSensorManager: ObservableObject {
         }
 
         updateAudioInfo()
+        registerObservers()
         print("[Environment] ✅ Environment sensors initialization complete")
+    }
+
+    private func registerObservers() {
+        guard !observersRegistered else { return }
+        observersRegistered = true
+        let nc = NotificationCenter.default
+        nc.addObserver(self,
+                       selector: #selector(handleProximityChange),
+                       name: UIDevice.proximityStateDidChangeNotification,
+                       object: nil)
+        nc.addObserver(self,
+                       selector: #selector(handleBrightnessChange),
+                       name: UIScreen.brightnessDidChangeNotification,
+                       object: nil)
+        nc.addObserver(self,
+                       selector: #selector(handleAudioRouteChange),
+                       name: AVAudioSession.routeChangeNotification,
+                       object: nil)
+        print("[Environment] ✓ Registered proximity/brightness/audio observers")
+    }
+
+    @objc private nonisolated func handleProximityChange(_ note: Notification) {
+        Task { @MainActor [weak self] in
+            guard let self = self else { return }
+            let near = UIDevice.current.proximityState
+            self.proximityState = near
+            self.samplePublisher.send(SensorSample(
+                sensorID: .proximity,
+                payload: .proximity(near: near)))
+        }
+    }
+
+    @objc private nonisolated func handleBrightnessChange(_ note: Notification) {
+        Task { @MainActor [weak self] in
+            guard let self = self else { return }
+            let level = Double(UIScreen.main.brightness)
+            self.screenBrightness = level
+            self.samplePublisher.send(SensorSample(
+                sensorID: .brightness,
+                payload: .brightness(level: level)))
+        }
+    }
+
+    @objc private nonisolated func handleAudioRouteChange(_ note: Notification) {
+        Task { @MainActor [weak self] in
+            guard let self = self else { return }
+            let session = AVAudioSession.sharedInstance()
+            self.audioSessionCategory = session.category.rawValue
+            self.audioVolume = session.outputVolume
+            self.audioOutputDevices = session.currentRoute.outputs.map { $0.portName }
+            self.samplePublisher.send(SensorSample(
+                sensorID: .audio,
+                payload: .audio(AudioPayload(
+                    category: session.category.rawValue,
+                    sampleRate: session.sampleRate,
+                    channels: Int(session.outputNumberOfChannels),
+                    volume: Double(session.outputVolume),
+                    inputs: session.currentRoute.inputs.map { $0.portName },
+                    outputs: session.currentRoute.outputs.map { $0.portName }))))
+        }
     }
 
     func stopUpdates() {
         print("[Environment] ■ Stopping environment sensors")
         altimeter.stopRelativeAltitudeUpdates()
         UIDevice.current.isProximityMonitoringEnabled = false
+        if observersRegistered {
+            NotificationCenter.default.removeObserver(self)
+            observersRegistered = false
+        }
     }
 
     func setTorchLevel(_ level: Float) {
@@ -80,12 +157,18 @@ class EnvironmentSensorManager: ObservableObject {
         try? device.setTorchModeOn(level: level)
         device.unlockForConfiguration()
         torchLevel = level
+        samplePublisher.send(SensorSample(
+            sensorID: .torch,
+            payload: .torch(level: Double(device.torchLevel))))
         print("[Environment] 🔦 Torch set to \(level)")
     }
 
     func setScreenBrightness(_ brightness: Double) {
         UIScreen.main.brightness = brightness
         screenBrightness = brightness
+        samplePublisher.send(SensorSample(
+            sensorID: .brightness,
+            payload: .brightness(level: brightness)))
         print("[Environment] ☀️ Brightness set to \(brightness)")
     }
 
@@ -98,6 +181,15 @@ class EnvironmentSensorManager: ObservableObject {
             audioVolume = session.outputVolume
             audioInputDevices = session.availableInputs?.map { $0.portName } ?? []
             audioOutputDevices = session.currentRoute.outputs.map { $0.portName }
+            samplePublisher.send(SensorSample(
+                sensorID: .audio,
+                payload: .audio(AudioPayload(
+                    category: session.category.rawValue,
+                    sampleRate: session.sampleRate,
+                    channels: Int(session.outputNumberOfChannels),
+                    volume: Double(session.outputVolume),
+                    inputs: session.currentRoute.inputs.map { $0.portName },
+                    outputs: session.currentRoute.outputs.map { $0.portName }))))
             print("[Environment] Audio category: \(audioSessionCategory)")
             print("[Environment] Audio volume: \(audioVolume)")
             print("[Environment] Audio inputs: \(audioInputDevices)")
