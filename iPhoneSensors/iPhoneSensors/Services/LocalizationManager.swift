@@ -136,6 +136,77 @@ enum Translations {
 
         // Language
         "language.title": "Language",
+
+        // Logger - tab & overview
+        "tab.logger": "Logger",
+        "logger.title": "Logger",
+        "logger.start": "Start session",
+        "logger.stop": "Stop session",
+        "logger.continuousActive": "sensors logging continuously",
+        "logger.sessionRecording": "Recording session",
+        "logger.sessionIdle": "No active session",
+        "logger.storage": "Storage",
+
+        // Logger - per-sensor config
+        "logger.stream.continuous": "Continuous stream",
+        "logger.stream.session": "Session stream",
+        "logger.format": "Format",
+        "logger.interval": "Interval",
+        "logger.interval.everySample": "Every sample",
+        "logger.enabled": "Enabled",
+        "logger.format.sqlite": "SQLite",
+        "logger.format.jsonl": "JSON Lines",
+        "logger.format.csv": "CSV",
+
+        // Logger - settings
+        "logger.settings.title": "Logger Settings",
+        "logger.settings.done": "Done",
+        "logger.settings.storageSection": "Storage",
+        "logger.settings.cap": "Storage cap",
+        "logger.settings.clearContinuous": "Clear all continuous data",
+        "logger.settings.clearConfirm": "This will permanently delete all continuous-stream data. Sessions are not affected.",
+        "logger.settings.behaviorSection": "Behavior",
+        "logger.settings.disableAutoLock": "Disable auto-lock during session",
+        "logger.settings.pauseLowBattery": "Pause continuous on low battery",
+        "logger.settings.pauseThermal": "Pause continuous on thermal warning",
+        "logger.settings.privacySection": "Privacy",
+        "logger.settings.showExportWarning": "Show export warning",
+
+        // Sensor categories (Logger overview groupings)
+        "category.motion": "Motion",
+        "category.location": "Location",
+        "category.environment": "Environment",
+        "category.system": "System",
+        "category.connectivity": "Connectivity",
+        "category.camera": "Camera",
+        "category.health": "Health",
+
+        // SensorID display names (one per SensorID.rawValue, prefixed `sensor.`)
+        "sensor.motion.accelerometer": "Accelerometer",
+        "sensor.motion.gyroscope": "Gyroscope",
+        "sensor.motion.magnetometer": "Magnetometer",
+        "sensor.motion.deviceMotion": "Device Motion",
+        "sensor.motion.altimeter": "Altimeter",
+        "sensor.motion.pedometer": "Pedometer",
+        "sensor.motion.activity": "Motion Activity",
+        "sensor.location.gps": "GPS",
+        "sensor.location.heading": "Heading",
+        "sensor.environment.proximity": "Proximity",
+        "sensor.environment.brightness": "Screen Brightness",
+        "sensor.environment.torch": "Torch",
+        "sensor.environment.audio": "Audio Session",
+        "sensor.system.battery": "Battery",
+        "sensor.system.thermal": "Thermal State",
+        "sensor.system.lowPower": "Low-Power Mode",
+        "sensor.system.orientation": "Orientation",
+        "sensor.system.disk": "Disk",
+        "sensor.system.uptime": "Uptime",
+        "sensor.connectivity.bluetoothState": "Bluetooth State",
+        "sensor.connectivity.bluetoothScan": "Bluetooth Scan",
+        "sensor.connectivity.network": "Network",
+        "sensor.connectivity.cellular": "Cellular",
+        "sensor.camera.snapshot": "Camera",
+        "sensor.health.metric": "Health",
     ]
 
     static let thai: [String: String] = [
@@ -208,6 +279,52 @@ enum Translations {
         "permission.startUsing": "เริ่มใช้แอป",
         "permission.notNow": "ข้ามไปก่อน",
         "language.title": "ภาษา",
+
+        // Logger - tab & overview
+        "tab.logger": "ตัวบันทึก",
+        "logger.title": "ตัวบันทึก",
+        "logger.start": "เริ่มเซสชัน",
+        "logger.stop": "หยุดเซสชัน",
+        "logger.continuousActive": "เซ็นเซอร์กำลังบันทึกต่อเนื่อง",
+        "logger.sessionRecording": "กำลังบันทึก",
+        "logger.sessionIdle": "ไม่มีเซสชันที่ทำงานอยู่",
+        "logger.storage": "พื้นที่จัดเก็บ",
+
+        // Logger - per-sensor config
+        "logger.stream.continuous": "สตรีมต่อเนื่อง",
+        "logger.stream.session": "สตรีมเซสชัน",
+        "logger.format": "รูปแบบ",
+        "logger.interval": "ช่วงเวลา",
+        "logger.interval.everySample": "ทุกตัวอย่าง",
+        "logger.enabled": "เปิดใช้งาน",
+        // Format names left as English (technical identifiers)
+
+        // Logger - settings
+        "logger.settings.title": "ตั้งค่าตัวบันทึก",
+        "logger.settings.done": "เสร็จสิ้น",
+        "logger.settings.storageSection": "พื้นที่จัดเก็บ",
+        "logger.settings.cap": "ขีดจำกัดพื้นที่",
+        "logger.settings.clearContinuous": "ล้างข้อมูลต่อเนื่องทั้งหมด",
+        "logger.settings.clearConfirm": "การดำเนินการนี้จะลบข้อมูลสตรีมต่อเนื่องทั้งหมดอย่างถาวร เซสชันจะไม่ได้รับผลกระทบ",
+        "logger.settings.behaviorSection": "พฤติกรรม",
+        "logger.settings.disableAutoLock": "ปิดล็อคอัตโนมัติระหว่างเซสชัน",
+        "logger.settings.pauseLowBattery": "หยุดสตรีมต่อเนื่องเมื่อแบตเตอรี่ต่ำ",
+        "logger.settings.pauseThermal": "หยุดสตรีมต่อเนื่องเมื่ออุณหภูมิสูง",
+        "logger.settings.privacySection": "ความเป็นส่วนตัว",
+        "logger.settings.showExportWarning": "แสดงคำเตือนการส่งออก",
+
+        // Sensor categories
+        "category.motion": "การเคลื่อนไหว",
+        "category.location": "ตำแหน่ง",
+        "category.environment": "สภาพแวดล้อม",
+        "category.system": "ระบบ",
+        "category.connectivity": "การเชื่อมต่อ",
+        "category.camera": "กล้อง",
+        "category.health": "สุขภาพ",
+
+        // SensorID display names left as English (technical names typically untranslated;
+        // English fallback already kicks in for missing keys, but listed explicitly is OK
+        // — kept omitted here so the English values fallback through Translations.get).
     ]
 
     static let chinese: [String: String] = [

@@ -30,7 +30,7 @@ struct LoggerOverviewView: View {
                 ForEach(SensorCategory.allCases, id: \.self) { cat in
                     Section(header: Text(localization.t("category.\(cat.rawValue)"))) {
                         ForEach(SensorID.allCases.filter { $0.category == cat }, id: \.self) { id in
-                            NavigationLink(destination: Text(id.rawValue)) {
+                            NavigationLink(destination: SensorLogConfigView(sensorID: id)) {
                                 SensorRowConfigPreview(sensorID: id)
                             }
                         }
@@ -51,7 +51,7 @@ struct LoggerOverviewView: View {
                 }
             }
             .sheet(isPresented: $showingDataViewer) { Text("Data Viewer (Phase 4)") }
-            .sheet(isPresented: $showingSettings) { Text("Settings (Phase 3.4)") }
+            .sheet(isPresented: $showingSettings) { LoggerSettingsView() }
         }
         .onAppear {
             sessionTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect().sink { _ in
