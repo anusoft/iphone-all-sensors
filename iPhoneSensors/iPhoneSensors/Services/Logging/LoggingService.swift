@@ -101,4 +101,12 @@ extension LoggingService {
     private func _sessionElapsed() -> TimeInterval {
         sessionStartedAt.map { Date().timeIntervalSince($0) } ?? 0
     }
+
+    /// Returns the on-disk folder URL for a session, suitable for sharing
+    /// via `UIActivityViewController`. Returns `nil` if the directory cannot
+    /// be resolved (e.g., the storage root is not writable).
+    @MainActor
+    func shareSession(_ id: UUID) -> URL? {
+        try? storage.sessionDir(id)
+    }
 }

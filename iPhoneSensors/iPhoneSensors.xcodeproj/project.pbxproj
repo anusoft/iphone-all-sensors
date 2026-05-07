@@ -10,10 +10,12 @@
 		039FB6FCE6DB59CF8E7076A3 /* SensorSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28DA6F957E5C92CD4E67730B /* SensorSample.swift */; };
 		1043ED939DD839AE2D8BEFCE /* LoggingConfigStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56058C4BF0225270B8C2678C /* LoggingConfigStoreTests.swift */; };
 		109D7681C08C8BDBE51123D6 /* CSVLogWriterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BA27E755BB656809C5DA54 /* CSVLogWriterTests.swift */; };
+		19ABAA90651DE7B6A91D20DF /* SessionsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8E2A83103997A9D038042D /* SessionsListView.swift */; };
 		1F40F03A419D45E54DE4EDAB /* FormatOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BA3C0863ED650591E6FFDD /* FormatOptions.swift */; };
 		2635A6E36E2C4926A87A3E2D /* SessionLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A179785AC4D9C75D245A168B /* SessionLifecycleTests.swift */; };
 		2753911E7EFBFFC999E2FAE9 /* LoggingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE59DD0CC363B0DA9B9980 /* LoggingCoordinator.swift */; };
 		282CCB9E36465E4D406B69F6 /* LogStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E085E14C6C14504C50B19C /* LogStorageManager.swift */; };
+		2FD4525DAACD3866B3AFEB99 /* LogEntryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACF6015BAD50EF207A536FD3 /* LogEntryDetailView.swift */; };
 		362D55BF2001768A5964E603 /* LoggingConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9676E7662B9D9AC7E10AAC /* LoggingConfigurationTests.swift */; };
 		38BEE6F8F5B67FFBAC998C55 /* JSONLogWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AB305E371227B6B1778E38 /* JSONLogWriter.swift */; };
 		38DBF935D6C89EB00077DE5C /* LogFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B14182F5B60F60AF8FD957 /* LogFormat.swift */; };
@@ -21,6 +23,7 @@
 		3EE8A05CCB873346F114E824 /* LoggerOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E8F1119E05DF41030829C7B /* LoggerOverviewView.swift */; };
 		3EF9F1084EC7C7687BF8B41E /* LoggerSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67D29CBD9E93F7D2280A5C2 /* LoggerSettingsView.swift */; };
 		3FBE03A3D73A42464DFC257A /* LogWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16447308C00155CADFCF41D7 /* LogWriter.swift */; };
+		47CBF35FE8CBD82F123112B4 /* FilesBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62D3DBD569DB1E7A08522C4 /* FilesBrowserView.swift */; };
 		4B5FCC46FE55BED5741331FF /* LogStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC53B5C7301DA9E76759A58 /* LogStream.swift */; };
 		567A7657B342B57C17CFB926 /* SensorPayloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDF764D65243C574012269C /* SensorPayloadTests.swift */; };
 		58311120EFBDAE52B7BED3C4 /* CSVLogWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A5AA4F8CCBB1D1D6C2326C /* CSVLogWriter.swift */; };
@@ -29,6 +32,7 @@
 		6CFD81477117C230DCCF0627 /* SQLiteLogWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DB2481498C9464D585A5310 /* SQLiteLogWriter.swift */; };
 		6E12817281492FE92EC28387 /* SensorLogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E3ECD4A7CFAED3DF1CA362 /* SensorLogEntry.swift */; };
 		6E68B2DAE8A343A10A2234D7 /* SQLiteLogWriterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AE95106B086DBB5871FA97 /* SQLiteLogWriterTests.swift */; };
+		71AB1B35B67401CB4F6471C5 /* DataViewerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819097EA5431908A723A52F0 /* DataViewerView.swift */; };
 		76A1F144BBE63C97784D8237 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFC68EB14A90DE7865932DBE /* Foundation.framework */; };
 		8E7C8D12B5D7E75D06DB8DD4 /* LoggingConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B90DA5947AD3DC86360DF6A /* LoggingConfiguration.swift */; };
 		9A6AC5BBFCD1F11160934A0C /* SensorPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7E63FB86C8D5FCEA00BB74 /* SensorPayload.swift */; };
@@ -81,6 +85,7 @@
 		A10047 /* PermissionRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20049 /* PermissionRequestView.swift */; };
 		A10048 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20050 /* LocalizationManager.swift */; };
 		A27EC14DE73457245629B18F /* LoggingCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66433F054CC0C3994CB0BBB7 /* LoggingCoordinatorTests.swift */; };
+		A423A98759AD37FE1AACAF19 /* SessionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2778EF4BABC4D036F2275D8 /* SessionDetailView.swift */; };
 		A43539FCEA85E9C7AF07347C /* LoggingConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B4804C98528F1A395AA87C5 /* LoggingConfigStore.swift */; };
 		A53A8EA53B08DFDFE551B222 /* SensorLogConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF360C45152181A6970981 /* SensorLogConfigView.swift */; };
 		A690E991EB9C73419E1C1ACD /* JSONLogWriterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411AE2D68C774D24A5397C6 /* JSONLogWriterTests.swift */; };
@@ -90,6 +95,7 @@
 		C83340220CE29A48FE20E8CE /* LogStoragePathsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719B516DBF49963C98554453 /* LogStoragePathsTests.swift */; };
 		CA1E96100A7910FBE22282D7 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = C792843E1C0D187A3CFB8747 /* GRDB */; };
 		D6A913C7DFFB498BE01C0B99 /* SensorEventBus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343C0ACC130BB19B2ADBA475 /* SensorEventBus.swift */; };
+		DA83F6593B015073F8C2A1F0 /* SensorDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAE21F318BC9742FB63796 /* SensorDataView.swift */; };
 		DC656192B65A38CA90CECA0B /* SensorLogSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881FC36FAD1F231118C14020 /* SensorLogSession.swift */; };
 		E28DA5368CC3698585BA9582 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 40573D4123C48D7BDA7E7BCE /* GRDB */; };
 		ECC35A4E0C1EDBB33835AB3E /* DatabaseSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE05FF706F49B07AEF568AF9 /* DatabaseSchema.swift */; };
@@ -118,6 +124,7 @@
 		2E7E63FB86C8D5FCEA00BB74 /* SensorPayload.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorPayload.swift; sourceTree = "<group>"; };
 		31AB305E371227B6B1778E38 /* JSONLogWriter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = JSONLogWriter.swift; sourceTree = "<group>"; };
 		343C0ACC130BB19B2ADBA475 /* SensorEventBus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorEventBus.swift; sourceTree = "<group>"; };
+		3DEAE21F318BC9742FB63796 /* SensorDataView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorDataView.swift; sourceTree = "<group>"; };
 		4411AE2D68C774D24A5397C6 /* JSONLogWriterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = JSONLogWriterTests.swift; sourceTree = "<group>"; };
 		56058C4BF0225270B8C2678C /* LoggingConfigStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingConfigStoreTests.swift; sourceTree = "<group>"; };
 		5B90DA5947AD3DC86360DF6A /* LoggingConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingConfiguration.swift; sourceTree = "<group>"; };
@@ -130,6 +137,7 @@
 		78E085E14C6C14504C50B19C /* LogStorageManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogStorageManager.swift; sourceTree = "<group>"; };
 		7DB2481498C9464D585A5310 /* SQLiteLogWriter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SQLiteLogWriter.swift; sourceTree = "<group>"; };
 		7E8F1119E05DF41030829C7B /* LoggerOverviewView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggerOverviewView.swift; sourceTree = "<group>"; };
+		819097EA5431908A723A52F0 /* DataViewerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DataViewerView.swift; sourceTree = "<group>"; };
 		82BA27E755BB656809C5DA54 /* CSVLogWriterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CSVLogWriterTests.swift; sourceTree = "<group>"; };
 		84EF360C45152181A6970981 /* SensorLogConfigView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorLogConfigView.swift; sourceTree = "<group>"; };
 		881FC36FAD1F231118C14020 /* SensorLogSession.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorLogSession.swift; sourceTree = "<group>"; };
@@ -185,11 +193,14 @@
 		A20050 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
 		A30001 /* iPhoneSensors.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iPhoneSensors.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4B14182F5B60F60AF8FD957 /* LogFormat.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogFormat.swift; sourceTree = "<group>"; };
+		A62D3DBD569DB1E7A08522C4 /* FilesBrowserView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FilesBrowserView.swift; sourceTree = "<group>"; };
+		ACF6015BAD50EF207A536FD3 /* LogEntryDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogEntryDetailView.swift; sourceTree = "<group>"; };
 		AFC68EB14A90DE7865932DBE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B2AE95106B086DBB5871FA97 /* SQLiteLogWriterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SQLiteLogWriterTests.swift; sourceTree = "<group>"; };
 		B7A5AA4F8CCBB1D1D6C2326C /* CSVLogWriter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CSVLogWriter.swift; sourceTree = "<group>"; };
 		BFB05EE7AC57F8E507059D80 /* LoggingService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingService.swift; sourceTree = "<group>"; };
 		CD9676E7662B9D9AC7E10AAC /* LoggingConfigurationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingConfigurationTests.swift; sourceTree = "<group>"; };
+		E2778EF4BABC4D036F2275D8 /* SessionDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SessionDetailView.swift; sourceTree = "<group>"; };
 		E67D29CBD9E93F7D2280A5C2 /* LoggerSettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggerSettingsView.swift; sourceTree = "<group>"; };
 		E9E58D9F43A870BD554E69B0 /* DatabaseSchemaTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DatabaseSchemaTests.swift; sourceTree = "<group>"; };
 		EFAF3AE39F3DE845BCD78BB4 /* LogStorageRotationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogStorageRotationTests.swift; sourceTree = "<group>"; };
@@ -197,6 +208,7 @@
 		F5ED6A2C38BDA9102677340C /* iPhoneSensorsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iPhoneSensorsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7BEA810FC635A7BD9C9A3AC /* SensorID.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorID.swift; sourceTree = "<group>"; };
 		F7FE86079943BF19E6C9FCB9 /* SessionManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
+		FD8E2A83103997A9D038042D /* SessionsListView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SessionsListView.swift; sourceTree = "<group>"; };
 		FE05FF706F49B07AEF568AF9 /* DatabaseSchema.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DatabaseSchema.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -228,6 +240,12 @@
 				08D22590BF3C5489EE11E629 /* LoggerStatusHeaderView.swift */,
 				84EF360C45152181A6970981 /* SensorLogConfigView.swift */,
 				E67D29CBD9E93F7D2280A5C2 /* LoggerSettingsView.swift */,
+				819097EA5431908A723A52F0 /* DataViewerView.swift */,
+				FD8E2A83103997A9D038042D /* SessionsListView.swift */,
+				E2778EF4BABC4D036F2275D8 /* SessionDetailView.swift */,
+				3DEAE21F318BC9742FB63796 /* SensorDataView.swift */,
+				ACF6015BAD50EF207A536FD3 /* LogEntryDetailView.swift */,
+				A62D3DBD569DB1E7A08522C4 /* FilesBrowserView.swift */,
 			);
 			name = Logger;
 			path = iPhoneSensors/Views/Logger;
@@ -626,6 +644,12 @@
 				C110A2CF7429622408EE7723 /* LoggerStatusHeaderView.swift in Sources */,
 				A53A8EA53B08DFDFE551B222 /* SensorLogConfigView.swift in Sources */,
 				3EF9F1084EC7C7687BF8B41E /* LoggerSettingsView.swift in Sources */,
+				71AB1B35B67401CB4F6471C5 /* DataViewerView.swift in Sources */,
+				19ABAA90651DE7B6A91D20DF /* SessionsListView.swift in Sources */,
+				A423A98759AD37FE1AACAF19 /* SessionDetailView.swift in Sources */,
+				DA83F6593B015073F8C2A1F0 /* SensorDataView.swift in Sources */,
+				2FD4525DAACD3866B3AFEB99 /* LogEntryDetailView.swift in Sources */,
+				47CBF35FE8CBD82F123112B4 /* FilesBrowserView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

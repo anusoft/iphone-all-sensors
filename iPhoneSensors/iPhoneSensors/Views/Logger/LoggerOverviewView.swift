@@ -50,7 +50,7 @@ struct LoggerOverviewView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showingDataViewer) { Text("Data Viewer (Phase 4)") }
+            .sheet(isPresented: $showingDataViewer) { DataViewerView() }
             .sheet(isPresented: $showingSettings) { LoggerSettingsView() }
         }
         .onAppear {

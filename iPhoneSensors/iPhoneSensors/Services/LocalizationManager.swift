@@ -207,6 +207,21 @@ enum Translations {
         "sensor.connectivity.cellular": "Cellular",
         "sensor.camera.snapshot": "Camera",
         "sensor.health.metric": "Health",
+
+        // Data Viewer
+        "dataviewer.title": "Data Viewer",
+        "dataviewer.tab.sessions": "Sessions",
+        "dataviewer.tab.sensor": "By Sensor",
+        "dataviewer.tab.files": "Files",
+        "dataviewer.delete": "Delete",
+        "dataviewer.session.active": "active",
+        "dataviewer.session.metadata": "Metadata",
+        "dataviewer.session.perSensor": "Per-sensor",
+        "dataviewer.session.title": "Session",
+        "dataviewer.sensor": "Sensor",
+        "dataviewer.source": "Source",
+        "dataviewer.source.continuous": "Continuous",
+        "dataviewer.source.latestSession": "Latest Session",
     ]
 
     static let thai: [String: String] = [
@@ -325,6 +340,21 @@ enum Translations {
         // SensorID display names left as English (technical names typically untranslated;
         // English fallback already kicks in for missing keys, but listed explicitly is OK
         // — kept omitted here so the English values fallback through Translations.get).
+
+        // Data Viewer
+        "dataviewer.title": "ตัวดูข้อมูล",
+        "dataviewer.tab.sessions": "เซสชัน",
+        "dataviewer.tab.sensor": "ตามเซ็นเซอร์",
+        "dataviewer.tab.files": "ไฟล์",
+        "dataviewer.delete": "ลบ",
+        "dataviewer.session.active": "กำลังบันทึก",
+        "dataviewer.session.metadata": "ข้อมูลเมตา",
+        "dataviewer.session.perSensor": "แยกตามเซ็นเซอร์",
+        "dataviewer.session.title": "เซสชัน",
+        "dataviewer.sensor": "เซ็นเซอร์",
+        "dataviewer.source": "แหล่ง",
+        "dataviewer.source.continuous": "ต่อเนื่อง",
+        "dataviewer.source.latestSession": "เซสชันล่าสุด",
     ]
 
     static let chinese: [String: String] = [
