@@ -50,18 +50,22 @@ class LocationSensorManager: NSObject, ObservableObject, CLLocationManagerDelega
             print("[Location] ⚠ Already started")
             return
         }
+        let status = locationManager.authorizationStatus
+        guard status == .authorizedWhenInUse || status == .authorizedAlways else {
+            print("[Location] ⏭ Location not authorized (status: \(authorizationStatusString(status))). Skipping location updates.")
+            return
+        }
         isStarted = true
         print("[Location] ═══════════════════════════════════")
         print("[Location] STARTING LOCATION SENSORS")
         print("[Location] ═══════════════════════════════════")
-        print("[Location] Auth status: \(authorizationStatusString(locationManager.authorizationStatus))")
+        print("[Location] Auth status: \(authorizationStatusString(status))")
 
-        locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         locationManager.startUpdatingHeading()
 
-        print("[Location] ✓ Location updates requested")
-        print("[Location] ✓ Heading updates requested")
+        print("[Location] ✓ Location updates started")
+        print("[Location] ✓ Heading updates started")
         print("[Location] ═══════════════════════════════════")
     }
 

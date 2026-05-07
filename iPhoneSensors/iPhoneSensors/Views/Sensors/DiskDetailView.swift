@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct DiskDetailView: View {
+    @EnvironmentObject var locManager: LocalizationManager
     @EnvironmentObject var sys: SystemSensorManager
 
     var body: some View {
@@ -15,16 +16,14 @@ struct DiskDetailView: View {
                     Text(String(format: "%.1f GB", freeGB))
                         .font(.system(size: 48, weight: .bold, design: .rounded))
                         .foregroundStyle(.green)
-                    Text("Free Space")
+                    Text(locManager.t("section.freeSpace"))
                         .font(.headline)
                         .foregroundStyle(.secondary)
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 VStack(spacing: 12) {
-                    Text("Storage Usage")
+                    Text(locManager.t("section.storageUsage"))
                         .font(.headline)
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
@@ -34,32 +33,33 @@ struct DiskDetailView: View {
                     }
                     .frame(height: 24)
                     HStack {
-                        Text("Used: \(String(format: "%.1f GB", usedGB))")
+                        Text("\(locManager.t("disk.used")): \(String(format: "%.1f GB", usedGB))")
                         Spacer()
-                        Text("Total: \(String(format: "%.1f GB", totalGB))")
+                        Text("\(locManager.t("disk.total")): \(String(format: "%.1f GB", totalGB))")
                     }
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Details")
+                    Text(locManager.t("section.details"))
                         .font(.headline)
                     DataRow(label: "Total Space", value: ByteCountFormatter.string(fromByteCount: sys.totalDiskSpace, countStyle: .file), icon: "internaldrive")
                     DataRow(label: "Free Space", value: ByteCountFormatter.string(fromByteCount: sys.freeDiskSpace, countStyle: .file), icon: "internaldrive")
                     DataRow(label: "Used Space", value: ByteCountFormatter.string(fromByteCount: sys.usedDiskSpace, countStyle: .file), icon: "internaldrive")
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Storage")
-        .navigationBarTitleDisplayMode(.inline)
+        .appBackground()
+        .navigationTitle(locManager.t("sensor.storage"))
+        .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SettingsToolbarButton()
+                }
+            }
     }
 }

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct LightDetailView: View {
+    @EnvironmentObject var locManager: LocalizationManager
     @EnvironmentObject var env: EnvironmentSensorManager
 
     var body: some View {
@@ -12,16 +13,14 @@ struct LightDetailView: View {
                         .foregroundStyle(.yellow)
                     Text(String(format: "%.0f%%", env.screenBrightness * 100))
                         .font(.system(size: 48, weight: .bold, design: .rounded))
-                    Text("Screen Brightness")
+                    Text(locManager.t("section.screenBrightness"))
                         .font(.headline)
                         .foregroundStyle(.secondary)
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Adjust Brightness")
+                    Text(locManager.t("section.adjustBrightness"))
                         .font(.headline)
                     Slider(value: Binding(
                         get: { env.screenBrightness },
@@ -29,14 +28,17 @@ struct LightDetailView: View {
                     ), in: 0...1)
                     .tint(.yellow)
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
+        .appBackground()
         .navigationTitle("Ambient Light")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SettingsToolbarButton()
+                }
+            }
     }
 }

@@ -8,7 +8,30 @@
 		<false/>
 	</dict>
 	<key>UILaunchScreen</key>
-	<dict/>
+	<dict>
+		<key>UIImageName</key>
+		<string>AppIcon</string>
+		<key>UIImageRespectsSafeAreaInsets</key>
+		<true/>
+	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We use your location to display GPS coordinates, altitude, speed, and compass heading.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>We use motion sensors to display accelerometer, gyroscope, pedometer, and activity data.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We use the camera to show camera capabilities and control the torch/flashlight.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We use the microphone to show audio input device information.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>We use Bluetooth to scan for nearby devices and display Bluetooth status.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>We read health data such as steps, heart rate, and activity to display in the Health tab.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>We can write workout and activity data to HealthKit.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>

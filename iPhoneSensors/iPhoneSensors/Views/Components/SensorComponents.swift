@@ -8,31 +8,37 @@ struct SensorCard: View {
     let color: Color
     let isAvailable: Bool
     var isLoading: Bool = false
+    @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var locManager: LocalizationManager
 
     var body: some View {
         HStack(spacing: 14) {
+            // Rounded square icon container
             ZStack {
-                Circle()
-                    .fill(color.opacity(0.15))
-                    .frame(width: 44, height: 44)
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(color.opacity(colorScheme == .dark ? 0.18 : 0.12))
+                    .frame(width: 40, height: 40)
+                
                 Image(systemName: icon)
-                    .font(.system(size: 20))
+                    .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(color)
             }
+            
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(.medium)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     if isLoading {
                         ProgressView()
                             .scaleEffect(0.7)
-                        Text("Loading...")
+                        Text(locManager.t("status.loading"))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     } else if value.isEmpty || value == "0" || value == "0.00" {
-                        Text("Waiting for data...")
+                        Text(locManager.t("status.waiting"))
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                             .italic()
@@ -49,9 +55,11 @@ struct SensorCard: View {
                     }
                 }
             }
+            
             Spacer()
+            
             if !isAvailable {
-                Text("N/A")
+                Text(locManager.t("status.unavailable"))
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             } else {
@@ -60,10 +68,21 @@ struct SensorCard: View {
                     .foregroundStyle(.tertiary)
             }
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(.vertical, 10)
+        .padding(.horizontal, 14)
+        .background {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(colorScheme == .dark 
+                      ? Color.white.opacity(0.04)
+                      : Color.white.opacity(0.6))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(colorScheme == .dark 
+                        ? Color.white.opacity(0.06)
+                        : Color.black.opacity(0.04),
+                        lineWidth: 0.5)
+        }
     }
 }
 
@@ -109,20 +128,21 @@ struct ThreeAxisView: View {
     let title: String
     let unit: String
     let color: Color
+    @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var locManager: LocalizationManager
 
     var body: some View {
         VStack(spacing: 12) {
             Text(title)
                 .font(.headline)
             HStack(spacing: 20) {
-                AxisValue(label: "X", value: x, unit: unit, color: .red)
-                AxisValue(label: "Y", value: y, unit: unit, color: .green)
-                AxisValue(label: "Z", value: z, unit: unit, color: .blue)
+                AxisValue(label: locManager.t("label.x"), value: x, unit: unit, color: .red)
+                AxisValue(label: locManager.t("label.y"), value: y, unit: unit, color: .green)
+                AxisValue(label: locManager.t("label.z"), value: z, unit: unit, color: .blue)
             }
         }
         .padding()
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .glassCard()
     }
 }
 
@@ -153,6 +173,7 @@ struct DataRow: View {
     let label: String
     let value: String
     let icon: String?
+    @Environment(\.colorScheme) var colorScheme
 
     init(label: String, value: String, icon: String? = nil) {
         self.label = label
@@ -173,6 +194,7 @@ struct DataRow: View {
             Text(value)
                 .fontWeight(.medium)
                 .monospacedDigit()
+                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.9) : .primary)
         }
         .padding(.vertical, 4)
     }
@@ -271,13 +293,532 @@ struct ProgressCard: View {
                 .tint(color)
         }
         .padding()
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .glassCard(cornerRadius: 12)
     }
 
     private func formatValue(_ v: Double) -> String {
         if v >= 1000 { return String(format: "%.0f", v) }
         if v >= 100 { return String(format: "%.0f", v) }
         return String(format: "%.1f", v)
+    }
+}
+
+// MARK: - Theme Backgrounds & Modifiers
+
+struct AppBackground: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    
+    func body(content: Content) -> some View {
+        content
+            .background {
+                Group {
+                    if colorScheme == .dark {
+                        GeometryReader { geo in
+                            RadialGradient(
+                                gradient: Gradient(stops: [
+                                    .init(color: Color(red: 0.114, green: 0.227, blue: 0.369), location: 0.0),
+                                    .init(color: Color(red: 0.039, green: 0.039, blue: 0.094), location: 0.55),
+                                    .init(color: .black, location: 1.0)
+                                ]),
+                                center: .init(x: 0.3, y: 0.2),
+                                startRadius: 0,
+                                endRadius: geo.size.width * 1.2
+                            )
+                            .ignoresSafeArea()
+                        }
+                    } else {
+                        Color(red: 0.941, green: 0.933, blue: 0.914)
+                            .ignoresSafeArea()
+                    }
+                }
+            }
+    }
+}
+
+extension View {
+    func appBackground() -> some View {
+        modifier(AppBackground())
+    }
+}
+
+struct GlassCardModifier: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    var cornerRadius: CGFloat = 16
+    
+    func body(content: Content) -> some View {
+        content
+            .padding()
+            .background {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(colorScheme == .dark 
+                          ? Color.white.opacity(0.06)
+                          : Color.white.opacity(0.7))
+                    .background {
+                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                            .fill(.ultraThinMaterial)
+                    }
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .stroke(colorScheme == .dark 
+                            ? Color.white.opacity(0.08)
+                            : Color.black.opacity(0.06),
+                            lineWidth: 1)
+            }
+    }
+}
+
+extension View {
+    func glassCard(cornerRadius: CGFloat = 16) -> some View {
+        modifier(GlassCardModifier(cornerRadius: cornerRadius))
+    }
+}
+
+struct GlowIcon: View {
+    let icon: String
+    let color: Color
+    let size: CGFloat
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: size * 0.35, style: .continuous)
+                .fill(color.opacity(0.25))
+                .frame(width: size, height: size)
+                .blur(radius: size * 0.25)
+            
+            RoundedRectangle(cornerRadius: size * 0.35, style: .continuous)
+                .fill(color.opacity(0.15))
+                .frame(width: size, height: size)
+            
+            RoundedRectangle(cornerRadius: size * 0.35, style: .continuous)
+                .stroke(color.opacity(0.4), lineWidth: 1)
+                .frame(width: size, height: size)
+            
+            Image(systemName: icon)
+                .font(.system(size: size * 0.4, weight: .semibold))
+                .foregroundStyle(color)
+        }
+    }
+}
+
+struct AppPrimaryButtonStyle: ButtonStyle {
+    let color: Color
+    
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.headline.weight(.semibold))
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(color)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .opacity(configuration.isPressed ? 0.9 : 1.0)
+            .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
+    }
+}
+
+struct DashboardRowBackground: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    
+    func body(content: Content) -> some View {
+        content
+            .padding(.vertical, 10)
+            .padding(.horizontal, 14)
+            .background {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(colorScheme == .dark 
+                          ? Color.white.opacity(0.04)
+                          : Color.white.opacity(0.6))
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(colorScheme == .dark 
+                            ? Color.white.opacity(0.06)
+                            : Color.black.opacity(0.04),
+                            lineWidth: 0.5)
+            }
+    }
+}
+
+extension View {
+    func dashboardRow() -> some View {
+        modifier(DashboardRowBackground())
+    }
+}
+
+// MARK: - Settings Toolbar Button
+
+struct SettingsToolbarButton: View {
+    @EnvironmentObject var locManager: LocalizationManager
+    @EnvironmentObject var themeManager: ThemeManager
+    @State private var showSettings = false
+
+    var body: some View {
+        Button(action: { showSettings = true }) {
+            Image(systemName: "gear")
+                .font(.system(size: 18, weight: .semibold))
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsSheet()
+                .environmentObject(locManager)
+                .environmentObject(themeManager)
+        }
+    }
+}
+
+struct SettingsSheet: View {
+    @EnvironmentObject var locManager: LocalizationManager
+    @EnvironmentObject var themeManager: ThemeManager
+    @Environment(\.dismiss) var dismiss
+    @Environment(\.colorScheme) var colorScheme
+    @AppStorage("consentGivenAt") private var consentTimestamp: Double = 0
+    @State private var showDeleteConfirm = false
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section(header: Text(locManager.t("language.title"))) {
+                    ForEach(AppLanguage.allCases) { lang in
+                        Button(action: {
+                            locManager.currentLanguage = lang
+                        }) {
+                            HStack {
+                                Text(lang.flag)
+                                    .font(.title3)
+                                Text(lang.displayName)
+                                    .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                                Spacer()
+                                if locManager.currentLanguage == lang {
+                                    Image(systemName: "checkmark")
+                                        .foregroundStyle(.blue)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Section(header: Text(locManager.t("theme.title"))) {
+                    ForEach(AppTheme.allCases) { theme in
+                        Button(action: {
+                            themeManager.currentTheme = theme
+                        }) {
+                            HStack {
+                                Image(systemName: theme.icon)
+                                    .foregroundStyle(.blue)
+                                    .frame(width: 28)
+                                Text(locManager.t("theme.\(theme.rawValue)"))
+                                    .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                                Spacer()
+                                if themeManager.currentTheme == theme {
+                                    Image(systemName: "checkmark")
+                                        .foregroundStyle(.blue)
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                Section(header: Text(locManager.t("privacy.dataPrivacy"))) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "checkmark.shield.fill")
+                                .foregroundStyle(.green)
+                            Text(locManager.t("privacy.localProcessing"))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        HStack(spacing: 8) {
+                            Image(systemName: "checkmark.shield.fill")
+                                .foregroundStyle(.green)
+                            Text(locManager.t("privacy.noExternalServers"))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        HStack(spacing: 8) {
+                            Image(systemName: "checkmark.shield.fill")
+                                .foregroundStyle(.green)
+                            Text(locManager.t("privacy.noAnalytics"))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        HStack(spacing: 8) {
+                            Image(systemName: "checkmark.shield.fill")
+                                .foregroundStyle(.green)
+                            Text(locManager.t("privacy.noTracking"))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+
+                Section(header: Text(locManager.t("privacy.manageConsent"))) {
+                    Button(action: deleteAllData) {
+                        HStack {
+                            Image(systemName: "trash.fill")
+                                .foregroundStyle(.red)
+                                .frame(width: 28)
+                            Text(locManager.t("privacy.deleteMyData"))
+                                .foregroundStyle(.red)
+                            Spacer()
+                        }
+                    }
+                    .alert(locManager.t("privacy.deleteMyData"), isPresented: $showDeleteConfirm) {
+                        Button(locManager.t("button.clearAll"), role: .destructive, action: confirmDeleteAllData)
+                        Button(locManager.t("permission.notNow"), role: .cancel) {}
+                    } message: {
+                        Text(locManager.t("privacy.deleteMyDataConfirm"))
+                    }
+
+                    let consentDate = Date(timeIntervalSince1970: consentTimestamp)
+                    if consentTimestamp > 0 {
+                        HStack {
+                            Image(systemName: "checkmark.shield")
+                                .foregroundStyle(.green)
+                                .frame(width: 28)
+                            VStack(alignment: .leading) {
+                                Text(locManager.t("privacy.consentHistory"))
+                                    .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                                Text("\(locManager.t("privacy.consentGivenAt")): \(consentDate.formatted())")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                        }
+                    }
+                }
+
+                Section(header: Text(locManager.t("settings.privacy"))) {
+                    Link(destination: URL(string: "https://1moby.com/privacy")!) {
+                        HStack {
+                            Image(systemName: "hand.raised.fill")
+                                .foregroundStyle(.blue)
+                                .frame(width: 28)
+                            Text(locManager.t("settings.privacy"))
+                                .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                            Spacer()
+                            Image(systemName: "arrow.up.right.square")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+            .navigationTitle(locManager.t("settings.title"))
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(locManager.t("button.done")) {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+
+    private func deleteAllData() {
+        showDeleteConfirm = true
+    }
+
+    private func confirmDeleteAllData() {
+        // Delete all recordings
+        SensorRecorder.shared.deleteAllRecordings()
+        // Delete exported files
+        if let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            if let files = try? FileManager.default.contentsOfDirectory(at: documentsDir, includingPropertiesForKeys: nil) {
+                for file in files {
+                    try? FileManager.default.removeItem(at: file)
+                }
+            }
+        }
+        // Clear alarm history if stored in UserDefaults
+        UserDefaults.standard.removeObject(forKey: "seismometerAlarmHistory")
+        // Note: consent timestamp is preserved for audit trail
+        print("[Privacy] All user data deleted")
+    }
+}
+import Foundation
+import SwiftUI
+import Charts
+
+struct ChartDataPoint: Identifiable {
+    let id = UUID()
+    let timestamp: Date
+    let x: Double
+    let y: Double
+    let z: Double
+}
+
+@MainActor
+class SensorChartData: ObservableObject {
+    @Published var dataPoints: [ChartDataPoint] = []
+    @Published var isPaused = false
+    private let maxPoints = 200
+    
+    func addPoint(x: Double, y: Double, z: Double) {
+        guard !isPaused else { return }
+        let point = ChartDataPoint(timestamp: Date(), x: x, y: y, z: z)
+        dataPoints.append(point)
+        if dataPoints.count > maxPoints {
+            dataPoints.removeFirst(dataPoints.count - maxPoints)
+        }
+    }
+    
+    func clear() {
+        dataPoints.removeAll()
+    }
+}
+
+struct SensorChartView: View {
+    @ObservedObject var chartData: SensorChartData
+    let title: String
+    let unit: String
+    @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var locManager: LocalizationManager
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text(title)
+                    .font(.headline)
+                    .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                Spacer()
+                Button(action: { chartData.isPaused.toggle() }) {
+                    Image(systemName: chartData.isPaused ? "play.fill" : "pause.fill")
+                        .foregroundStyle(.blue)
+                }
+            }
+            
+            if chartData.dataPoints.isEmpty {
+                Text(locManager.t("status.waiting"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .frame(height: 200)
+                    .frame(maxWidth: .infinity)
+            } else {
+                Chart {
+                    ForEach(chartData.dataPoints) { point in
+                        LineMark(
+                            x: .value("Time", point.timestamp),
+                            y: .value("X", point.x)
+                        )
+                        .foregroundStyle(.red)
+                        .interpolationMethod(.catmullRom)
+                        
+                        LineMark(
+                            x: .value("Time", point.timestamp),
+                            y: .value("Y", point.y)
+                        )
+                        .foregroundStyle(.green)
+                        .interpolationMethod(.catmullRom)
+                        
+                        LineMark(
+                            x: .value("Time", point.timestamp),
+                            y: .value("Z", point.z)
+                        )
+                        .foregroundStyle(.blue)
+                        .interpolationMethod(.catmullRom)
+                    }
+                }
+                .chartYAxis {
+                    AxisMarks(position: .leading)
+                }
+                .chartXAxis {
+                    AxisMarks(values: .stride(by: .second, count: 5)) { value in
+                        if let date = value.as(Date.self) {
+                            AxisValueLabel {
+                                Text(date, style: .time)
+                                    .font(.caption2)
+                            }
+                        }
+                    }
+                }
+                .frame(height: 200)
+            }
+            
+            HStack(spacing: 20) {
+                LegendItem(color: .red, label: "X")
+                LegendItem(color: .green, label: "Y")
+                LegendItem(color: .blue, label: "Z")
+                Spacer()
+                Text(unit)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding()
+        .glassCard()
+    }
+}
+
+struct LegendItem: View {
+    let color: Color
+    let label: String
+    
+    var body: some View {
+        HStack(spacing: 4) {
+            Circle()
+                .fill(color)
+                .frame(width: 8, height: 8)
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
+struct SingleValueChartView: View {
+    @ObservedObject var chartData: SensorChartData
+    let title: String
+    let unit: String
+    let color: Color
+    @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var locManager: LocalizationManager
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(title)
+                .font(.headline)
+                .foregroundStyle(colorScheme == .dark ? .white : .primary)
+            
+            if chartData.dataPoints.isEmpty {
+                Text(locManager.t("status.waiting"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .frame(height: 200)
+                    .frame(maxWidth: .infinity)
+            } else {
+                Chart {
+                    ForEach(chartData.dataPoints) { point in
+                        LineMark(
+                            x: .value("Time", point.timestamp),
+                            y: .value("Value", point.x)
+                        )
+                        .foregroundStyle(color)
+                        .interpolationMethod(.catmullRom)
+                        
+                        AreaMark(
+                            x: .value("Time", point.timestamp),
+                            y: .value("Value", point.x)
+                        )
+                        .foregroundStyle(color.opacity(0.1))
+                        .interpolationMethod(.catmullRom)
+                    }
+                }
+                .chartYAxis {
+                    AxisMarks(position: .leading)
+                }
+                .frame(height: 200)
+            }
+            
+            HStack {
+                Spacer()
+                Text(unit)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding()
+        .glassCard()
     }
 }

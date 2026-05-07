@@ -13,6 +13,8 @@ class CameraSensorManager: ObservableObject {
     @Published var cameraAccessGranted = false
     @Published var microphoneAccessGranted = false
 
+    private var isStarted = false
+
     @Published var audioSessionCategory: String = ""
     @Published var audioSampleRate: Double = 0
     @Published var audioInputChannels: Int = 0
@@ -22,6 +24,11 @@ class CameraSensorManager: ObservableObject {
     let samplePublisher = PassthroughSubject<SensorSample, Never>()
 
     func startUpdates() {
+        guard !isStarted else {
+            print("[Camera] ⚠ Already started")
+            return
+        }
+        isStarted = true
         print("[Camera] ── Starting Camera Sensors ──")
 
         isFrontCameraAvailable = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) != nil
@@ -62,6 +69,8 @@ class CameraSensorManager: ObservableObject {
     }
 
     func stopUpdates() {
+        guard isStarted else { return }
+        isStarted = false
         print("[Camera] ■ Stopping camera sensors")
     }
 
@@ -71,13 +80,8 @@ class CameraSensorManager: ObservableObject {
             cameraAccessGranted = true
             print("[Camera] ✓ Camera access: Authorized")
         case .notDetermined:
-            print("[Camera] ? Camera access: Not Determined - requesting...")
-            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
-                Task { @MainActor in
-                    self?.cameraAccessGranted = granted
-                    print("[Camera] \(granted ? "✓" : "❌") Camera access: \(granted ? "Granted" : "Denied")")
-                }
-            }
+            cameraAccessGranted = false
+            print("[Camera] ? Camera access: Not Determined — will request in welcome flow")
         case .denied:
             cameraAccessGranted = false
             print("[Camera] ❌ Camera access: Denied")
@@ -96,13 +100,8 @@ class CameraSensorManager: ObservableObject {
             microphoneAccessGranted = true
             print("[Camera] ✓ Microphone access: Authorized")
         case .notDetermined:
-            print("[Camera] ? Microphone access: Not Determined - requesting...")
-            AVCaptureDevice.requestAccess(for: .audio) { [weak self] granted in
-                Task { @MainActor in
-                    self?.microphoneAccessGranted = granted
-                    print("[Camera] \(granted ? "✓" : "❌") Microphone access: \(granted ? "Granted" : "Denied")")
-                }
-            }
+            microphoneAccessGranted = false
+            print("[Camera] ? Microphone access: Not Determined — will request in welcome flow")
         case .denied:
             microphoneAccessGranted = false
             print("[Camera] ❌ Microphone access: Denied")
@@ -111,6 +110,26 @@ class CameraSensorManager: ObservableObject {
             print("[Camera] ⚠ Microphone access: Restricted")
         @unknown default:
             microphoneAccessGranted = false
+        }
+    }
+
+    func requestCameraAccess() {
+        guard AVCaptureDevice.authorizationStatus(for: .video) == .notDetermined else { return }
+        AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+            Task { @MainActor in
+                self?.cameraAccessGranted = granted
+                print("[Camera] \(granted ? "✓" : "❌") Camera access: \(granted ? "Granted" : "Denied")")
+            }
+        }
+    }
+
+    func requestMicrophoneAccess() {
+        guard AVCaptureDevice.authorizationStatus(for: .audio) == .notDetermined else { return }
+        AVCaptureDevice.requestAccess(for: .audio) { [weak self] granted in
+            Task { @MainActor in
+                self?.microphoneAccessGranted = granted
+                print("[Camera] \(granted ? "✓" : "❌") Microphone access: \(granted ? "Granted" : "Denied")")
+            }
         }
     }
 

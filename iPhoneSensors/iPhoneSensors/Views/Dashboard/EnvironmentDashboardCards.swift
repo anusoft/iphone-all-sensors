@@ -2,6 +2,7 @@ import SwiftUI
 
 struct EnvironmentDashboardCards: View {
     @EnvironmentObject var env: EnvironmentSensorManager
+    @EnvironmentObject var locManager: LocalizationManager
 
     var body: some View {
         VStack(spacing: 10) {
@@ -9,7 +10,7 @@ struct EnvironmentDashboardCards: View {
                 BarometerDetailView()
             } label: {
                 SensorCard(
-                    title: "Barometer",
+                    title: locManager.t("sensor.barometer"),
                     icon: "barometer",
                     value: env.pressure > 0 ? String(format: "%.1f", env.pressure) : "",
                     unit: "kPa",
@@ -21,9 +22,9 @@ struct EnvironmentDashboardCards: View {
                 ProximityDetailView()
             } label: {
                 SensorCard(
-                    title: "Proximity",
+                    title: locManager.t("sensor.proximity"),
                     icon: "sensor.tag.radiowaves.forward",
-                    value: env.isProximityMonitoringEnabled ? (env.proximityState ? "Near" : "Far") : "",
+                    value: env.isProximityMonitoringEnabled ? (env.proximityState ? locManager.t("value.near") : locManager.t("value.far")) : "",
                     unit: "",
                     color: .red,
                     isAvailable: env.isProximityMonitoringEnabled
@@ -33,7 +34,7 @@ struct EnvironmentDashboardCards: View {
                 LightDetailView()
             } label: {
                 SensorCard(
-                    title: "Screen Brightness",
+                    title: locManager.t("sensor.brightness"),
                     icon: "sun.max.fill",
                     value: String(format: "%.0f%%", env.screenBrightness * 100),
                     unit: "",

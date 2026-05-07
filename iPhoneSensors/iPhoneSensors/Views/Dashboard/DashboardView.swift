@@ -9,13 +9,16 @@ struct DashboardView: View {
     @EnvironmentObject var conn: ConnectivitySensorManager
     @EnvironmentObject var cam: CameraSensorManager
     @EnvironmentObject var locManager: LocalizationManager
+    @Environment(\.colorScheme) var colorScheme
     @State private var searchText = ""
-    @State private var showLanguagePicker = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 LazyVStack(spacing: 16) {
+                    if sensorManager.isThrottled {
+                        ThrottleBanner(reason: sensorManager.throttleReason)
+                    }
                     if searchText.isEmpty {
                         SensorSection(title: locManager.t("dashboard.motion"), icon: "gyroscope", color: .blue) {
                             MotionDashboardCards()
@@ -41,32 +44,14 @@ struct DashboardView: View {
                 }
                 .padding()
             }
-            .background(Color(.systemGroupedBackground))
+            .appBackground()
             .navigationTitle(locManager.t("dashboard.title"))
+            .navigationBarTitleDisplayMode(.large)
             .searchable(text: $searchText, prompt: locManager.t("dashboard.search"))
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: { showLanguagePicker = true }) {
-                        Text(locManager.currentLanguage.flag)
-                            .font(.title2)
-                    }
+                    SettingsToolbarButton()
                 }
-            }
-            .confirmationDialog(locManager.t("language.title"), isPresented: $showLanguagePicker) {
-                ForEach(AppLanguage.allCases) { lang in
-                    Button(action: { locManager.currentLanguage = lang }) {
-                        HStack {
-                            Text(lang.flag)
-                            Text(lang.displayName)
-                            if locManager.currentLanguage == lang {
-                                Image(systemName: "checkmark")
-                            }
-                        }
-                    }
-                }
-            }
-            .onAppear {
-                sensorManager.startAllSensors()
             }
         }
     }
@@ -106,7 +91,7 @@ struct DashboardView: View {
                 Image(systemName: "magnifyingglass")
                     .font(.largeTitle)
                     .foregroundStyle(.secondary)
-                Text("No sensors found")
+                Text(locManager.t("search.noResults"))
                     .font(.headline)
                     .foregroundStyle(.secondary)
             }
@@ -127,26 +112,64 @@ struct DashboardView: View {
     }
 }
 
+struct ThrottleBanner: View {
+    let reason: String
+    @EnvironmentObject var locManager: LocalizationManager
+    @Environment(\.colorScheme) var colorScheme
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "bolt.fill")
+                .foregroundStyle(.yellow)
+            Text(locManager.t(reason))
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(colorScheme == .dark ? .white : .primary)
+            Spacer()
+        }
+        .padding()
+        .background(Color.yellow.opacity(0.1))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(Color.yellow.opacity(0.3), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+}
+
 struct SensorSection<Content: View>: View {
     let title: String
     let icon: String
     let color: Color
     @ViewBuilder let content: () -> Content
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: icon)
+            HStack(spacing: 6) {
+                Circle()
+                    .fill(color)
+                    .frame(width: 8, height: 8)
+                Text(title.uppercased())
+                    .font(.caption.weight(.semibold))
                     .foregroundStyle(color)
-                    .font(.title3)
-                Text(title)
-                    .font(.headline)
-                    .fontWeight(.semibold)
             }
-            content()
+            .padding(.leading, 4)
+            
+            VStack(spacing: 8) {
+                content()
+            }
+            .padding()
+            .background {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(.ultraThinMaterial)
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(colorScheme == .dark 
+                            ? Color.white.opacity(0.08)
+                            : Color.black.opacity(0.06),
+                            lineWidth: 0.5)
+            }
         }
-        .padding()
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }

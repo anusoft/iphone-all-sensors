@@ -7,7 +7,7 @@ import Combine
 @MainActor
 class ConnectivitySensorManager: NSObject, ObservableObject {
     @Published var bluetoothState: CBManagerState = .unknown
-    @Published var bluetoothStateText: String = "Unknown"
+    @Published var bluetoothStateText: String = "bluetooth.unknown"
     @Published var discoveredPeripherals: [CBPeripheral] = []
     @Published var connectedPeripherals: [CBPeripheral] = []
     @Published var isScanning = false
@@ -26,6 +26,7 @@ class ConnectivitySensorManager: NSObject, ObservableObject {
 
     private var centralManager: CBCentralManager?
     private var monitor: NWPathMonitor?
+    private var isStarted = false
 
     override init() {
         super.init()
@@ -33,14 +34,35 @@ class ConnectivitySensorManager: NSObject, ObservableObject {
     }
 
     func startUpdates() {
+        guard !isStarted else {
+            print("[Connectivity] ⚠ Already started")
+            return
+        }
+        isStarted = true
         print("[Connectivity] ── Starting Connectivity Sensors ──")
-        centralManager = CBCentralManager(delegate: self, queue: nil)
+        // Only initialize CBCentralManager if Bluetooth permission has been decided
+        // Creating it with .notDetermined status triggers the system permission dialog
+        let authStatus = CBManager.authorization
+        if authStatus == .allowedAlways || authStatus == .restricted {
+            centralManager = CBCentralManager(delegate: self, queue: nil)
+            print("[Connectivity] ✓ Bluetooth authorized — CBCentralManager initialized")
+        } else if authStatus == .denied {
+            bluetoothState = .unauthorized
+            bluetoothStateText = "bluetooth.unauthorized"
+            print("[Connectivity] ⏭ Bluetooth denied — skipping CBCentralManager")
+        } else {
+            bluetoothState = .unknown
+            bluetoothStateText = "bluetooth.unknown"
+            print("[Connectivity] ⏭ Bluetooth not determined — skipping CBCentralManager (will request in welcome flow)")
+        }
         startNetworkMonitoring()
         updateCellularInfo()
         print("[Connectivity] ✅ Connectivity sensors started")
     }
 
     func stopUpdates() {
+        guard isStarted else { return }
+        isStarted = false
         print("[Connectivity] ■ Stopping connectivity sensors")
         centralManager?.stopScan()
         isScanning = false
@@ -126,25 +148,25 @@ extension ConnectivitySensorManager: CBCentralManagerDelegate {
             let stateLower: String
             switch state {
             case .unknown:
-                bluetoothStateText = "Unknown"
+                bluetoothStateText = "bluetooth.unknown"
                 stateLower = "unknown"
             case .resetting:
-                bluetoothStateText = "Resetting"
+                bluetoothStateText = "bluetooth.resetting"
                 stateLower = "resetting"
             case .unsupported:
-                bluetoothStateText = "Unsupported"
+                bluetoothStateText = "bluetooth.unsupported"
                 stateLower = "unsupported"
             case .unauthorized:
-                bluetoothStateText = "Unauthorized"
+                bluetoothStateText = "bluetooth.unauthorized"
                 stateLower = "unauthorized"
             case .poweredOff:
-                bluetoothStateText = "Powered Off"
+                bluetoothStateText = "bluetooth.poweredoff"
                 stateLower = "poweredOff"
             case .poweredOn:
-                bluetoothStateText = "Powered On"
+                bluetoothStateText = "bluetooth.poweredon"
                 stateLower = "poweredOn"
             @unknown default:
-                bluetoothStateText = "Unknown"
+                bluetoothStateText = "bluetooth.unknown"
                 stateLower = "unknown"
             }
             samplePublisher.send(SensorSample(

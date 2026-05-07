@@ -7,6 +7,7 @@ import Combine
 @MainActor
 class EnvironmentSensorManager: ObservableObject {
     private let altimeter = CMAltimeter()
+    private var isStarted = false
 
     @Published var relativeAltitude: Double = 0
     @Published var pressure: Double = 0
@@ -32,6 +33,11 @@ class EnvironmentSensorManager: ObservableObject {
     private var observersRegistered = false
 
     func startUpdates() {
+        guard !isStarted else {
+            print("[Environment] ⚠ Already started")
+            return
+        }
+        isStarted = true
         print("[Environment] ── Starting Environment Sensors ──")
 
         if CMAltimeter.isRelativeAltitudeAvailable() {
@@ -138,6 +144,8 @@ class EnvironmentSensorManager: ObservableObject {
     }
 
     func stopUpdates() {
+        guard isStarted else { return }
+        isStarted = false
         print("[Environment] ■ Stopping environment sensors")
         altimeter.stopRelativeAltitudeUpdates()
         UIDevice.current.isProximityMonitoringEnabled = false

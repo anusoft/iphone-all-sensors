@@ -1,52 +1,73 @@
 import SwiftUI
 
 struct GyroscopeDetailView: View {
+    @EnvironmentObject var locManager: LocalizationManager
     @EnvironmentObject var motion: MotionSensorManager
+    @StateObject private var chartData = SensorChartData()
+    @State private var showShareSheet = false
+    @State private var exportURL: URL?
 
     var body: some View {
         let mag = sqrt(motion.gyroX * motion.gyroX + motion.gyroY * motion.gyroY + motion.gyroZ * motion.gyroZ)
-        ScrollView {
+                ScrollView {
             VStack(spacing: 20) {
-                ThreeAxisView(x: motion.gyroX, y: motion.gyroY, z: motion.gyroZ, title: "Gyroscope", unit: "rad/s", color: .indigo)
+                ThreeAxisView(x: motion.gyroX, y: motion.gyroY, z: motion.gyroZ, title: locManager.t("sensor.gyroscope"), unit: "rad/s", color: .indigo)
+
+                SensorChartView(chartData: chartData, title: locManager.t("sensor.gyroscope"), unit: "rad/s")
 
                 VStack(spacing: 16) {
-                    Text("Rotation Rate")
+                    Text(locManager.t("section.rotationRate"))
                         .font(.headline)
-                    CircularGauge(value: mag, maxValue: 10, title: "Total", unit: "rad/s", color: .indigo, size: 140)
+                    CircularGauge(value: mag, maxValue: 10, title: locManager.t("label.total"), unit: "rad/s", color: .indigo, size: 140)
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Details")
+                    Text(locManager.t("section.details"))
                         .font(.headline)
-                    DataRow(label: "X (Roll)", value: String(format: "%.4f rad/s", motion.gyroX), icon: "arrow.left.and.right")
-                    DataRow(label: "Y (Pitch)", value: String(format: "%.4f rad/s", motion.gyroY), icon: "arrow.up.and.down")
-                    DataRow(label: "Z (Yaw)", value: String(format: "%.4f rad/s", motion.gyroZ), icon: "arrow.clockwise")
+                    DataRow(label: locManager.t("label.xroll"), value: String(format: "%.4f rad/s", motion.gyroX), icon: "arrow.left.and.right")
+                    DataRow(label: locManager.t("label.ypitch"), value: String(format: "%.4f rad/s", motion.gyroY), icon: "arrow.up.and.down")
+                    DataRow(label: locManager.t("label.zyaw"), value: String(format: "%.4f rad/s", motion.gyroZ), icon: "arrow.clockwise")
                     Divider()
-                    DataRow(label: "Degrees/s (X)", value: String(format: "%.2f°/s", motion.gyroX * 180 / .pi), icon: "degreesign")
-                    DataRow(label: "Degrees/s (Y)", value: String(format: "%.2f°/s", motion.gyroY * 180 / .pi), icon: "degreesign")
-                    DataRow(label: "Degrees/s (Z)", value: String(format: "%.2f°/s", motion.gyroZ * 180 / .pi), icon: "degreesign")
+                    DataRow(label: locManager.t("label.degreesPerSecondX"), value: String(format: "%.2f°/s", motion.gyroX * 180 / .pi), icon: "degreesign")
+                    DataRow(label: locManager.t("label.degreesPerSecondY"), value: String(format: "%.2f°/s", motion.gyroY * 180 / .pi), icon: "degreesign")
+                    DataRow(label: locManager.t("label.degreesPerSecondZ"), value: String(format: "%.2f°/s", motion.gyroZ * 180 / .pi), icon: "degreesign")
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 VStack(spacing: 12) {
-                    Text("3D Rotation")
+                    Text(locManager.t("section.3dRotation"))
                         .font(.headline)
                     RotationCube(roll: motion.gyroX, pitch: motion.gyroY, yaw: motion.gyroZ)
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Gyroscope")
-        .navigationBarTitleDisplayMode(.inline)
+        .appBackground()
+        .sheet(isPresented: $showShareSheet) {
+            if let url = exportURL {
+                ShareSheet(items: [url])
+            }
+        }
+        .onChange(of: motion.gyroX) { _, _ in
+            chartData.addPoint(x: motion.gyroX, y: motion.gyroY, z: motion.gyroZ)
+        }
+        .navigationTitle(locManager.t("sensor.gyroscope"))
+        .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                HStack(spacing: 12) {
+                    Button(action: {
+                        exportURL = DataExportManager.shared.exportRecording(dataPoints: chartData.dataPoints, sensorName: "Gyroscope", unit: "rad/s", format: .csv)
+                        showShareSheet = true
+                    }) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    SettingsToolbarButton()
+                }
+                }
+            }
     }
 }
 

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ThermalDetailView: View {
+    @EnvironmentObject var locManager: LocalizationManager
     @EnvironmentObject var sys: SystemSensorManager
 
     var body: some View {
@@ -10,29 +11,30 @@ struct ThermalDetailView: View {
                     Image(systemName: "thermometer.medium")
                         .font(.system(size: 60))
                         .foregroundStyle(thermalColor(state: sys.thermalState))
-                    Text(sys.thermalStateText)
+                    Text(locManager.t(sys.thermalStateKey))
                         .font(.system(size: 36, weight: .bold, design: .rounded))
-                    StatusBadge(text: sys.thermalStateText, color: thermalColor(state: sys.thermalState))
+                    StatusBadge(text: locManager.t(sys.thermalStateKey), color: thermalColor(state: sys.thermalState))
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Thermal Info")
+                    Text(locManager.t("section.info"))
                         .font(.headline)
-                    DataRow(label: "Thermal State", value: sys.thermalStateText, icon: "thermometer.medium")
-                    DataRow(label: "Low Power Mode", value: sys.isLowPowerModeEnabled ? "Enabled" : "Disabled", icon: "bolt.circle")
+                    DataRow(label: locManager.t("sensor.thermal"), value: locManager.t(sys.thermalStateKey), icon: "thermometer.medium")
+                    DataRow(label: locManager.t("label.lowPowerMode"), value: sys.isLowPowerModeEnabled ? locManager.t("value.enabled") : locManager.t("value.disabled"), icon: "bolt.circle")
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Thermal State")
-        .navigationBarTitleDisplayMode(.inline)
+        .appBackground()
+        .navigationTitle(locManager.t("sensor.thermal"))
+        .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SettingsToolbarButton()
+                }
+            }
     }
 
     private func thermalColor(state: ProcessInfo.ThermalState) -> Color {

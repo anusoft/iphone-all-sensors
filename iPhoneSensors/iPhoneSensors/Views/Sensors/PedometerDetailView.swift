@@ -1,18 +1,17 @@
 import SwiftUI
 
 struct PedometerDetailView: View {
+    @EnvironmentObject var locManager: LocalizationManager
     @EnvironmentObject var motion: MotionSensorManager
 
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
                 HStack(spacing: 24) {
-                    CircularGauge(value: Double(motion.steps), maxValue: 10000, title: "Steps", unit: "steps", color: .green, size: 120)
-                    CircularGauge(value: motion.distance, maxValue: 10000, title: "Distance", unit: "m", color: .blue, size: 120)
+                    CircularGauge(value: Double(motion.steps), maxValue: 10000, title: locManager.t("label.steps"), unit: "steps", color: .green, size: 120)
+                    CircularGauge(value: motion.distance, maxValue: 10000, title: locManager.t("label.distance"), unit: "m", color: .blue, size: 120)
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 HStack(spacing: 12) {
                     StatBox(title: "Floors Up", value: "\(motion.floorsAscended)", icon: "arrow.up.circle.fill", color: .green)
@@ -20,28 +19,31 @@ struct PedometerDetailView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Details")
+                    Text(locManager.t("section.details"))
                         .font(.headline)
-                    DataRow(label: "Step Count", value: "\(motion.steps)", icon: "figure.walk")
-                    DataRow(label: "Distance", value: String(format: "%.1f m", motion.distance), icon: "ruler")
-                    DataRow(label: "Floors Ascended", value: "\(motion.floorsAscended)", icon: "arrow.up.circle")
-                    DataRow(label: "Floors Descended", value: "\(motion.floorsDescended)", icon: "arrow.down.circle")
+                    DataRow(label: locManager.t("label.stepCount"), value: "\(motion.steps)", icon: "figure.walk")
+                    DataRow(label: locManager.t("label.distance"), value: String(format: "%.1f m", motion.distance), icon: "ruler")
+                    DataRow(label: locManager.t("label.floorsAscended"), value: "\(motion.floorsAscended)", icon: "arrow.up.circle")
+                    DataRow(label: locManager.t("label.floorsDescended"), value: "\(motion.floorsDescended)", icon: "arrow.down.circle")
                     if motion.pace > 0 {
-                        DataRow(label: "Current Pace", value: String(format: "%.2f s/m", motion.pace), icon: "timer")
+                        DataRow(label: locManager.t("label.currentPace"), value: String(format: "%.2f s/m", motion.pace), icon: "timer")
                     }
                     if motion.cadence > 0 {
-                        DataRow(label: "Cadence", value: String(format: "%.1f steps/s", motion.cadence), icon: "metronome")
+                        DataRow(label: locManager.t("label.cadence"), value: String(format: "%.1f steps/s", motion.cadence), icon: "metronome")
                     }
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Pedometer")
-        .navigationBarTitleDisplayMode(.inline)
+        .appBackground()
+        .navigationTitle(locManager.t("sensor.pedometer"))
+        .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SettingsToolbarButton()
+                }
+            }
     }
 }
 
@@ -65,8 +67,6 @@ struct StatBox: View {
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
-        .padding()
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .glassCard(cornerRadius: 12)
     }
 }

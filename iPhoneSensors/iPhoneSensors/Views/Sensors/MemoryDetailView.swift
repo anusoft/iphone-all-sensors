@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct MemoryDetailView: View {
+    @EnvironmentObject var locManager: LocalizationManager
     @EnvironmentObject var sys: SystemSensorManager
 
     var body: some View {
@@ -12,28 +13,29 @@ struct MemoryDetailView: View {
                         .foregroundStyle(.indigo)
                     Text(ByteCountFormatter.string(fromByteCount: Int64(sys.physicalMemory), countStyle: .memory))
                         .font(.system(size: 36, weight: .bold, design: .rounded))
-                    Text("Total Physical Memory")
+                    Text(locManager.t("section.totalPhysicalMemory"))
                         .font(.headline)
                         .foregroundStyle(.secondary)
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Memory Info")
+                    Text(locManager.t("section.info"))
                         .font(.headline)
-                    DataRow(label: "Physical Memory", value: ByteCountFormatter.string(fromByteCount: Int64(sys.physicalMemory), countStyle: .memory), icon: "memorychip")
-                    DataRow(label: "Formatted", value: String(format: "%.2f GB", Double(sys.physicalMemory) / 1_073_741_824), icon: "memorychip")
+                    DataRow(label: locManager.t("label.physicalMemory"), value: ByteCountFormatter.string(fromByteCount: Int64(sys.physicalMemory), countStyle: .memory), icon: "memorychip")
+                    DataRow(label: locManager.t("label.formatted"), value: String(format: "%.2f GB", Double(sys.physicalMemory) / 1_073_741_824), icon: "memorychip")
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Memory")
-        .navigationBarTitleDisplayMode(.inline)
+        .appBackground()
+        .navigationTitle(locManager.t("sensor.memory"))
+        .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SettingsToolbarButton()
+                }
+            }
     }
 }

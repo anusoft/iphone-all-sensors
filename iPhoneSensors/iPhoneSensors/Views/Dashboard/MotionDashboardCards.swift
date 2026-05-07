@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MotionDashboardCards: View {
     @EnvironmentObject var motion: MotionSensorManager
+    @EnvironmentObject var locManager: LocalizationManager
 
     var body: some View {
         VStack(spacing: 10) {
@@ -9,7 +10,7 @@ struct MotionDashboardCards: View {
                 AccelerometerDetailView()
             } label: {
                 SensorCard(
-                    title: "Accelerometer",
+                    title: locManager.t("sensor.accelerometer"),
                     icon: "gyroscope",
                     value: formatAcc(),
                     unit: "G",
@@ -21,7 +22,7 @@ struct MotionDashboardCards: View {
                 GyroscopeDetailView()
             } label: {
                 SensorCard(
-                    title: "Gyroscope",
+                    title: locManager.t("sensor.gyroscope"),
                     icon: "gyroscope",
                     value: formatGyro(),
                     unit: "rad/s",
@@ -34,7 +35,7 @@ struct MotionDashboardCards: View {
             } label: {
                 let total = sqrt(motion.magX * motion.magX + motion.magY * motion.magY + motion.magZ * motion.magZ)
                 SensorCard(
-                    title: "Magnetometer",
+                    title: locManager.t("sensor.magnetometer"),
                     icon: "sensor.tag.radiowaves.forward",
                     value: total > 0 ? String(format: "%.1f", total) : "",
                     unit: "µT",
@@ -46,7 +47,7 @@ struct MotionDashboardCards: View {
                 DeviceMotionDetailView()
             } label: {
                 SensorCard(
-                    title: "Device Motion",
+                    title: locManager.t("sensor.deviceMotion"),
                     icon: "rotate.3d",
                     value: formatDeviceMotion(),
                     unit: "",
@@ -58,7 +59,7 @@ struct MotionDashboardCards: View {
                 PedometerDetailView()
             } label: {
                 SensorCard(
-                    title: "Pedometer",
+                    title: locManager.t("sensor.pedometer"),
                     icon: "figure.walk",
                     value: motion.steps > 0 ? "\(motion.steps)" : "",
                     unit: "steps",
@@ -70,7 +71,7 @@ struct MotionDashboardCards: View {
                 AltimeterDetailView()
             } label: {
                 SensorCard(
-                    title: "Altimeter",
+                    title: locManager.t("sensor.altimeter"),
                     icon: "altimeter",
                     value: motion.relativeAltitude != 0 ? String(format: "%.1f", motion.relativeAltitude) : "",
                     unit: "m",
@@ -82,9 +83,9 @@ struct MotionDashboardCards: View {
                 ActivityDetailView()
             } label: {
                 SensorCard(
-                    title: "Activity",
+                    title: locManager.t("sensor.activity"),
                     icon: "figure.run",
-                    value: motion.activityState != "Unknown" ? motion.activityState : "",
+                    value: motion.activityState != "activity.unknown" ? motion.activityState.split(separator: ", ").map { locManager.t(String($0)) }.joined(separator: ", ") : "",
                     unit: "",
                     color: .orange,
                     isAvailable: motion.isActivityAvailable

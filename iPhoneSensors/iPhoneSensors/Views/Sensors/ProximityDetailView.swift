@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ProximityDetailView: View {
+    @EnvironmentObject var locManager: LocalizationManager
     @EnvironmentObject var env: EnvironmentSensorManager
 
     var body: some View {
@@ -15,24 +16,25 @@ struct ProximityDetailView: View {
                         .fontWeight(.bold)
                     StatusBadge(text: env.proximityState ? "NEAR" : "FAR", color: env.proximityState ? .red : .green)
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Details")
+                    Text(locManager.t("section.details"))
                         .font(.headline)
-                    DataRow(label: "Proximity State", value: env.proximityState ? "Near" : "Far", icon: "sensor.tag.radiowaves.forward")
-                    DataRow(label: "Monitoring", value: env.isProximityMonitoringEnabled ? "Enabled" : "Disabled", icon: "checkmark.circle")
+                    DataRow(label: locManager.t("label.proximityState"), value: env.proximityState ? locManager.t("value.near") : locManager.t("value.far"), icon: "sensor.tag.radiowaves.forward")
+                    DataRow(label: locManager.t("label.monitoring"), value: env.isProximityMonitoringEnabled ? locManager.t("value.enabled") : locManager.t("value.disabled"), icon: "checkmark.circle")
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
+        .appBackground()
         .navigationTitle("Proximity Sensor")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SettingsToolbarButton()
+                }
+            }
     }
 }

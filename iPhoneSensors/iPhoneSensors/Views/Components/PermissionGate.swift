@@ -15,6 +15,7 @@ enum PermissionType {
 struct PermissionGate<Content: View>: View {
     let permission: PermissionType
     let content: () -> Content
+    @EnvironmentObject var locManager: LocalizationManager
     @State private var isAuthorized = false
     @State private var isChecking = true
     @State private var showDenied = false
@@ -25,7 +26,7 @@ struct PermissionGate<Content: View>: View {
                 VStack(spacing: 16) {
                     ProgressView()
                         .scaleEffect(1.2)
-                    Text("Checking permissions...")
+                    Text(locManager.t("permission.checking"))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }

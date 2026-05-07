@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ProcessorDetailView: View {
+    @EnvironmentObject var locManager: LocalizationManager
     @EnvironmentObject var sys: SystemSensorManager
 
     var body: some View {
@@ -10,27 +11,28 @@ struct ProcessorDetailView: View {
                     CircularGauge(value: Double(sys.activeProcessorCount), maxValue: Double(sys.processorCount), title: "Active Cores", unit: "cores", color: .purple, size: 130)
                     CircularGauge(value: Double(sys.processorCount), maxValue: 10, title: "Total Cores", unit: "cores", color: .indigo, size: 130)
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Processor Info")
+                    Text(locManager.t("section.info"))
                         .font(.headline)
                     DataRow(label: "Total Cores", value: "\(sys.processorCount)", icon: "cpu")
                     DataRow(label: "Active Cores", value: "\(sys.activeProcessorCount)", icon: "cpu")
-                    DataRow(label: "Uptime", value: formatUptime(sys.systemUptime), icon: "clock")
-                    DataRow(label: "Low Power Mode", value: sys.isLowPowerModeEnabled ? "Enabled" : "Disabled", icon: "bolt.circle")
+                    DataRow(label: locManager.t("label.uptime"), value: formatUptime(sys.systemUptime), icon: "clock")
+                    DataRow(label: locManager.t("label.lowPowerMode"), value: sys.isLowPowerModeEnabled ? locManager.t("value.enabled") : locManager.t("value.disabled"), icon: "bolt.circle")
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Processor")
-        .navigationBarTitleDisplayMode(.inline)
+        .appBackground()
+        .navigationTitle(locManager.t("sensor.processor"))
+        .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SettingsToolbarButton()
+                }
+            }
     }
 
     private func formatUptime(_ uptime: TimeInterval) -> String {

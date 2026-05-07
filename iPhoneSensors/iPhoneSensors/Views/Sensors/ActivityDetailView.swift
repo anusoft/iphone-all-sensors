@@ -1,45 +1,47 @@
 import SwiftUI
 
 struct ActivityDetailView: View {
+    @EnvironmentObject var locManager: LocalizationManager
     @EnvironmentObject var motion: MotionSensorManager
 
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
                 VStack(spacing: 16) {
-                    Text("Current Activity")
+                    Text(locManager.t("section.currentActivity"))
                         .font(.headline)
-                    Text(motion.activityState)
+                    Text(motion.activityState.split(separator: ", ").map { locManager.t(String($0)) }.joined(separator: ", "))
                         .font(.title)
                         .fontWeight(.bold)
                         .foregroundStyle(.blue)
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                    ActivityTile(title: "Stationary", icon: "figure.stand", isActive: motion.isStationary, color: .gray)
-                    ActivityTile(title: "Walking", icon: "figure.walk", isActive: motion.isWalking, color: .green)
-                    ActivityTile(title: "Running", icon: "figure.run", isActive: motion.isRunning, color: .orange)
-                    ActivityTile(title: "Cycling", icon: "figure.outdoor.cycle", isActive: motion.isCycling, color: .blue)
-                    ActivityTile(title: "Automotive", icon: "car.fill", isActive: motion.isAutomotive, color: .purple)
+                    ActivityTile(title: locManager.t("activity.stationary"), icon: "figure.stand", isActive: motion.isStationary, color: .gray)
+                    ActivityTile(title: locManager.t("activity.walking"), icon: "figure.walk", isActive: motion.isWalking, color: .green)
+                    ActivityTile(title: locManager.t("activity.running"), icon: "figure.run", isActive: motion.isRunning, color: .orange)
+                    ActivityTile(title: locManager.t("activity.cycling"), icon: "figure.outdoor.cycle", isActive: motion.isCycling, color: .blue)
+                    ActivityTile(title: locManager.t("activity.automotive"), icon: "car.fill", isActive: motion.isAutomotive, color: .purple)
                 }
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Status")
+                    Text(locManager.t("label.status"))
                         .font(.headline)
-                    DataRow(label: "Available", value: motion.isActivityAvailable ? "Yes" : "No", icon: "checkmark.circle")
+                    DataRow(label: locManager.t("label.available"), value: motion.isActivityAvailable ? locManager.t("value.yes") : locManager.t("value.no"), icon: "checkmark.circle")
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Activity Recognition")
-        .navigationBarTitleDisplayMode(.inline)
+        .appBackground()
+        .navigationTitle(locManager.t("sensor.activity"))
+        .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SettingsToolbarButton()
+                }
+            }
     }
 }
 

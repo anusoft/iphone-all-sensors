@@ -1,6 +1,7 @@
 import Foundation
 import CoreMotion
 import Combine
+import UserNotifications
 
 @MainActor
 class MotionSensorManager: ObservableObject {
@@ -34,7 +35,7 @@ class MotionSensorManager: ObservableObject {
     @Published var calMagX: Double = 0
     @Published var calMagY: Double = 0
     @Published var calMagZ: Double = 0
-    @Published var calMagAccuracy: String = "Unknown"
+    @Published var calMagAccuracy: String = "magaccuracy.unknown"
     @Published var quatW: Double = 1
     @Published var quatX: Double = 0
     @Published var quatY: Double = 0
@@ -65,8 +66,30 @@ class MotionSensorManager: ObservableObject {
     @Published var isActivityAvailable = false
 
     /// Stream of sensor samples for the logging pipeline.
-    /// Phase 1 wires accelerometer only; other sensors land in Phase 2 (Task 2.7.1).
     let samplePublisher = PassthroughSubject<SensorSample, Never>()
+
+    // Seismometer
+    @Published var isSeismometerEnabled = false
+    @Published var seismometerThreshold: Double = 1.5
+    @Published var seismometerAlarmHistory: [SeismometerAlarm] = []
+    private var lastAlarmTime: Date = .distantPast
+
+    // Barometer Session Tracking
+    @Published var isBarometerTracking = false
+    @Published var barometerBaseline: Double = 0
+    @Published var barometerMaxDelta: Double = 0
+    @Published var barometerElevationChange: Double = 0
+    @Published var barometerTrend: String = "stable"
+    @Published var barometerWeatherPrediction: String = ""
+    private var barometerTrackingStartTime: Date?
+    private var barometerSessionValues: [Double] = []
+
+    struct SeismometerAlarm: Identifiable, Codable {
+        let id = UUID()
+        let timestamp: Date
+        let magnitude: Double
+        let axis: String
+    }
 
     private var isStarted = false
     private var accUpdateCount = 0
@@ -131,11 +154,84 @@ class MotionSensorManager: ObservableObject {
             self.samplePublisher.send(SensorSample(
                 sensorID: .accelerometer,
                 payload: .acceleration(x: data.acceleration.x, y: data.acceleration.y, z: data.acceleration.z)))
+            self.checkSeismometer()
             if self.accUpdateCount <= 3 || self.accUpdateCount % 100 == 0 {
                 print("[Motion] 📊 Acc[\(self.accUpdateCount)]: x=\(String(format: "%.3f", data.acceleration.x)) y=\(String(format: "%.3f", data.acceleration.y)) z=\(String(format: "%.3f", data.acceleration.z))")
             }
         }
         print("[Motion] ✓ Accelerometer started (interval: 0.1s)")
+    }
+
+    private func checkSeismometer() {
+        guard isSeismometerEnabled else { return }
+        let mag = sqrt(accX * accX + accY * accY + accZ * accZ)
+        guard mag >= seismometerThreshold else { return }
+        // Debounce: minimum 2 seconds between alarms
+        guard Date().timeIntervalSince(lastAlarmTime) >= 2.0 else { return }
+        lastAlarmTime = Date()
+        let axis: String
+        if abs(accX) >= abs(accY) && abs(accX) >= abs(accZ) { axis = "X" }
+        else if abs(accY) >= abs(accX) && abs(accY) >= abs(accZ) { axis = "Y" }
+        else { axis = "Z" }
+        let alarm = SeismometerAlarm(timestamp: Date(), magnitude: mag, axis: axis)
+        seismometerAlarmHistory.append(alarm)
+        // Keep only last 50 alarms
+        if seismometerAlarmHistory.count > 50 {
+            seismometerAlarmHistory.removeFirst(seismometerAlarmHistory.count - 50)
+        }
+        // Send local notification
+        let content = UNMutableNotificationContent()
+        content.title = "Vibration Detected"
+        content.body = String(format: "G-force threshold exceeded: %.2fG on %@ axis", mag, axis)
+        content.sound = .default
+        let request = UNNotificationRequest(identifier: alarm.id.uuidString, content: content, trigger: nil)
+        UNUserNotificationCenter.current().add(request)
+        print("[Motion] 🚨 Seismometer alarm: %.3fG on %@ axis", mag, axis)
+    }
+
+    func startBarometerTracking() {
+        isBarometerTracking = true
+        barometerBaseline = pressure
+        barometerMaxDelta = 0
+        barometerElevationChange = 0
+        barometerTrend = "stable"
+        barometerWeatherPrediction = ""
+        barometerTrackingStartTime = Date()
+        barometerSessionValues = [pressure]
+        print("[Motion] 📊 Barometer tracking started. Baseline: \(String(format: "%.2f", pressure)) kPa")
+    }
+
+    func stopBarometerTracking() {
+        isBarometerTracking = false
+        barometerTrackingStartTime = nil
+        barometerSessionValues = []
+        print("[Motion] 📊 Barometer tracking stopped")
+    }
+
+    private func updateBarometerTracking() {
+        guard isBarometerTracking else { return }
+        let delta = pressure - barometerBaseline
+        barometerMaxDelta = max(barometerMaxDelta, abs(delta))
+        // Elevation formula: h = 44330 * (1 - (P/P0)^(1/5.255))
+        barometerElevationChange = 44330 * (1 - pow(pressure / barometerBaseline, 1.0 / 5.255))
+        barometerSessionValues.append(pressure)
+        // Trend analysis (last 10 values, min 5 min)
+        if barometerSessionValues.count >= 10 {
+            let recent = Array(barometerSessionValues.suffix(10))
+            let first = recent.first ?? pressure
+            let last = recent.last ?? pressure
+            let diff = last - first
+            if diff > 0.1 {
+                barometerTrend = "rising"
+                barometerWeatherPrediction = "Conditions improving"
+            } else if diff < -0.1 {
+                barometerTrend = "falling"
+                barometerWeatherPrediction = "Storm possible"
+            } else {
+                barometerTrend = "stable"
+                barometerWeatherPrediction = "Conditions stable"
+            }
+        }
     }
 
     private func startGyroscope() {
@@ -295,6 +391,7 @@ class MotionSensorManager: ObservableObject {
             self?.samplePublisher.send(SensorSample(
                 sensorID: .altimeter,
                 payload: .altitude(relative: data.relativeAltitude.doubleValue, pressure: data.pressure.doubleValue)))
+            self?.updateBarometerTracking()
         }
         print("[Motion] ✓ Altimeter started")
     }
@@ -329,6 +426,27 @@ class MotionSensorManager: ObservableObject {
         print("[Motion] ✓ Activity started")
     }
 
+    func setThrottle(_ throttled: Bool) {
+        let interval = throttled ? 0.5 : 0.1
+        guard motionManager.accelerometerUpdateInterval != interval else { return }
+        motionManager.accelerometerUpdateInterval = interval
+        motionManager.gyroUpdateInterval = interval
+        motionManager.magnetometerUpdateInterval = interval
+        motionManager.deviceMotionUpdateInterval = interval
+        if isStarted {
+            // Restart with new interval
+            motionManager.stopAccelerometerUpdates()
+            motionManager.stopGyroUpdates()
+            motionManager.stopMagnetometerUpdates()
+            motionManager.stopDeviceMotionUpdates()
+            startAccelerometer()
+            startGyroscope()
+            startMagnetometer()
+            startDeviceMotion()
+            print("[Motion] ⏱ Update interval changed to \(interval)s (throttled: \(throttled))")
+        }
+    }
+
     func stopUpdates() {
         guard isStarted else { return }
         isStarted = false
@@ -344,11 +462,11 @@ class MotionSensorManager: ObservableObject {
 
     private func calibrationAccuracy(_ accuracy: CMMagneticFieldCalibrationAccuracy) -> String {
         switch accuracy {
-        case .uncalibrated: return "Uncalibrated"
-        case .low: return "Low"
-        case .medium: return "Medium"
-        case .high: return "High"
-        @unknown default: return "Unknown"
+        case .uncalibrated: return "magaccuracy.uncalibrated"
+        case .low: return "magaccuracy.low"
+        case .medium: return "magaccuracy.medium"
+        case .high: return "magaccuracy.high"
+        @unknown default: return "magaccuracy.unknown"
         }
     }
 }
@@ -356,12 +474,12 @@ class MotionSensorManager: ObservableObject {
 extension CMMotionActivity {
     var activityTypes: String {
         var types: [String] = []
-        if stationary { types.append("Stationary") }
-        if walking { types.append("Walking") }
-        if running { types.append("Running") }
-        if cycling { types.append("Cycling") }
-        if automotive { types.append("Automotive") }
-        if unknown { types.append("Unknown") }
-        return types.isEmpty ? "Unknown" : types.joined(separator: ", ")
+        if stationary { types.append("activity.stationary") }
+        if walking { types.append("activity.walking") }
+        if running { types.append("activity.running") }
+        if cycling { types.append("activity.cycling") }
+        if automotive { types.append("activity.automotive") }
+        if unknown { types.append("activity.unknown") }
+        return types.isEmpty ? "activity.unknown" : types.joined(separator: ", ")
     }
 }

@@ -7,7 +7,7 @@ import Combine
 class SystemSensorManager: ObservableObject {
     @Published var batteryLevel: Float = 0
     @Published var batteryState: UIDevice.BatteryState = .unknown
-    @Published var batteryStateText: String = "Unknown"
+    @Published var batteryStateKey: String = "battery.unknown"
     @Published var isBatteryMonitoringEnabled = false
 
     @Published var deviceName: String = ""
@@ -26,7 +26,7 @@ class SystemSensorManager: ObservableObject {
 
     @Published var isMultitaskingSupported = false
     @Published var thermalState: ProcessInfo.ThermalState = .nominal
-    @Published var thermalStateText: String = "Nominal"
+    @Published var thermalStateKey: String = "thermal.nominal"
     @Published var processorCount: Int = 0
     @Published var activeProcessorCount: Int = 0
     @Published var physicalMemory: UInt64 = 0
@@ -44,15 +44,22 @@ class SystemSensorManager: ObservableObject {
 
     @Published var isNFCAvailable = false
 
-    @Published var orientationText: String = "Unknown"
+    @Published var orientationKey: String = "orientation.unknown"
     @Published var isMultitaskGestureEnabled = true
 
     /// Stream of sensor samples for the logging pipeline.
     let samplePublisher = PassthroughSubject<SensorSample, Never>()
 
     private var timer: Timer?
+    private var isStarted = false
+    private var observers: [NSObjectProtocol] = []
 
     func startUpdates() {
+        guard !isStarted else {
+            print("[System] ⚠ Already started")
+            return
+        }
+        isStarted = true
         print("[System] ── Starting System Sensors ──")
 
         let device = UIDevice.current
@@ -60,7 +67,7 @@ class SystemSensorManager: ObservableObject {
         isBatteryMonitoringEnabled = true
         batteryLevel = device.batteryLevel
         batteryState = device.batteryState
-        batteryStateText = batteryStateString(device.batteryState)
+        batteryStateKey = batteryStateString(device.batteryState)
 
         deviceName = device.name
         deviceModel = device.model
@@ -72,7 +79,7 @@ class SystemSensorManager: ObservableObject {
         print("[System] Device: \(deviceName)")
         print("[System] Model: \(deviceModel)")
         print("[System] System: \(systemName) \(systemVersion)")
-        print("[System] Battery: \(batteryLevel * 100)% (\(batteryStateText))")
+        print("[System] Battery: \(batteryLevel * 100)% (\(batteryStateKey))")
         print("[System] Identifier: \(deviceIdentifierForVendor)")
 
         screenBounds = UIScreen.main.bounds
@@ -85,7 +92,7 @@ class SystemSensorManager: ObservableObject {
         let processInfo = ProcessInfo.processInfo
         isMultitaskingSupported = true
         thermalState = processInfo.thermalState
-        thermalStateText = thermalStateString(processInfo.thermalState)
+        thermalStateKey = thermalStateString(processInfo.thermalState)
         processorCount = processInfo.processorCount
         activeProcessorCount = processInfo.activeProcessorCount
         physicalMemory = processInfo.physicalMemory
@@ -94,7 +101,7 @@ class SystemSensorManager: ObservableObject {
 
         print("[System] Processor: \(activeProcessorCount)/\(processorCount) cores")
         print("[System] Memory: \(ByteCountFormatter.string(fromByteCount: Int64(physicalMemory), countStyle: .memory))")
-        print("[System] Thermal: \(thermalStateText)")
+        print("[System] Thermal: \(thermalStateKey)")
         print("[System] Low Power Mode: \(isLowPowerModeEnabled)")
         print("[System] Uptime: \(String(format: "%.0f", systemUptime))s")
 
@@ -102,7 +109,7 @@ class SystemSensorManager: ObservableObject {
         updateCameraInfo()
         updateOrientation()
 
-        NotificationCenter.default.addObserver(forName: UIDevice.batteryLevelDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+        let obs1 = NotificationCenter.default.addObserver(forName: UIDevice.batteryLevelDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
             Task { @MainActor in
                 guard let self = self else { return }
                 let level = UIDevice.current.batteryLevel
@@ -114,20 +121,20 @@ class SystemSensorManager: ObservableObject {
                 print("[System] 🔋 Battery: \(level * 100)%")
             }
         }
-        NotificationCenter.default.addObserver(forName: UIDevice.batteryStateDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+        let obs2 = NotificationCenter.default.addObserver(forName: UIDevice.batteryStateDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
             Task { @MainActor in
                 guard let self = self else { return }
                 let state = UIDevice.current.batteryState
                 self.batteryState = state
-                self.batteryStateText = self.batteryStateString(state)
+                self.batteryStateKey = self.batteryStateString(state)
                 self.samplePublisher.send(SensorSample(
                     sensorID: .battery,
                     payload: .battery(level: Double(UIDevice.current.batteryLevel),
                                       state: self.batteryStateLowercase(state))))
-                print("[System] 🔋 Battery state: \(self.batteryStateText)")
+                print("[System] 🔋 Battery state: \(self.batteryStateKey)")
             }
         }
-        NotificationCenter.default.addObserver(forName: UIDevice.orientationDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+        let obs3 = NotificationCenter.default.addObserver(forName: UIDevice.orientationDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
             Task { @MainActor in
                 guard let self = self else { return }
                 self.updateOrientation()
@@ -136,18 +143,20 @@ class SystemSensorManager: ObservableObject {
                     payload: .orientation(name: self.orientationLowercase(UIDevice.current.orientation))))
             }
         }
-        NotificationCenter.default.addObserver(forName: ProcessInfo.thermalStateDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+        let obs4 = NotificationCenter.default.addObserver(forName: ProcessInfo.thermalStateDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
             Task { @MainActor in
                 guard let self = self else { return }
                 let state = ProcessInfo.processInfo.thermalState
                 self.thermalState = state
-                self.thermalStateText = self.thermalStateString(state)
+                self.thermalStateKey = self.thermalStateString(state)
                 self.samplePublisher.send(SensorSample(
                     sensorID: .thermal,
                     payload: .thermal(state: self.thermalStateLowercase(state))))
-                print("[System] 🌡️ Thermal state: \(self.thermalStateText)")
+                print("[System] 🌡️ Thermal state: \(self.thermalStateKey)")
             }
         }
+
+        observers = [obs1, obs2, obs3, obs4]
 
         timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
             Task { @MainActor in
@@ -174,9 +183,15 @@ class SystemSensorManager: ObservableObject {
     }
 
     func stopUpdates() {
+        guard isStarted else { return }
+        isStarted = false
         print("[System] ■ Stopping system sensors")
         timer?.invalidate()
         timer = nil
+        for observer in observers {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        observers.removeAll()
     }
 
     private func updateDiskSpace() {
@@ -200,34 +215,34 @@ class SystemSensorManager: ObservableObject {
 
     private func updateOrientation() {
         switch UIDevice.current.orientation {
-        case .portrait: orientationText = "Portrait"
-        case .portraitUpsideDown: orientationText = "Portrait Upside Down"
-        case .landscapeLeft: orientationText = "Landscape Left"
-        case .landscapeRight: orientationText = "Landscape Right"
-        case .faceUp: orientationText = "Face Up"
-        case .faceDown: orientationText = "Face Down"
-        case .unknown: orientationText = "Unknown"
-        @unknown default: orientationText = "Unknown"
+        case .portrait: orientationKey = "orientation.portrait"
+        case .portraitUpsideDown: orientationKey = "orientation.portraitupsidedown"
+        case .landscapeLeft: orientationKey = "orientation.landscapeleft"
+        case .landscapeRight: orientationKey = "orientation.landscaperight"
+        case .faceUp: orientationKey = "orientation.faceup"
+        case .faceDown: orientationKey = "orientation.facedown"
+        case .unknown: orientationKey = "orientation.unknown"
+        @unknown default: orientationKey = "orientation.unknown"
         }
     }
 
     private func batteryStateString(_ state: UIDevice.BatteryState) -> String {
         switch state {
-        case .unknown: return "Unknown"
-        case .unplugged: return "Unplugged"
-        case .charging: return "Charging"
-        case .full: return "Full"
-        @unknown default: return "Unknown"
+        case .unknown: return "battery.unknown"
+        case .unplugged: return "battery.unplugged"
+        case .charging: return "battery.charging"
+        case .full: return "battery.full"
+        @unknown default: return "battery.unknown"
         }
     }
 
     private func thermalStateString(_ state: ProcessInfo.ThermalState) -> String {
         switch state {
-        case .nominal: return "Nominal"
-        case .fair: return "Fair"
-        case .serious: return "Serious"
-        case .critical: return "Critical"
-        @unknown default: return "Unknown"
+        case .nominal: return "thermal.nominal"
+        case .fair: return "thermal.fair"
+        case .serious: return "thermal.serious"
+        case .critical: return "thermal.critical"
+        @unknown default: return "thermal.unknown"
         }
     }
 

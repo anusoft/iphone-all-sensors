@@ -1,51 +1,103 @@
 import SwiftUI
 
 struct AccelerometerDetailView: View {
+    @EnvironmentObject var locManager: LocalizationManager
     @EnvironmentObject var motion: MotionSensorManager
+    @StateObject private var chartData = SensorChartData()
+    @State private var showShareSheet = false
+    @State private var exportURL: URL?
+    @State private var showRecordings = false
+    @State private var isRecording = false
 
     var body: some View {
         let mag = sqrt(motion.accX * motion.accX + motion.accY * motion.accY + motion.accZ * motion.accZ)
+        
         ScrollView {
             VStack(spacing: 20) {
-                ThreeAxisView(x: motion.accX, y: motion.accY, z: motion.accZ, title: "Accelerometer", unit: "G", color: .blue)
+                ThreeAxisView(x: motion.accX, y: motion.accY, z: motion.accZ, title: locManager.t("sensor.accelerometer"), unit: "G", color: .blue)
+
+                SensorChartView(chartData: chartData, title: locManager.t("sensor.accelerometer"), unit: "G")
 
                 VStack(spacing: 16) {
-                    Text("Magnitude")
+                    Text(locManager.t("label.magnitude"))
                         .font(.headline)
                     CircularGauge(value: mag, maxValue: 4, title: "Total G", unit: "G", color: .blue, size: 140)
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Details")
+                    Text(locManager.t("section.details"))
                         .font(.headline)
                     DataRow(label: "X-Axis", value: String(format: "%.4f G", motion.accX), icon: "arrow.left.and.right")
                     DataRow(label: "Y-Axis", value: String(format: "%.4f G", motion.accY), icon: "arrow.up.and.down")
                     DataRow(label: "Z-Axis", value: String(format: "%.4f G", motion.accZ), icon: "arrow.up")
                     Divider()
-                    DataRow(label: "Magnitude", value: String(format: "%.4f G", mag), icon: "scope")
-                    DataRow(label: "Status", value: motion.isAccelerometerAvailable ? "Active" : "Unavailable", icon: "checkmark.circle")
+                    DataRow(label: locManager.t("label.magnitude"), value: String(format: "%.4f G", mag), icon: "scope")
+                    DataRow(label: locManager.t("label.status"), value: motion.isAccelerometerAvailable ? locManager.t("status.active") : locManager.t("status.unavailable"), icon: "checkmark.circle")
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 VStack(spacing: 12) {
-                    Text("Axis Visualization")
+                    Text(locManager.t("section.axisVisualization"))
                         .font(.headline)
                     AxisVisualization(x: motion.accX, y: motion.accY, z: motion.accZ)
                 }
+                .glassCard()
+
+                // Seismometer Section
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Text(locManager.t("seismometer.title"))
+                            .font(.headline)
+                        Spacer()
+                        Toggle(locManager.t("seismometer.enable"), isOn: $motion.isSeismometerEnabled)
+                                .onChange(of: motion.isSeismometerEnabled) { _, enabled in
+                                    if enabled {
+                                        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
+                                    }
+                                }
+                    }
+                    if motion.isSeismometerEnabled {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("\(locManager.t("seismometer.threshold")): \(String(format: "%.1f", motion.seismometerThreshold)) G")
+                                .font(.subheadline)
+                            Slider(value: $motion.seismometerThreshold, in: 0.5...5.0, step: 0.1)
+                            if !motion.seismometerAlarmHistory.isEmpty {
+                                Text(locManager.t("seismometer.alarmHistory"))
+                                    .font(.subheadline)
+                                    .padding(.top, 4)
+                                ForEach(motion.seismometerAlarmHistory.suffix(5).reversed()) { alarm in
+                                    HStack {
+                                        Image(systemName: "exclamationmark.triangle.fill")
+                                            .foregroundStyle(.red)
+                                        Text("\(String(format: "%.2f", alarm.magnitude))G on \(alarm.axis)")
+                                            .font(.caption)
+                                        Spacer()
+                                        Text(alarm.timestamp, style: .time)
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                            } else {
+                                Text(locManager.t("seismometer.noAlarms"))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
                 .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
             }
-            .padding()
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Accelerometer")
-        .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showShareSheet) {
+            if let url = exportURL {
+                ShareSheet(items: [url])
+            }
+        }
+        .onChange(of: motion.accX) { _, _ in
+            chartData.addPoint(x: motion.accX, y: motion.accY, z: motion.accZ)
+        }
     }
 }
 
@@ -97,5 +149,121 @@ struct AxisBar: View {
                 .monospacedDigit()
         }
         .frame(maxWidth: .infinity)
+    }
+}
+import SwiftUI
+
+struct RecordingListView: View {
+    @EnvironmentObject var recorder: SensorRecorder
+    @EnvironmentObject var locManager: LocalizationManager
+    @Environment(\.colorScheme) var colorScheme
+    @State private var showShareSheet = false
+    @State private var exportURL: URL?
+    
+    var body: some View {
+        List {
+            if recorder.recordings.isEmpty {
+                Section {
+                    VStack(spacing: 16) {
+                        Image(systemName: "recordingtape")
+                            .font(.system(size: 50))
+                            .foregroundStyle(.secondary)
+                        Text(locManager.t("record.noRecordings"))
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 40)
+                }
+            } else {
+                ForEach(recorder.recordings.sorted(by: { $0.startTime > $1.startTime })) { recording in
+                    RecordingRow(recording: recording)
+                        .swipeActions(edge: .trailing) {
+                            Button(role: .destructive) {
+                                recorder.deleteRecording(id: recording.id)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                            
+                            Button {
+                                exportURL = recorder.exportRecording(id: recording.id, format: .csv)
+                                showShareSheet = true
+                            } label: {
+                                Label("Export", systemImage: "square.and.arrow.up")
+                            }
+                            .tint(.blue)
+                        }
+                }
+            }
+        }
+        .navigationTitle("Recordings")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                if !recorder.recordings.isEmpty {
+                    Button(action: {
+                        recorder.deleteAllRecordings()
+                    }) {
+                        Text(locManager.t("button.clearAll"))
+                            .foregroundStyle(.red)
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $showShareSheet) {
+            if let url = exportURL {
+                ShareSheet(items: [url])
+            }
+        }
+    }
+}
+
+struct RecordingRow: View {
+    let recording: SensorRecording
+    @EnvironmentObject var locManager: LocalizationManager
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text(recording.sensorName)
+                    .font(.headline)
+                    .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                
+                Spacer()
+                
+                if recording.isActive {
+                    HStack(spacing: 4) {
+                        Circle()
+                            .fill(.red)
+                            .frame(width: 8, height: 8)
+                        Text(locManager.t("record.recording"))
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    }
+                }
+            }
+            
+            HStack(spacing: 16) {
+                Label(formatDuration(recording.duration), systemImage: "clock")
+                Label("\(recording.dataPoints.count) points", systemImage: "chart.xyaxis.line")
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            
+            Text(recording.startTime, style: .date)
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.vertical, 4)
+    }
+    
+    private func formatDuration(_ interval: TimeInterval) -> String {
+        let minutes = Int(interval) / 60
+        let seconds = Int(interval) % 60
+        if minutes > 0 {
+            return "\(minutes)m \(seconds)s"
+        }
+        return "\(seconds)s"
     }
 }

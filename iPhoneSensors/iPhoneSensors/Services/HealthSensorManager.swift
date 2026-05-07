@@ -40,8 +40,14 @@ class HealthSensorManager: ObservableObject {
     @Published var authorizationStatus: String = "Not Authorized"
     @Published var isAuthorized = false
     @Published var authorizationError: String?
+    private var isStarted = false
 
     func startUpdates() {
+        guard !isStarted else {
+            print("[Health] ⚠ Already started")
+            return
+        }
+        isStarted = true
         print("[Health] ── Starting Health Sensors ──")
         isHealthDataAvailable = HKHealthStore.isHealthDataAvailable()
         print("[Health] HealthKit available: \(isHealthDataAvailable)")
@@ -51,10 +57,23 @@ class HealthSensorManager: ObservableObject {
             return
         }
 
-        requestAuthorization()
+        // Only fetch data if already authorized — do NOT auto-request
+        let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
+        let status = healthStore.authorizationStatus(for: heartRateType)
+        if status == .sharingAuthorized {
+            isAuthorized = true
+            authorizationStatus = "Authorized"
+            fetchAllHealthData()
+        } else {
+            isAuthorized = false
+            authorizationStatus = "Not Authorized"
+            print("[Health] ⏭ HealthKit not authorized — skipping data fetch")
+        }
     }
 
     func stopUpdates() {
+        guard isStarted else { return }
+        isStarted = false
         print("[Health] ■ Stopping health sensors")
     }
 

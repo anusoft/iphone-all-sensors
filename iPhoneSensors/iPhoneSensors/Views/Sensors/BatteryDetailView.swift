@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct BatteryDetailView: View {
+    @EnvironmentObject var locManager: LocalizationManager
     @EnvironmentObject var sys: SystemSensorManager
 
     var body: some View {
@@ -12,27 +13,28 @@ struct BatteryDetailView: View {
                         .foregroundStyle(batteryColor(level: sys.batteryLevel))
                     Text(String(format: "%.0f%%", sys.batteryLevel * 100))
                         .font(.system(size: 48, weight: .bold, design: .rounded))
-                    StatusBadge(text: sys.batteryStateText, color: batteryColor(level: sys.batteryLevel))
+                    StatusBadge(text: locManager.t(sys.batteryStateKey), color: batteryColor(level: sys.batteryLevel))
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Battery Info")
+                    Text(locManager.t("section.info"))
                         .font(.headline)
-                    DataRow(label: "Level", value: String(format: "%.0f%%", sys.batteryLevel * 100), icon: batteryIcon(level: sys.batteryLevel))
-                    DataRow(label: "State", value: sys.batteryStateText, icon: "bolt.fill")
+                    DataRow(label: locManager.t("label.level"), value: String(format: "%.0f%%", sys.batteryLevel * 100), icon: batteryIcon(level: sys.batteryLevel))
+                    DataRow(label: locManager.t("label.state"), value: locManager.t(sys.batteryStateKey), icon: "bolt.fill")
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Battery")
-        .navigationBarTitleDisplayMode(.inline)
+        .appBackground()
+        .navigationTitle(locManager.t("sensor.battery"))
+        .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SettingsToolbarButton()
+                }
+            }
     }
 
     private func batteryIcon(level: Float) -> String {

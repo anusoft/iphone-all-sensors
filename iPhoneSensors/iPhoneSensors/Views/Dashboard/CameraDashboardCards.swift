@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CameraDashboardCards: View {
     @EnvironmentObject var cam: CameraSensorManager
+    @EnvironmentObject var locManager: LocalizationManager
 
     var body: some View {
         VStack(spacing: 10) {
@@ -9,9 +10,9 @@ struct CameraDashboardCards: View {
                 CameraDetailView()
             } label: {
                 SensorCard(
-                    title: "Camera",
+                    title: locManager.t("sensor.camera"),
                     icon: "camera.fill",
-                    value: cam.isRearCameraAvailable ? "Available" : "",
+                    value: cam.isRearCameraAvailable ? locManager.t("status.available") : "",
                     unit: "",
                     color: .yellow,
                     isAvailable: cam.isRearCameraAvailable
@@ -21,7 +22,7 @@ struct CameraDashboardCards: View {
                 TorchDetailView()
             } label: {
                 SensorCard(
-                    title: "Torch",
+                    title: locManager.t("sensor.torch"),
                     icon: "flashlight.on.fill",
                     value: cam.isTorchAvailable ? String(format: "%.0f%%", cam.torchLevel * 100) : "",
                     unit: "",

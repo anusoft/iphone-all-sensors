@@ -1,61 +1,83 @@
 import SwiftUI
 
 struct MagnetometerDetailView: View {
+    @EnvironmentObject var locManager: LocalizationManager
     @EnvironmentObject var motion: MotionSensorManager
     @EnvironmentObject var loc: LocationSensorManager
+    @StateObject private var chartData = SensorChartData()
+    @State private var showShareSheet = false
+    @State private var exportURL: URL?
 
     var body: some View {
         let totalMag = sqrt(motion.magX * motion.magX + motion.magY * motion.magY + motion.magZ * motion.magZ)
-        ScrollView {
+                ScrollView {
             VStack(spacing: 20) {
-                ThreeAxisView(x: motion.magX, y: motion.magY, z: motion.magZ, title: "Magnetometer", unit: "µT", color: .purple)
+                ThreeAxisView(x: motion.magX, y: motion.magY, z: motion.magZ, title: locManager.t("sensor.magnetometer"), unit: "µT", color: .purple)
+
+                SensorChartView(chartData: chartData, title: locManager.t("sensor.magnetometer"), unit: "µT")
 
                 VStack(spacing: 16) {
-                    Text("Field Strength")
+                    Text(locManager.t("section.fieldStrength"))
                         .font(.headline)
                     CircularGauge(value: totalMag, maxValue: 100, title: "Total Field", unit: "µT", color: .purple, size: 140)
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Raw Magnetic Field")
+                    Text(locManager.t("section.rawMagneticField"))
                         .font(.headline)
-                    DataRow(label: "X-Axis", value: String(format: "%.2f µT", motion.magX), icon: "arrow.left.and.right")
-                    DataRow(label: "Y-Axis", value: String(format: "%.2f µT", motion.magY), icon: "arrow.up.and.down")
-                    DataRow(label: "Z-Axis", value: String(format: "%.2f µT", motion.magZ), icon: "arrow.up")
+                    DataRow(label: locManager.t("label.xaxis"), value: String(format: "%.2f µT", motion.magX), icon: "arrow.left.and.right")
+                    DataRow(label: locManager.t("label.yaxis"), value: String(format: "%.2f µT", motion.magY), icon: "arrow.up.and.down")
+                    DataRow(label: locManager.t("label.zaxis"), value: String(format: "%.2f µT", motion.magZ), icon: "arrow.up")
                     Divider()
-                    Text("Calibrated Magnetic Field")
+                    Text(locManager.t("section.calibratedMagneticField"))
                         .font(.headline)
-                    DataRow(label: "X-Axis", value: String(format: "%.2f µT", motion.calMagX), icon: "arrow.left.and.right")
-                    DataRow(label: "Y-Axis", value: String(format: "%.2f µT", motion.calMagY), icon: "arrow.up.and.down")
-                    DataRow(label: "Z-Axis", value: String(format: "%.2f µT", motion.calMagZ), icon: "arrow.up")
+                    DataRow(label: locManager.t("label.xaxis"), value: String(format: "%.2f µT", motion.calMagX), icon: "arrow.left.and.right")
+                    DataRow(label: locManager.t("label.yaxis"), value: String(format: "%.2f µT", motion.calMagY), icon: "arrow.up.and.down")
+                    DataRow(label: locManager.t("label.zaxis"), value: String(format: "%.2f µT", motion.calMagZ), icon: "arrow.up")
                     Divider()
-                    DataRow(label: "Calibration", value: motion.calMagAccuracy, icon: "checkmark.shield")
+                    DataRow(label: locManager.t("label.calibration"), value: locManager.t(motion.calMagAccuracy), icon: "checkmark.shield")
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
 
                 VStack(spacing: 12) {
-                    Text("Compass")
+                    Text(locManager.t("section.compass"))
                         .font(.headline)
                     CompassView(heading: loc.trueHeading)
                 }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .glassCard()
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Magnetometer")
-        .navigationBarTitleDisplayMode(.inline)
+        .appBackground()
+        .sheet(isPresented: $showShareSheet) {
+            if let url = exportURL {
+                ShareSheet(items: [url])
+            }
+        }
+        .onChange(of: motion.magX) { _, _ in
+            chartData.addPoint(x: motion.magX, y: motion.magY, z: motion.magZ)
+        }
+        .navigationTitle(locManager.t("sensor.magnetometer"))
+        .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                HStack(spacing: 12) {
+                    Button(action: {
+                        exportURL = DataExportManager.shared.exportRecording(dataPoints: chartData.dataPoints, sensorName: "Magnetometer", unit: "µT", format: .csv)
+                        showShareSheet = true
+                    }) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    SettingsToolbarButton()
+                }
+                }
+            }
     }
 }
 
 struct CompassView: View {
+    @EnvironmentObject var locManager: LocalizationManager
     let heading: Double
 
     var body: some View {
@@ -69,10 +91,10 @@ struct CompassView: View {
                         .frame(width: i % 18 == 0 ? 2 : 1, height: i % 18 == 0 ? 15 : i % 6 == 0 ? 10 : 5)
                         .offset(y: -70)
                 }
-                Text("N").font(.system(size: 14, weight: .bold)).foregroundStyle(.red).offset(y: -50)
-                Text("E").font(.system(size: 12, weight: .semibold)).offset(x: 50)
-                Text("S").font(.system(size: 12, weight: .semibold)).offset(y: 50)
-                Text("W").font(.system(size: 12, weight: .semibold)).offset(x: -50)
+                Text(locManager.t("compass.n")).font(.system(size: 14, weight: .bold)).foregroundStyle(.red).offset(y: -50)
+                Text(locManager.t("compass.e")).font(.system(size: 12, weight: .semibold)).offset(x: 50)
+                Text(locManager.t("compass.s")).font(.system(size: 12, weight: .semibold)).offset(y: 50)
+                Text(locManager.t("compass.w")).font(.system(size: 12, weight: .semibold)).offset(x: -50)
             }
             .rotationEffect(.degrees(-heading))
 

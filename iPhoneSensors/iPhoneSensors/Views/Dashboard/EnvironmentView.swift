@@ -1,7 +1,9 @@
 import SwiftUI
 
 struct EnvironmentView: View {
+    @EnvironmentObject var locManager: LocalizationManager
     @EnvironmentObject var sensorManager: SensorManager
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         let env = sensorManager.environmentManager
@@ -9,12 +11,11 @@ struct EnvironmentView: View {
             ScrollView {
                 VStack(spacing: 16) {
                     HStack(spacing: 16) {
-                        CircularGauge(value: env.pressure, maxValue: 120, title: "Pressure", unit: "kPa", color: .orange, size: 120)
-                        CircularGauge(value: env.relativeAltitude, maxValue: 100, title: "Altitude", unit: "m", color: .cyan, size: 120)
+                        CircularGauge(value: env.pressure, maxValue: 120, title: locManager.t("label.pressure"), unit: locManager.t("unit.kpa"), color: .orange, size: 120)
+                        CircularGauge(value: env.relativeAltitude, maxValue: 100, title: locManager.t("label.altitude"), unit: locManager.t("unit.meters"), color: .cyan, size: 120)
                     }
                     .padding()
-                    .background(.ultraThinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .glassCard()
 
                     NavigationLink {
                         BarometerDetailView()
@@ -22,7 +23,8 @@ struct EnvironmentView: View {
                         HStack {
                             Image(systemName: "barometer")
                                 .foregroundStyle(.orange)
-                            Text("Barometer")
+                            Text(locManager.t("sensor.barometer"))
+                                .foregroundStyle(colorScheme == .dark ? .white : .primary)
                             Spacer()
                             Text(String(format: "%.1f kPa", env.pressure))
                                 .foregroundStyle(.secondary)
@@ -30,8 +32,7 @@ struct EnvironmentView: View {
                                 .foregroundStyle(.tertiary)
                         }
                         .padding()
-                        .background(.ultraThinMaterial)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .dashboardRow()
                     }
 
                     NavigationLink {
@@ -40,16 +41,16 @@ struct EnvironmentView: View {
                         HStack {
                             Image(systemName: "sensor.tag.radiowaves.forward")
                                 .foregroundStyle(.red)
-                            Text("Proximity Sensor")
+                            Text(locManager.t("label.proximitySensor"))
+                                .foregroundStyle(colorScheme == .dark ? .white : .primary)
                             Spacer()
-                            Text(env.proximityState ? "Near" : "Far")
+                            Text(env.proximityState ? locManager.t("value.near") : locManager.t("value.far"))
                                 .foregroundStyle(.secondary)
                             Image(systemName: "chevron.right")
                                 .foregroundStyle(.tertiary)
                         }
                         .padding()
-                        .background(.ultraThinMaterial)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .dashboardRow()
                     }
 
                     NavigationLink {
@@ -58,7 +59,8 @@ struct EnvironmentView: View {
                         HStack {
                             Image(systemName: "sun.max.fill")
                                 .foregroundStyle(.yellow)
-                            Text("Screen Brightness")
+                            Text(locManager.t("sensor.brightness"))
+                                .foregroundStyle(colorScheme == .dark ? .white : .primary)
                             Spacer()
                             Text(String(format: "%.0f%%", env.screenBrightness * 100))
                                 .foregroundStyle(.secondary)
@@ -66,30 +68,32 @@ struct EnvironmentView: View {
                                 .foregroundStyle(.tertiary)
                         }
                         .padding()
-                        .background(.ultraThinMaterial)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .dashboardRow()
                     }
 
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Audio")
+                        Text(locManager.t("section.audioSession"))
                             .font(.headline)
-                        DataRow(label: "Output Volume", value: String(format: "%.0f%%", env.audioVolume * 100), icon: "speaker.wave.2")
-                        DataRow(label: "Category", value: env.audioSessionCategory, icon: "speaker.wave.2")
-                        DataRow(label: "Other Audio Playing", value: env.isAudioSessionActive ? "Yes" : "No", icon: "speaker.wave.2")
+                            .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                        DataRow(label: locManager.t("label.outputVolume"), value: String(format: "%.0f%%", env.audioVolume * 100), icon: "speaker.wave.2")
+                        DataRow(label: locManager.t("label.category"), value: locManager.t("audiocategory." + env.audioSessionCategory.lowercased().replacingOccurrences(of: " ", with: "")), icon: "speaker.wave.2")
+                        DataRow(label: locManager.t("label.otherAudioPlaying"), value: env.isAudioSessionActive ? locManager.t("value.yes") : locManager.t("value.no"), icon: "speaker.wave.2")
                         ForEach(env.audioOutputDevices, id: \.self) { device in
-                            DataRow(label: "Output", value: device, icon: "speaker.wave.2")
+                            DataRow(label: locManager.t("label.audioOutput"), value: device, icon: "speaker.wave.2")
                         }
                     }
                     .padding()
-                    .background(.ultraThinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .glassCard()
                 }
                 .padding()
             }
-            .background(Color(.systemGroupedBackground))
-            .navigationTitle("Environment")
-            .onAppear {
-                sensorManager.environmentManager.startUpdates()
+            .appBackground()
+            .navigationTitle(locManager.t("sensor.environment"))
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SettingsToolbarButton()
+                }
             }
         }
     }

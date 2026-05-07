@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SystemDashboardCards: View {
     @EnvironmentObject var sys: SystemSensorManager
+    @EnvironmentObject var locManager: LocalizationManager
 
     var body: some View {
         VStack(spacing: 10) {
@@ -9,10 +10,10 @@ struct SystemDashboardCards: View {
                 BatteryDetailView()
             } label: {
                 SensorCard(
-                    title: "Battery",
+                    title: locManager.t("sensor.battery"),
                     icon: batteryIcon(level: sys.batteryLevel),
                     value: String(format: "%.0f%%", sys.batteryLevel * 100),
-                    unit: sys.batteryStateText,
+                    unit: locManager.t(sys.batteryStateKey),
                     color: batteryColor(level: sys.batteryLevel),
                     isAvailable: sys.isBatteryMonitoringEnabled
                 )
@@ -21,7 +22,7 @@ struct SystemDashboardCards: View {
                 ProcessorDetailView()
             } label: {
                 SensorCard(
-                    title: "Processor",
+                    title: locManager.t("sensor.processor"),
                     icon: "cpu",
                     value: "\(sys.activeProcessorCount)/\(sys.processorCount)",
                     unit: "cores",
@@ -33,7 +34,7 @@ struct SystemDashboardCards: View {
                 MemoryDetailView()
             } label: {
                 SensorCard(
-                    title: "Memory",
+                    title: locManager.t("sensor.memory"),
                     icon: "memorychip",
                     value: ByteCountFormatter.string(fromByteCount: Int64(sys.physicalMemory), countStyle: .memory),
                     unit: "",
@@ -45,7 +46,7 @@ struct SystemDashboardCards: View {
                 DiskDetailView()
             } label: {
                 SensorCard(
-                    title: "Storage",
+                    title: locManager.t("sensor.storage"),
                     icon: "internaldrive",
                     value: ByteCountFormatter.string(fromByteCount: sys.freeDiskSpace, countStyle: .memory),
                     unit: "free",
@@ -57,9 +58,9 @@ struct SystemDashboardCards: View {
                 ThermalDetailView()
             } label: {
                 SensorCard(
-                    title: "Thermal State",
+                    title: locManager.t("sensor.thermal"),
                     icon: "thermometer.medium",
-                    value: sys.thermalStateText,
+                    value: locManager.t(sys.thermalStateKey),
                     unit: "",
                     color: thermalColor(state: sys.thermalState),
                     isAvailable: true

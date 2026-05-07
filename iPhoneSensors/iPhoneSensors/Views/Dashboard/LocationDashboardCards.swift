@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LocationDashboardCards: View {
     @EnvironmentObject var loc: LocationSensorManager
+    @EnvironmentObject var locManager: LocalizationManager
 
     var body: some View {
         VStack(spacing: 10) {
@@ -9,7 +10,7 @@ struct LocationDashboardCards: View {
                 LocationDetailView()
             } label: {
                 SensorCard(
-                    title: "GPS Location",
+                    title: locManager.t("sensor.gps"),
                     icon: "location.fill",
                     value: formatLocation(),
                     unit: "",
@@ -21,7 +22,7 @@ struct LocationDashboardCards: View {
                 HeadingDetailView()
             } label: {
                 SensorCard(
-                    title: "Compass Heading",
+                    title: locManager.t("sensor.compass"),
                     icon: "safari",
                     value: loc.trueHeading > 0 ? String(format: "%.0f°", loc.trueHeading) : "",
                     unit: cardinalDirection(loc.trueHeading),
