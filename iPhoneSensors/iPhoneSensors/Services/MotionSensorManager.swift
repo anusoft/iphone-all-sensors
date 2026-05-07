@@ -155,6 +155,9 @@ class MotionSensorManager: ObservableObject {
             self.gyroX = data.rotationRate.x
             self.gyroY = data.rotationRate.y
             self.gyroZ = data.rotationRate.z
+            self.samplePublisher.send(SensorSample(
+                sensorID: .gyroscope,
+                payload: .rotationRate(x: data.rotationRate.x, y: data.rotationRate.y, z: data.rotationRate.z)))
             if self.gyroUpdateCount <= 3 || self.gyroUpdateCount % 100 == 0 {
                 print("[Motion] 📊 Gyro[\(self.gyroUpdateCount)]: x=\(String(format: "%.3f", data.rotationRate.x)) y=\(String(format: "%.3f", data.rotationRate.y)) z=\(String(format: "%.3f", data.rotationRate.z))")
             }
@@ -177,6 +180,9 @@ class MotionSensorManager: ObservableObject {
             self?.magX = data.magneticField.x
             self?.magY = data.magneticField.y
             self?.magZ = data.magneticField.z
+            self?.samplePublisher.send(SensorSample(
+                sensorID: .magnetometer,
+                payload: .magneticField(x: data.magneticField.x, y: data.magneticField.y, z: data.magneticField.z, accuracy: 0)))
         }
         print("[Motion] ✓ Magnetometer started")
     }
@@ -220,6 +226,17 @@ class MotionSensorManager: ObservableObject {
             self.quatZ = data.attitude.quaternion.z
             let m = data.attitude.rotationMatrix
             self.rotMat = [[m.m11, m.m12, m.m13],[m.m21, m.m22, m.m23],[m.m31, m.m32, m.m33]]
+            self.samplePublisher.send(SensorSample(
+                sensorID: .deviceMotion,
+                payload: .deviceMotion(DeviceMotionPayload(
+                    roll: data.attitude.roll, pitch: data.attitude.pitch, yaw: data.attitude.yaw,
+                    gravityX: data.gravity.x, gravityY: data.gravity.y, gravityZ: data.gravity.z,
+                    userAccX: data.userAcceleration.x, userAccY: data.userAcceleration.y, userAccZ: data.userAcceleration.z,
+                    rotationX: data.rotationRate.x, rotationY: data.rotationRate.y, rotationZ: data.rotationRate.z,
+                    quatW: data.attitude.quaternion.w, quatX: data.attitude.quaternion.x,
+                    quatY: data.attitude.quaternion.y, quatZ: data.attitude.quaternion.z,
+                    calMagX: data.magneticField.field.x, calMagY: data.magneticField.field.y, calMagZ: data.magneticField.field.z,
+                    calMagAccuracy: Int(data.magneticField.accuracy.rawValue)))))
             if self.dmUpdateCount <= 3 || self.dmUpdateCount % 100 == 0 {
                 print("[Motion] 📊 DM[\(self.dmUpdateCount)]: roll=\(String(format: "%.2f", data.attitude.roll)) pitch=\(String(format: "%.2f", data.attitude.pitch)) yaw=\(String(format: "%.2f", data.attitude.yaw))")
             }
@@ -246,6 +263,15 @@ class MotionSensorManager: ObservableObject {
                 self?.floorsDescended = data.floorsDescended?.intValue ?? 0
                 self?.pace = data.currentPace?.doubleValue ?? 0
                 self?.cadence = data.currentCadence?.doubleValue ?? 0
+                self?.samplePublisher.send(SensorSample(
+                    sensorID: .pedometer,
+                    payload: .pedometer(PedometerPayload(
+                        steps: data.numberOfSteps.intValue,
+                        distance: data.distance?.doubleValue ?? 0,
+                        floorsAscended: data.floorsAscended?.intValue ?? 0,
+                        floorsDescended: data.floorsDescended?.intValue ?? 0,
+                        pace: data.currentPace?.doubleValue,
+                        cadence: data.currentCadence?.doubleValue))))
                 print("[Motion] 🚶 Steps: \(data.numberOfSteps.intValue)")
             }
         }
@@ -266,6 +292,9 @@ class MotionSensorManager: ObservableObject {
             guard let data = data else { return }
             self?.relativeAltitude = data.relativeAltitude.doubleValue
             self?.pressure = data.pressure.doubleValue
+            self?.samplePublisher.send(SensorSample(
+                sensorID: .altimeter,
+                payload: .altitude(relative: data.relativeAltitude.doubleValue, pressure: data.pressure.doubleValue)))
         }
         print("[Motion] ✓ Altimeter started")
     }
@@ -284,6 +313,17 @@ class MotionSensorManager: ObservableObject {
             self?.isCycling = activity.cycling
             self?.isAutomotive = activity.automotive
             self?.isStationary = activity.stationary
+            let stateString: String = {
+                if activity.walking { return "walking" }
+                if activity.running { return "running" }
+                if activity.cycling { return "cycling" }
+                if activity.automotive { return "automotive" }
+                if activity.stationary { return "stationary" }
+                return "unknown"
+            }()
+            self?.samplePublisher.send(SensorSample(
+                sensorID: .motionActivity,
+                payload: .activity(ActivityPayload(state: stateString, confidence: Int(activity.confidence.rawValue)))))
             print("[Motion] 🏃 Activity: \(activity.activityTypes)")
         }
         print("[Motion] ✓ Activity started")
