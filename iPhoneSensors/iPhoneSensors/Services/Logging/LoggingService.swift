@@ -8,6 +8,14 @@ final class LoggingService: ObservableObject {
     let configStore: LoggingConfigStore
     let bus: SensorEventBus
     let coordinator: LoggingCoordinator
+    let sessionManager: SessionManager
+
+    /// Wall-clock at which the current session was started from the UI.
+    /// Drives `sessionElapsed()` for the status header.
+    @Published var sessionStartedAt: Date?
+
+    /// Mirror of `sessionManager.activeSessionID` for SwiftUI binding.
+    @Published var activeSessionDisplayID: UUID?
 
     init(storage: LogStorageManager? = nil,
          configStore: LoggingConfigStore? = nil) {
@@ -17,6 +25,7 @@ final class LoggingService: ObservableObject {
         self.configStore = c
         self.bus = SensorEventBus()
         self.coordinator = LoggingCoordinator(storage: s, configStore: c)
+        self.sessionManager = SessionManager(storage: s)
     }
 
     func bootstrap() async {
@@ -52,4 +61,44 @@ final class LoggingService: ObservableObject {
     }
 
     func flush() async { await coordinator.flushAll() }
+}
+
+// MARK: - UI helpers (Logger tab)
+
+extension LoggingService {
+    /// Number of sensors with a continuous stream currently configured `on`.
+    @MainActor
+    func continuousActiveCount() -> Int {
+        SensorID.allCases.filter { configStore.config(for: $0).continuous.isOn }.count
+    }
+
+    /// Seconds elapsed since the current session was started via the UI.
+    /// Returns 0 when no session is active.
+    @MainActor
+    func sessionElapsed() -> TimeInterval {
+        _sessionElapsed()
+    }
+
+    @MainActor
+    func startSessionFromUI(note: String? = nil) async {
+        try? await sessionManager.startSession(note: note)
+        let id = await sessionManager.activeSessionID
+        let pool = await sessionManager.activePool
+        await coordinator.setActiveSession(id, pool: pool)
+        sessionStartedAt = Date()
+        activeSessionDisplayID = id
+    }
+
+    @MainActor
+    func stopSessionFromUI() async {
+        try? await sessionManager.stopSession()
+        await coordinator.setActiveSession(nil, pool: nil)
+        sessionStartedAt = nil
+        activeSessionDisplayID = nil
+    }
+
+    @MainActor
+    private func _sessionElapsed() -> TimeInterval {
+        sessionStartedAt.map { Date().timeIntervalSince($0) } ?? 0
+    }
 }

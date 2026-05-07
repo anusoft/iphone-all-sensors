@@ -33,6 +33,12 @@ struct ContentView: View {
                         Label(locManager.t("tab.health"), systemImage: "heart.text.square")
                     }
                     .tag(3)
+
+                LoggerOverviewView()
+                    .tabItem {
+                        Label(locManager.t("tab.logger"), systemImage: "record.circle")
+                    }
+                    .tag(4)
             }
             .tint(.blue)
             .onAppear {
