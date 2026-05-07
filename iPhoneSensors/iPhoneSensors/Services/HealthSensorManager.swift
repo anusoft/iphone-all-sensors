@@ -6,6 +6,9 @@ import Combine
 class HealthSensorManager: ObservableObject {
     private let healthStore = HKHealthStore()
 
+    /// Combine publisher emitting per-metric samples for the LoggingService.
+    let samplePublisher = PassthroughSubject<SensorSample, Never>()
+
     @Published var heartRate: Double = 0
     @Published var heartRateVariability: Double = 0
     @Published var oxygenSaturation: Double = 0
@@ -104,77 +107,110 @@ class HealthSensorManager: ObservableObject {
     private func fetchAllHealthData() {
         print("[Health] Fetching all health data...")
 
-        fetchLatestQuantity(.heartRate) { [weak self] value in
+        fetchLatestQuantity(.heartRate) { [weak self] value, ts in
             self?.heartRate = value
+            self?.publishHealth(metric: "heartRate", value: value, unit: "count/min", ts: ts)
             print("[Health] Heart rate: \(value) bpm")
         }
-        fetchLatestQuantity(.heartRateVariabilitySDNN) { [weak self] value in
+        fetchLatestQuantity(.heartRateVariabilitySDNN) { [weak self] value, ts in
             self?.heartRateVariability = value
+            self?.publishHealth(metric: "heartRateVariability", value: value, unit: "ms", ts: ts)
             print("[Health] HRV: \(value) ms")
         }
-        fetchLatestQuantity(.oxygenSaturation) { [weak self] value in
+        fetchLatestQuantity(.oxygenSaturation) { [weak self] value, ts in
             self?.oxygenSaturation = value * 100
+            self?.publishHealth(metric: "oxygenSaturation", value: value * 100, unit: "%", ts: ts)
             print("[Health] SpO2: \(value * 100)%")
         }
-        fetchLatestQuantity(.respiratoryRate) { [weak self] value in
+        fetchLatestQuantity(.respiratoryRate) { [weak self] value, ts in
             self?.respiratoryRate = value
+            self?.publishHealth(metric: "respiratoryRate", value: value, unit: "count/min", ts: ts)
             print("[Health] Respiratory rate: \(value) br/min")
         }
-        fetchLatestQuantity(.bodyTemperature) { [weak self] value in
+        fetchLatestQuantity(.bodyTemperature) { [weak self] value, ts in
             self?.bodyTemperature = value
+            self?.publishHealth(metric: "bodyTemperature", value: value, unit: "degC", ts: ts)
             print("[Health] Body temp: \(value)°C")
         }
-        fetchLatestQuantity(.bloodPressureSystolic) { [weak self] value in
+        fetchLatestQuantity(.bloodPressureSystolic) { [weak self] value, ts in
             self?.bloodPressureSystolic = value
+            self?.publishHealth(metric: "bloodPressureSystolic", value: value, unit: "mmHg", ts: ts)
             print("[Health] BP systolic: \(value) mmHg")
         }
-        fetchLatestQuantity(.bloodPressureDiastolic) { [weak self] value in
+        fetchLatestQuantity(.bloodPressureDiastolic) { [weak self] value, ts in
             self?.bloodPressureDiastolic = value
+            self?.publishHealth(metric: "bloodPressureDiastolic", value: value, unit: "mmHg", ts: ts)
             print("[Health] BP diastolic: \(value) mmHg")
         }
-        fetchLatestQuantity(.electrodermalActivity) { [weak self] value in
+        fetchLatestQuantity(.electrodermalActivity) { [weak self] value, ts in
             self?.electrodermalActivity = value
+            self?.publishHealth(metric: "electrodermalActivity", value: value, unit: "count", ts: ts)
             print("[Health] EDA: \(value)")
         }
-        fetchTodaySum(.stepCount) { [weak self] value in
+        fetchTodaySum(.stepCount) { [weak self] value, ts in
             self?.stepCount = value
+            self?.publishHealth(metric: "stepCount", value: value, unit: "count", ts: ts)
             print("[Health] Steps today: \(value)")
         }
-        fetchTodaySum(.distanceWalkingRunning) { [weak self] value in
+        fetchTodaySum(.distanceWalkingRunning) { [weak self] value, ts in
             self?.distanceWalkingRunning = value
+            self?.publishHealth(metric: "walkingDistance", value: value, unit: "m", ts: ts)
             print("[Health] Distance today: \(value)m")
         }
-        fetchTodaySum(.flightsClimbed) { [weak self] value in
+        fetchTodaySum(.flightsClimbed) { [weak self] value, ts in
             self?.flightsClimbed = value
+            self?.publishHealth(metric: "flightsClimbed", value: value, unit: "count", ts: ts)
             print("[Health] Flights today: \(value)")
         }
-        fetchTodaySum(.activeEnergyBurned) { [weak self] value in
+        fetchTodaySum(.activeEnergyBurned) { [weak self] value, ts in
             self?.activeEnergyBurned = value
+            self?.publishHealth(metric: "activeEnergy", value: value, unit: "kcal", ts: ts)
             print("[Health] Active energy: \(value) kcal")
         }
-        fetchTodaySum(.basalEnergyBurned) { [weak self] value in
+        fetchTodaySum(.basalEnergyBurned) { [weak self] value, ts in
             self?.basalEnergyBurned = value
+            self?.publishHealth(metric: "basalEnergy", value: value, unit: "kcal", ts: ts)
         }
-        fetchTodaySum(.appleExerciseTime) { [weak self] value in
+        fetchTodaySum(.appleExerciseTime) { [weak self] value, ts in
             self?.exerciseTime = value
+            self?.publishHealth(metric: "exerciseTime", value: value, unit: "min", ts: ts)
             print("[Health] Exercise time: \(value) min")
         }
-        fetchTodaySum(.appleStandTime) { [weak self] value in
+        fetchTodaySum(.appleStandTime) { [weak self] value, ts in
             self?.standTime = value
+            self?.publishHealth(metric: "standTime", value: value, unit: "count", ts: ts)
         }
 
-        fetchLatestQuantity(.height) { [weak self] value in self?.height = value }
-        fetchLatestQuantity(.bodyMass) { [weak self] value in self?.bodyMass = value }
-        fetchLatestQuantity(.bodyMassIndex) { [weak self] value in self?.bodyMassIndex = value }
-        fetchLatestQuantity(.bodyFatPercentage) { [weak self] value in self?.bodyFatPercentage = value * 100 }
-        fetchLatestQuantity(.leanBodyMass) { [weak self] value in self?.leanBodyMass = value }
-        fetchLatestQuantity(.waistCircumference) { [weak self] value in self?.waistCircumference = value }
+        fetchLatestQuantity(.height) { [weak self] value, ts in
+            self?.height = value
+            self?.publishHealth(metric: "height", value: value, unit: "m", ts: ts)
+        }
+        fetchLatestQuantity(.bodyMass) { [weak self] value, ts in
+            self?.bodyMass = value
+            self?.publishHealth(metric: "bodyMass", value: value, unit: "kg", ts: ts)
+        }
+        fetchLatestQuantity(.bodyMassIndex) { [weak self] value, ts in
+            self?.bodyMassIndex = value
+            self?.publishHealth(metric: "bodyMassIndex", value: value, unit: "%", ts: ts)
+        }
+        fetchLatestQuantity(.bodyFatPercentage) { [weak self] value, ts in
+            self?.bodyFatPercentage = value * 100
+            self?.publishHealth(metric: "bodyFatPercentage", value: value * 100, unit: "%", ts: ts)
+        }
+        fetchLatestQuantity(.leanBodyMass) { [weak self] value, ts in
+            self?.leanBodyMass = value
+            self?.publishHealth(metric: "leanBodyMass", value: value, unit: "kg", ts: ts)
+        }
+        fetchLatestQuantity(.waistCircumference) { [weak self] value, ts in
+            self?.waistCircumference = value
+            self?.publishHealth(metric: "waistCircumference", value: value, unit: "m", ts: ts)
+        }
 
         fetchCharacteristicData()
         print("[Health] ✅ Health data fetch initiated")
     }
 
-    private func fetchLatestQuantity(_ identifier: HKQuantityTypeIdentifier, completion: @escaping (Double) -> Void) {
+    private func fetchLatestQuantity(_ identifier: HKQuantityTypeIdentifier, completion: @escaping (Double, Date) -> Void) {
         guard let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
             print("[Health] ⚠ Unknown quantity type: \(identifier.rawValue)")
             return
@@ -191,12 +227,12 @@ class HealthSensorManager: ObservableObject {
             }
             let unit = self.preferredUnit(for: identifier)
             let value = sample.quantity.doubleValue(for: unit)
-            completion(value)
+            completion(value, sample.endDate)
         }
         healthStore.execute(query)
     }
 
-    private func fetchTodaySum(_ identifier: HKQuantityTypeIdentifier, completion: @escaping (Double) -> Void) {
+    private func fetchTodaySum(_ identifier: HKQuantityTypeIdentifier, completion: @escaping (Double, Date) -> Void) {
         guard let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
             print("[Health] ⚠ Unknown quantity type: \(identifier.rawValue)")
             return
@@ -210,10 +246,26 @@ class HealthSensorManager: ObservableObject {
                 return
             }
             let unit = self.preferredUnit(for: identifier)
-            let value = result?.sumQuantity()?.doubleValue(for: unit) ?? 0
-            completion(value)
+            guard let sum = result?.sumQuantity() else {
+                // No data — skip publish to avoid emitting zero rows for missing data.
+                return
+            }
+            let value = sum.doubleValue(for: unit)
+            completion(value, Date())
         }
         healthStore.execute(query)
+    }
+
+    /// Helper to publish a single health metric sample on the publisher.
+    private func publishHealth(metric: String, value: Double, unit: String, ts: Date) {
+        samplePublisher.send(SensorSample(
+            sensorID: .health,
+            payload: .health(
+                metric: metric,
+                value: value,
+                unit: unit,
+                ts: ts
+            )))
     }
 
     private func fetchCharacteristicData() {
