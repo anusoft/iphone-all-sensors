@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import UIKit
 
 @MainActor
 final class LoggingService: ObservableObject {
@@ -19,9 +20,19 @@ final class LoggingService: ObservableObject {
     }
 
     func bootstrap() async {
+        AppDelegate.loggingService = self
         let coord = self.coordinator
         await bus.setIngest { sample in await coord.ingest(sample) }
         await coordinator.start()
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.willResignActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                await self?.flush()
+            }
+        }
     }
 
     func attach(_ publisher: AnyPublisher<SensorSample, Never>) {

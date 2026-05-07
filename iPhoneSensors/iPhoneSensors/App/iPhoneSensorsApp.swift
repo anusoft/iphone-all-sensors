@@ -1,7 +1,9 @@
 import SwiftUI
+import UIKit
 
 @main
 struct iPhoneSensorsApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var sensorManager = SensorManager()
     @StateObject private var locManager = LocalizationManager()
     @StateObject private var loggingService = LoggingService()
@@ -34,5 +36,18 @@ struct iPhoneSensorsApp: App {
                     loggingService.attachThrottleSource(sensorManager)
                 }
         }
+    }
+}
+
+final class AppDelegate: NSObject, UIApplicationDelegate {
+    static var loggingService: LoggingService?
+
+    func applicationWillTerminate(_ application: UIApplication) {
+        let sem = DispatchSemaphore(value: 0)
+        Task { @MainActor in
+            await Self.loggingService?.flush()
+            sem.signal()
+        }
+        _ = sem.wait(timeout: .now() + .milliseconds(200))
     }
 }
