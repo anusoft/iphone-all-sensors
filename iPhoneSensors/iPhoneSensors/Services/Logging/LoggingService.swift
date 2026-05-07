@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import UIKit
+import GRDB
 
 @MainActor
 final class LoggingService: ObservableObject {
@@ -108,5 +109,38 @@ extension LoggingService {
     @MainActor
     func shareSession(_ id: UUID) -> URL? {
         try? storage.sessionDir(id)
+    }
+
+    /// Produce a sanitized copy of a session folder with all location data
+    /// removed. The copy lives next to the original in `<sessionsRoot>/`,
+    /// suffixed with `-stripped`. Returns the new folder URL on success.
+    @MainActor
+    func exportSessionStrippingLocation(_ id: UUID) async throws -> URL? {
+        guard let src = try? storage.sessionDir(id) else { return nil }
+        let dstName = "\(id.uuidString)-stripped"
+        let dst = src.deletingLastPathComponent().appendingPathComponent(dstName, isDirectory: true)
+        if FileManager.default.fileExists(atPath: dst.path) {
+            try FileManager.default.removeItem(at: dst)
+        }
+        try FileManager.default.copyItem(at: src, to: dst)
+        // Remove location-related flat files (jsonl/csv per-sensor outputs).
+        if let contents = try? FileManager.default.contentsOfDirectory(at: dst, includingPropertiesForKeys: nil) {
+            for url in contents {
+                let name = url.lastPathComponent.lowercased()
+                if name.contains("gps") || name.contains("heading") || name.contains("location") {
+                    try? FileManager.default.removeItem(at: url)
+                }
+            }
+        }
+        // Strip location rows from log.sqlite.
+        let dbURL = dst.appendingPathComponent("log.sqlite")
+        if FileManager.default.fileExists(atPath: dbURL.path) {
+            let pool = try DatabasePool(path: dbURL.path)
+            try await pool.write { db in
+                try db.execute(sql: "DELETE FROM entries WHERE sensor_id LIKE 'location.%'")
+                try db.execute(sql: "VACUUM")
+            }
+        }
+        return dst
     }
 }

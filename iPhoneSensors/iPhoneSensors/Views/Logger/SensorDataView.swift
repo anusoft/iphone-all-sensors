@@ -1,5 +1,13 @@
 import SwiftUI
+import Charts
 import GRDB
+
+private struct ChartPoint: Identifiable {
+    let id = UUID()
+    let time: Date
+    let series: String
+    let value: Double
+}
 
 struct SensorDataView: View {
     @EnvironmentObject var loggingService: LoggingService
@@ -31,6 +39,15 @@ struct SensorDataView: View {
             .padding(.horizontal)
 
             List {
+                let points = chartPoints(rows)
+                if !points.isEmpty {
+                    Chart(points) { p in
+                        LineMark(x: .value("t", p.time), y: .value("v", p.value))
+                            .foregroundStyle(by: .value("series", p.series))
+                    }
+                    .frame(height: 160)
+                    .padding(.horizontal)
+                }
                 ForEach(rows, id: \.id) { row in
                     NavigationLink(destination: LogEntryDetailView(entry: row)) {
                         VStack(alignment: .leading, spacing: 2) {
@@ -98,5 +115,29 @@ struct SensorDataView: View {
                 .fetchAll(db)
         }) ?? []
         rows = fetched
+    }
+
+    private func chartPoints(_ rows: [SensorLogEntry]) -> [ChartPoint] {
+        var out: [ChartPoint] = []
+        for r in rows {
+            guard let data = r.payloadJSON.data(using: .utf8),
+                  let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { continue }
+            let t = Date(timeIntervalSince1970: r.wallTime)
+            // Try x/y/z first
+            if let x = obj["x"] as? Double, let y = obj["y"] as? Double, let z = obj["z"] as? Double {
+                out.append(.init(time: t, series: "x", value: x))
+                out.append(.init(time: t, series: "y", value: y))
+                out.append(.init(time: t, series: "z", value: z))
+                continue
+            }
+            // Single-scalar
+            for key in ["level", "relative", "pressure", "value", "rssi", "trueHeading", "magneticHeading", "alt"] {
+                if let v = obj[key] as? Double {
+                    out.append(.init(time: t, series: key, value: v))
+                    break
+                }
+            }
+        }
+        return out
     }
 }

@@ -158,6 +158,10 @@ enum Translations {
         "logger.format.jsonl": "JSON Lines",
         "logger.format.csv": "CSV",
 
+        // Logger - inline card
+        "logger.inlineCard.notLogging": "Not currently logging",
+        "logger.inlineCard.configure": "Configure logger",
+
         // Logger - settings
         "logger.settings.title": "Logger Settings",
         "logger.settings.done": "Done",
@@ -312,6 +316,8 @@ enum Translations {
         "logger.interval": "ช่วงเวลา",
         "logger.interval.everySample": "ทุกตัวอย่าง",
         "logger.enabled": "เปิดใช้งาน",
+        "logger.inlineCard.notLogging": "ไม่ได้บันทึกในตอนนี้",
+        "logger.inlineCard.configure": "ตั้งค่าตัวบันทึก",
         // Format names left as English (technical identifiers)
 
         // Logger - settings
