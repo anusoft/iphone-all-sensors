@@ -18,6 +18,9 @@ class CameraSensorManager: ObservableObject {
     @Published var audioInputChannels: Int = 0
     @Published var isAudioInputAvailable = false
 
+    /// Stream of sensor samples for the logging pipeline.
+    let samplePublisher = PassthroughSubject<SensorSample, Never>()
+
     func startUpdates() {
         print("[Camera] ── Starting Camera Sensors ──")
 
@@ -41,6 +44,19 @@ class CameraSensorManager: ObservableObject {
         checkCameraAccess()
         checkMicrophoneAccess()
         updateAudioInfo()
+
+        let hasUltraWide = AVCaptureDevice.default(.builtInUltraWideCamera, for: .video, position: .back) != nil
+        let hasTelephoto = AVCaptureDevice.default(.builtInTelephotoCamera, for: .video, position: .back) != nil
+        let hasLiDAR = AVCaptureDevice.default(.builtInLiDARDepthCamera, for: .video, position: .back) != nil
+        samplePublisher.send(SensorSample(
+            sensorID: .camera,
+            payload: .cameraSnapshot(CameraPayload(
+                hasFront: isFrontCameraAvailable,
+                hasBack: isRearCameraAvailable,
+                hasUltraWide: hasUltraWide,
+                hasTelephoto: hasTelephoto,
+                hasLiDAR: hasLiDAR,
+                zoom: Double(maxZoomFactor)))))
 
         print("[Camera] ✅ Camera sensors initialization complete")
     }
