@@ -7,7 +7,7 @@ struct TorchDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 VStack(spacing: 16) {
                     Image(systemName: torchLevel > 0 ? "flashlight.on.fill" : "flashlight.off.fill")
                         .font(.system(size: 60))
@@ -39,6 +39,8 @@ struct TorchDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.torch)
+        .showOffEntry(sensorID: "21", accent: SO.torchAccent)
         .navigationTitle(locManager.t("sensor.torch"))
         .navigationBarTitleDisplayMode(.large)
             .toolbar {

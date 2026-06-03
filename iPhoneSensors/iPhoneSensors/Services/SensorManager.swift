@@ -45,6 +45,7 @@ class SensorManager: ObservableObject {
         print("[SensorManager] ✓ Location manager started")
 
         environmentManager.startUpdates()
+        environmentManager.subscribeToMotionAltitude(motionManager)
         print("[SensorManager] ✓ Environment manager started")
 
         systemManager.startUpdates()
@@ -296,6 +297,7 @@ class SensorRecorder: ObservableObject {
     private var timer: Timer?
     
     func startRecording(sensorName: String, sensorKey: String, valueProvider: @escaping () -> [String: Double]) {
+        _ = valueProvider
         let recording = SensorRecording(
             sensorName: sensorName,
             sensorKey: sensorKey,
@@ -306,30 +308,34 @@ class SensorRecorder: ObservableObject {
         
         activeRecording = recording
         recordings.append(recording)
-        
-        // Record at 10Hz
-        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+
+        if let service = AppDelegate.loggingService {
             Task { @MainActor in
-                guard let index = self.recordings.firstIndex(where: { $0.id == recording.id && $0.isActive }) else { return }
-                let values = valueProvider()
-                let point = RecordingDataPoint(timestamp: Date(), values: values)
-                self.recordings[index].dataPoints.append(point)
-                self.activeRecording = self.recordings[index]
+                await service.startSessionFromUI(
+                    note: sensorName,
+                    only: SensorID(legacyRecorderKey: sensorKey, sensorName: sensorName)
+                )
             }
         }
         
-        print("[Recorder] Started recording \(sensorName)")
+        print("[Recorder] Started persistent logger session for \(sensorName)")
     }
     
     func stopRecording() {
         timer?.invalidate()
         timer = nil
+
+        if let service = AppDelegate.loggingService {
+            Task { @MainActor in
+                await service.stopSessionFromUI()
+            }
+        }
         
         if let recording = activeRecording,
            let index = recordings.firstIndex(where: { $0.id == recording.id }) {
             recordings[index].endTime = Date()
             activeRecording = nil
-            print("[Recorder] Stopped recording \(recording.sensorName). Duration: \(recordings[index].duration)s, Points: \(recordings[index].dataPoints.count)")
+            print("[Recorder] Stopped persistent logger session for \(recording.sensorName). Duration: \(recordings[index].duration)s")
         }
     }
     
@@ -363,6 +369,49 @@ class SensorRecorder: ObservableObject {
             unit: "",
             format: format
         )
+    }
+}
+
+private extension SensorID {
+    init?(legacyRecorderKey: String, sensorName: String) {
+        let key = legacyRecorderKey.lowercased()
+        let name = sensorName.lowercased()
+
+        if key.contains("accelerometer") || name.contains("accelerometer") {
+            self = .accelerometer
+        } else if key.contains("gyro") || name.contains("gyro") {
+            self = .gyroscope
+        } else if key.contains("magnet") || name.contains("magnet") {
+            self = .magnetometer
+        } else if key.contains("motion") || name.contains("motion") {
+            self = .deviceMotion
+        } else if key.contains("location") || key.contains("gps") || name.contains("location") || name.contains("gps") {
+            self = .gps
+        } else if key.contains("heading") || name.contains("heading") || name.contains("compass") {
+            self = .heading
+        } else if key.contains("altimeter") || key.contains("barometer") || name.contains("altimeter") || name.contains("barometer") {
+            self = .altimeter
+        } else if key.contains("step") || key.contains("pedometer") || name.contains("step") || name.contains("pedometer") {
+            self = .pedometer
+        } else if key.contains("battery") || name.contains("battery") {
+            self = .battery
+        } else if key.contains("thermal") || name.contains("thermal") {
+            self = .thermal
+        } else if key.contains("bluetooth") || name.contains("bluetooth") {
+            self = .bluetoothState
+        } else if key.contains("network") || key.contains("wifi") || name.contains("network") || name.contains("wi-fi") {
+            self = .network
+        } else if key.contains("camera") || name.contains("camera") {
+            self = .camera
+        } else if key.contains("torch") || name.contains("torch") {
+            self = .torch
+        } else if key.contains("proximity") || name.contains("proximity") {
+            self = .proximity
+        } else if key.contains("brightness") || key.contains("light") || name.contains("brightness") || name.contains("light") {
+            self = .brightness
+        } else {
+            return nil
+        }
     }
 }
 import Foundation

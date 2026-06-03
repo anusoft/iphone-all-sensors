@@ -6,7 +6,7 @@ struct PedometerDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 HStack(spacing: 24) {
                     CircularGauge(value: Double(motion.steps), maxValue: 10000, title: locManager.t("label.steps"), unit: "steps", color: .green, size: 120)
                     CircularGauge(value: motion.distance, maxValue: 10000, title: locManager.t("label.distance"), unit: "m", color: .blue, size: 120)
@@ -37,6 +37,8 @@ struct PedometerDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.pedometer)
+        .showOffEntry(sensorID: "09", accent: SO.pedAccent)
         .navigationTitle(locManager.t("sensor.pedometer"))
         .navigationBarTitleDisplayMode(.large)
             .toolbar {

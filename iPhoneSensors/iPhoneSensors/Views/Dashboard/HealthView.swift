@@ -8,11 +8,9 @@ struct HealthView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 16) {
-                    HealthContent()
-                        .environmentObject(sensorManager)
-                }
-                .padding()
+                HealthContent()
+                    .environmentObject(sensorManager)
+                    .responsivePage()
             }
             .appBackground()
             .navigationTitle(locManager.t("sensor.health"))
@@ -73,7 +71,44 @@ struct HealthContent: View {
 
     var body: some View {
         let health = sensorManager.healthManager
-        return VStack(spacing: 16) {
+        return AdaptiveCardGrid(spacing: 16) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Label(health.authorizationStatus, systemImage: "heart.text.square")
+                        .font(.headline)
+                        .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                    Spacer()
+                }
+
+                if let error = health.authorizationError {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+
+                Text(health.latestFetchStatus)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                Button {
+                    if health.hasRequestedAuthorization {
+                        health.refreshHealthData()
+                    } else {
+                        health.requestAuthorization()
+                    }
+                } label: {
+                    Label(
+                        health.hasRequestedAuthorization ? "Refresh Health Data" : "Allow Health Access",
+                        systemImage: health.hasRequestedAuthorization ? "arrow.clockwise" : "heart.fill"
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(!health.isHealthDataAvailable)
+            }
+            .padding()
+            .glassCard()
+
             VStack(alignment: .leading, spacing: 12) {
                 Text(locManager.t("section.vitals"))
                     .font(.headline)

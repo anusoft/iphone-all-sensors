@@ -6,9 +6,9 @@ struct AltimeterDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 HStack(spacing: 24) {
-                    CircularGauge(value: motion.relativeAltitude, maxValue: 100, title: "Relative Altitude", unit: "m", color: .cyan, size: 130)
+                    CircularGauge(value: motion.relativeAltitude, maxValue: 500, title: "Relative Altitude", unit: "m", color: .cyan, size: 130)
                     CircularGauge(value: motion.pressure, maxValue: 120, title: locManager.t("label.pressure"), unit: "kPa", color: .orange, size: 130)
                 }
                 .glassCard()
@@ -30,6 +30,8 @@ struct AltimeterDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.altimeter)
+        .showOffEntry(sensorID: "07", accent: SO.altAccent)
         .navigationTitle(locManager.t("sensor.altimeter"))
         .navigationBarTitleDisplayMode(.large)
             .toolbar {

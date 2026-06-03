@@ -104,7 +104,7 @@ extension LogStorageManager {
         return Int64(size) >= limit
     }
 
-    /// Recursively delete the entire continuous tree (used by "Clear all continuous" UI).
+    /// Recursively delete the entire continuous tree for legacy cleanup.
     func deleteContinuous() throws {
         let dir = rootURL.appendingPathComponent("continuous", isDirectory: true)
         if FileManager.default.fileExists(atPath: dir.path) {

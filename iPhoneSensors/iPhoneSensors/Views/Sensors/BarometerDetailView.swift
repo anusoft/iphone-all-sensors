@@ -9,10 +9,10 @@ struct BarometerDetailView: View {
 
     var body: some View {
                 ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 HStack(spacing: 24) {
                     CircularGauge(value: motion.pressure, maxValue: 120, title: locManager.t("label.pressure"), unit: "kPa", color: .orange, size: 130)
-                    CircularGauge(value: motion.relativeAltitude, maxValue: 100, title: locManager.t("label.altitude"), unit: "m", color: .cyan, size: 130)
+                    CircularGauge(value: motion.relativeAltitude, maxValue: 500, title: locManager.t("label.altitude"), unit: "m", color: .cyan, size: 130)
                 }
                 .glassCard()
 
@@ -74,6 +74,8 @@ struct BarometerDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.altimeter)
+        .showOffEntry(sensorID: "08", accent: SO.baroAccent)
         .sheet(isPresented: $showShareSheet) {
             if let url = exportURL {
                 ShareSheet(items: [url])

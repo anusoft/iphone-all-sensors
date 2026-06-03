@@ -3,6 +3,43 @@ import GRDB
 @testable import iPhoneSensors
 
 final class SessionLifecycleTests: XCTestCase {
+    @MainActor
+    func testLoggingServiceStartStopSessionUpdatesPublishedState() async throws {
+        let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let storage = LogStorageManager(rootURL: tmp)
+        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let service = LoggingService(storage: storage, configStore: LoggingConfigStore(defaults: defaults))
+
+        await service.bootstrap()
+        await service.startSessionFromUI(note: "control")
+
+        XCTAssertNotNil(service.activeSessionDisplayID)
+        XCTAssertNotNil(service.sessionStartedAt)
+
+        await service.stopSessionFromUI()
+
+        XCTAssertNil(service.activeSessionDisplayID)
+        XCTAssertNil(service.sessionStartedAt)
+    }
+
+    @MainActor
+    func testScopedSessionTemporarilyRecordsOnlySelectedSensor() async throws {
+        let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let storage = LogStorageManager(rootURL: tmp)
+        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let service = LoggingService(storage: storage, configStore: LoggingConfigStore(defaults: defaults))
+
+        await service.bootstrap()
+        await service.startSessionFromUI(note: "accelerometer", only: .accelerometer)
+
+        XCTAssertTrue(service.configStore.config(for: .accelerometer).session.isOn)
+        XCTAssertFalse(service.configStore.config(for: .gyroscope).session.isOn)
+
+        await service.stopSessionFromUI()
+
+        XCTAssertTrue(service.configStore.config(for: .gyroscope).session.isOn)
+    }
+
     func testStartAndStop() async throws {
         let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
         let storage = LogStorageManager(rootURL: tmp)

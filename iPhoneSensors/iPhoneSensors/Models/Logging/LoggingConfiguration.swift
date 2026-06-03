@@ -16,10 +16,10 @@ extension LoggingConfiguration {
     static func `default`(for id: SensorID) -> LoggingConfiguration {
         switch id {
         case .gps, .heading:
-            return .init(continuous: .on(format: .jsonl, intervalMs: 60_000, options: .default),
+            return .init(continuous: .off,
                          session:    .on(format: .sqlite, intervalMs: 1000, options: .default))
         case .battery, .thermal, .lowPower, .network, .orientation, .pedometer, .motionActivity, .bluetoothState, .cellular:
-            return .init(continuous: .on(format: .jsonl, intervalMs: 0, options: .default),
+            return .init(continuous: .off,
                          session:    .on(format: .sqlite, intervalMs: 0, options: .default))
         case .altimeter:
             return .init(continuous: .off,

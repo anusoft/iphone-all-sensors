@@ -1,0 +1,28 @@
+All Sensors is a focused utility for seeing — really seeing — what every sensor on your iPhone or iPad reports, in real time.
+
+Twenty-one sensors, one clean dashboard:
+
+• Motion: accelerometer, gyroscope, magnetometer, device motion (fused IMU), pedometer, altimeter, motion activity classifier
+• Location: GPS coordinates, speed, altitude, heading (true & magnetic), barometric pressure
+• System: battery level & charging state, thermal state, CPU cores & load, memory pressure, storage usage, screen brightness
+• Connectivity: Wi-Fi network type, cellular carrier & radio technology, Bluetooth state and discovered peripherals
+• Hardware: camera capabilities, lens enumeration, microphone audio levels, ambient light estimate, proximity, torch level
+
+Each sensor has its own detail screen with three-axis charts, gauges, raw value readouts, and a live magnitude calculation. Tap into any sensor to see what's actually being read by the underlying iOS APIs (CMMotionManager, CLLocationManager, CMAltimeter, CMPedometer, CMMotionActivityManager, CBCentralManager, NWPathMonitor, AVCaptureDevice, ProcessInfo, UIDevice, HKHealthStore).
+
+▼ Show-Off Mode
+Tap the Show-Off banner on any sensor detail screen and the device transforms. The sensor takes over the full screen with a theatrical visualization — flight HUDs, compass roses, gravity wells, oscilloscopes, gauges, lighthouses. There are 74 unique full-bleed visualizations across 21 sensors. Swipe horizontally to switch sensors, swipe vertically to cycle variants, tap the grid icon to jump to any of them. It's a great way to demo what your phone is doing right now to a friend, a class, or yourself.
+
+▼ Logger
+A real recorder. Pick any subset of sensors, set a sample rate (60 Hz down to 1 Hz, per sensor), tap record, walk around. When you stop, your session shows up in a browser with timeline, sensor-by-sensor breakdown, and one-tap export to CSV or JSON for analysis in Numbers, Excel, Python, R, or whatever you use. Logs are stored in a local SQLite database under your app's Documents folder; nothing is uploaded.
+
+▼ HealthKit
+The Health tab shows your steps, heart rate, active energy, distance, and sleep — read directly from HealthKit with a permission scope that's read-only by default. Toggle write access on if you want the app to record workouts.
+
+▼ Siri & Shortcuts
+"Get Sensor Reading", "Start Sensor Recording", "Stop Sensor Recording", and "Export Sensor Data" are wired as App Intents. Add them to a Shortcut, ask Siri, automate from Focus modes.
+
+▼ Privacy
+Every reading stays on your device. There is no analytics SDK, no ad SDK, no crash reporter, no remote backend. The app makes no outbound network requests except a single optional ping to 1.1.1.1 when you ask the Network sensor to test connectivity.
+
+Built for developers, makers, students, hardware hobbyists, geocachers, weather watchers, and anyone who's ever wondered what their phone really knows about itself.

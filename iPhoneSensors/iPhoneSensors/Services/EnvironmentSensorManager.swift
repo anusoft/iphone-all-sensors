@@ -6,8 +6,8 @@ import Combine
 
 @MainActor
 class EnvironmentSensorManager: ObservableObject {
-    private let altimeter = CMAltimeter()
     private var isStarted = false
+    private var cancellables = Set<AnyCancellable>()
 
     @Published var relativeAltitude: Double = 0
     @Published var pressure: Double = 0
@@ -42,16 +42,7 @@ class EnvironmentSensorManager: ObservableObject {
 
         if CMAltimeter.isRelativeAltitudeAvailable() {
             isAltimeterAvailable = true
-            altimeter.startRelativeAltitudeUpdates(to: .main) { [weak self] data, error in
-                if let error = error {
-                    print("[Environment] ❌ Altimeter error: \(error.localizedDescription)")
-                    return
-                }
-                guard let data = data else { return }
-                self?.relativeAltitude = data.relativeAltitude.doubleValue
-                self?.pressure = data.pressure.doubleValue
-            }
-            print("[Environment] ✓ Altimeter started")
+            print("[Environment] ✓ Altimeter available (shared with MotionSensorManager)")
         } else {
             print("[Environment] ⚠ Altimeter not available")
         }
@@ -143,11 +134,27 @@ class EnvironmentSensorManager: ObservableObject {
         }
     }
 
+    /// Subscribe to altitude/pressure from the shared MotionSensorManager
+    /// to avoid a second CMAltimeter instance competing for hardware.
+    func subscribeToMotionAltitude(_ motionManager: MotionSensorManager) {
+        motionManager.$relativeAltitude
+            .sink { [weak self] value in
+                self?.relativeAltitude = value
+            }
+            .store(in: &cancellables)
+        motionManager.$pressure
+            .sink { [weak self] value in
+                self?.pressure = value
+            }
+            .store(in: &cancellables)
+        print("[Environment] ✓ Subscribed to MotionSensorManager altitude")
+    }
+
     func stopUpdates() {
         guard isStarted else { return }
         isStarted = false
+        cancellables.removeAll()
         print("[Environment] ■ Stopping environment sensors")
-        altimeter.stopRelativeAltitudeUpdates()
         UIDevice.current.isProximityMonitoringEnabled = false
         if observersRegistered {
             NotificationCenter.default.removeObserver(self)

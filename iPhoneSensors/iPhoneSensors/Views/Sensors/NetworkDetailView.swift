@@ -129,7 +129,7 @@ struct NetworkDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 VStack(spacing: 16) {
                     Image(systemName: conn.isConnectedToNetwork ? "network" : "network.slash")
                         .font(.system(size: 50))
@@ -226,6 +226,8 @@ struct NetworkDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.network)
+        .showOffEntry(sensorID: "17", accent: SO.netAccent)
         .navigationTitle(locManager.t("sensor.network"))
         .navigationBarTitleDisplayMode(.large)
         .toolbar {

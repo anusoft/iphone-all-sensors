@@ -1,4 +1,5 @@
 import SwiftUI
+import MapKit
 
 struct LocationDetailView: View {
     @EnvironmentObject var locManager: LocalizationManager
@@ -6,30 +7,42 @@ struct LocationDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
-                VStack(spacing: 12) {
-                    Text(locManager.t("section.coordinates"))
-                        .font(.headline)
+            AdaptiveCardGrid(spacing: 20) {
+                VStack(spacing: 8) {
+                    LocationMapView(
+                        coordinate: CLLocationCoordinate2D(latitude: loc.latitude, longitude: loc.longitude),
+                        horizontalAccuracy: loc.horizontalAccuracy,
+                        course: loc.course
+                    )
+                    .frame(height: 220)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+
                     HStack(spacing: 16) {
-                        VStack {
+                        VStack(spacing: 2) {
                             Text(locManager.t("label.latitude"))
-                                .font(.caption)
+                                .font(.caption2)
                                 .foregroundStyle(.secondary)
                             Text(String(format: "%.6f°", loc.latitude))
-                                .font(.title2)
-                                .fontWeight(.bold)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
                                 .monospacedDigit()
                         }
-                        VStack {
+                        .frame(maxWidth: .infinity)
+
+                        Divider().frame(height: 28)
+
+                        VStack(spacing: 2) {
                             Text(locManager.t("label.longitude"))
-                                .font(.caption)
+                                .font(.caption2)
                                 .foregroundStyle(.secondary)
                             Text(String(format: "%.6f°", loc.longitude))
-                                .font(.title2)
-                                .fontWeight(.bold)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
                                 .monospacedDigit()
                         }
+                        .frame(maxWidth: .infinity)
                     }
+                    .padding(.vertical, 4)
                 }
                 .glassCard()
 
@@ -54,6 +67,8 @@ struct LocationDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.gps)
+        .showOffEntry(sensorID: "01", accent: SO.gpsAccent)
         .navigationTitle("GPS Location")
         .navigationBarTitleDisplayMode(.large)
             .toolbar {

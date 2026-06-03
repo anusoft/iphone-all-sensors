@@ -2,15 +2,22 @@ import XCTest
 @testable import iPhoneSensors
 
 final class LoggingCoordinatorTests: XCTestCase {
-    func testThrottleDownsamples() async throws {
+    /// The session stream is the only user-exposed stream (continuous is always
+    /// sanitized off), so the interval-based downsampling that the UI configures
+    /// is verified here on the session path.
+    func testIntervalDownsamplesSessionStream() async throws {
         let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
         let storage = LogStorageManager(rootURL: tmp)
         let store = await MainActor.run { LoggingConfigStore(defaults: UserDefaults(suiteName: UUID().uuidString)!) }
         await MainActor.run {
-            store.set(LoggingConfiguration(continuous: .on(format: .jsonl, intervalMs: 100, options: .default), session: .off), for: .accelerometer)
+            store.set(LoggingConfiguration(continuous: .off, session: .on(format: .jsonl, intervalMs: 100, options: .default)), for: .accelerometer)
         }
         let coord = LoggingCoordinator(storage: storage, configStore: store)
         await coord.start()
+
+        // JSONL session writes only need an active session id (no DB pool).
+        let sid = UUID()
+        await coord.setActiveSession(sid, pool: nil)
 
         // Fire 50 samples 10ms apart synthetically
         var t0 = Date()
@@ -24,9 +31,8 @@ final class LoggingCoordinatorTests: XCTestCase {
         }
         await coord.flushAll()
 
-        // 50 samples spanning 0–500ms at 100ms throttle ⇒ ≤ 6 written
-        let day = Date()
-        let url = try storage.continuousFileURL(for: .accelerometer, format: .jsonl, day: day)
+        // 50 samples spanning 0–490ms at a 100ms interval ⇒ ≤ 6 written
+        let url = try storage.sessionFileURL(sid, sensor: .accelerometer, format: .jsonl)
         let content = (try? String(contentsOf: url)) ?? ""
         let lineCount = content.split(separator: "\n").count
         XCTAssertGreaterThanOrEqual(lineCount, 1)

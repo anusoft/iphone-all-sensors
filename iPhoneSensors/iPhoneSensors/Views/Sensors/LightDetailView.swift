@@ -6,7 +6,7 @@ struct LightDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 VStack(spacing: 16) {
                     Image(systemName: "sun.max.fill")
                         .font(.system(size: 60))
@@ -33,6 +33,8 @@ struct LightDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.brightness)
+        .showOffEntry(sensorID: "19", accent: SO.lightAccent)
         .navigationTitle("Ambient Light")
         .navigationBarTitleDisplayMode(.large)
             .toolbar {

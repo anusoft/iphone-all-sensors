@@ -40,20 +40,16 @@ class ConnectivitySensorManager: NSObject, ObservableObject {
         }
         isStarted = true
         print("[Connectivity] ── Starting Connectivity Sensors ──")
-        // Only initialize CBCentralManager if Bluetooth permission has been decided
-        // Creating it with .notDetermined status triggers the system permission dialog
         let authStatus = CBManager.authorization
-        if authStatus == .allowedAlways || authStatus == .restricted {
-            centralManager = CBCentralManager(delegate: self, queue: nil)
-            print("[Connectivity] ✓ Bluetooth authorized — CBCentralManager initialized")
-        } else if authStatus == .denied {
+        if authStatus == .denied {
             bluetoothState = .unauthorized
             bluetoothStateText = "bluetooth.unauthorized"
             print("[Connectivity] ⏭ Bluetooth denied — skipping CBCentralManager")
         } else {
-            bluetoothState = .unknown
-            bluetoothStateText = "bluetooth.unknown"
-            print("[Connectivity] ⏭ Bluetooth not determined — skipping CBCentralManager (will request in welcome flow)")
+            // Keep the central manager alive so CoreBluetooth can deliver the real
+            // state and trigger the system permission prompt when status is not determined.
+            centralManager = CBCentralManager(delegate: self, queue: nil)
+            print("[Connectivity] ✓ CBCentralManager initialized (authorization: \(authStatus.rawValue))")
         }
         startNetworkMonitoring()
         updateCellularInfo()

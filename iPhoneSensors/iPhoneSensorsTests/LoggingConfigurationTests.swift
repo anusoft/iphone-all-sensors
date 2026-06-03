@@ -19,8 +19,26 @@ final class LoggingConfigurationTests: XCTestCase {
         let cfg = LoggingConfiguration.default(for: .accelerometer)
         if case .off = cfg.continuous {} else { XCTFail("expected continuous off") }
     }
-    func testGPSDefaultsContinuousOn() {
+    func testGPSDefaultsSessionSQLiteAt1Hz() {
+        // Continuous streams are disabled across the app; GPS logs to the
+        // session stream as SQLite at a 1s interval by default.
         let cfg = LoggingConfiguration.default(for: .gps)
-        if case .on = cfg.continuous {} else { XCTFail("expected continuous on") }
+        if case .off = cfg.continuous {} else { XCTFail("expected continuous off") }
+        guard case let .on(format, intervalMs, _) = cfg.session else {
+            return XCTFail("expected session on")
+        }
+        XCTAssertEqual(format, .sqlite)
+        XCTAssertEqual(intervalMs, 1000)
+    }
+
+    func testDefaultIntervalsRespectSensorMinimum() {
+        // No curated default may sample faster than the sensor's native floor.
+        for s in SensorID.allCases {
+            if case let .on(_, intervalMs, _) = LoggingConfiguration.default(for: s).session,
+               intervalMs > 0 {
+                XCTAssertGreaterThanOrEqual(intervalMs, s.minIntervalMs,
+                    "\(s) default interval \(intervalMs)ms is below its minimum \(s.minIntervalMs)ms")
+            }
+        }
     }
 }

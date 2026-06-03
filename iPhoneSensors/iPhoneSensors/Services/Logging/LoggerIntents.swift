@@ -28,3 +28,27 @@ struct StopLoggerSessionIntent: AppIntent {
         return .result()
     }
 }
+
+struct LoggerAppShortcuts: AppShortcutsProvider {
+    static var appShortcuts: [AppShortcut] {
+        AppShortcut(
+            intent: StartLoggerSessionIntent(),
+            phrases: [
+                "Start sensor recording in \(.applicationName)",
+                "Start logging sensors in \(.applicationName)"
+            ],
+            shortTitle: "Start Recording",
+            systemImageName: "record.circle"
+        )
+
+        AppShortcut(
+            intent: StopLoggerSessionIntent(),
+            phrases: [
+                "Stop sensor recording in \(.applicationName)",
+                "Stop logging sensors in \(.applicationName)"
+            ],
+            shortTitle: "Stop Recording",
+            systemImageName: "stop.circle"
+        )
+    }
+}

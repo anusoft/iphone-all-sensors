@@ -13,7 +13,7 @@ struct AccelerometerDetailView: View {
         let mag = sqrt(motion.accX * motion.accX + motion.accY * motion.accY + motion.accZ * motion.accZ)
         
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 ThreeAxisView(x: motion.accX, y: motion.accY, z: motion.accZ, title: locManager.t("sensor.accelerometer"), unit: "G", color: .blue)
 
                 SensorChartView(chartData: chartData, title: locManager.t("sensor.accelerometer"), unit: "G")
@@ -44,52 +44,11 @@ struct AccelerometerDetailView: View {
                 }
                 .glassCard()
 
-                // Seismometer Section
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Text(locManager.t("seismometer.title"))
-                            .font(.headline)
-                        Spacer()
-                        Toggle(locManager.t("seismometer.enable"), isOn: $motion.isSeismometerEnabled)
-                                .onChange(of: motion.isSeismometerEnabled) { _, enabled in
-                                    if enabled {
-                                        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
-                                    }
-                                }
-                    }
-                    if motion.isSeismometerEnabled {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("\(locManager.t("seismometer.threshold")): \(String(format: "%.1f", motion.seismometerThreshold)) G")
-                                .font(.subheadline)
-                            Slider(value: $motion.seismometerThreshold, in: 0.5...5.0, step: 0.1)
-                            if !motion.seismometerAlarmHistory.isEmpty {
-                                Text(locManager.t("seismometer.alarmHistory"))
-                                    .font(.subheadline)
-                                    .padding(.top, 4)
-                                ForEach(motion.seismometerAlarmHistory.suffix(5).reversed()) { alarm in
-                                    HStack {
-                                        Image(systemName: "exclamationmark.triangle.fill")
-                                            .foregroundStyle(.red)
-                                        Text("\(String(format: "%.2f", alarm.magnitude))G on \(alarm.axis)")
-                                            .font(.caption)
-                                        Spacer()
-                                        Text(alarm.timestamp, style: .time)
-                                            .font(.caption2)
-                                            .foregroundStyle(.secondary)
-                                    }
-                                }
-                            } else {
-                                Text(locManager.t("seismometer.noAlarms"))
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                }
-                .padding()
-                .glassCard()
+                SeismometerCard()
             }
         }
+        .loggerInlineCard(.accelerometer)
+        .showOffEntry(sensorID: "03", accent: SO.accelAccent)
         .sheet(isPresented: $showShareSheet) {
             if let url = exportURL {
                 ShareSheet(items: [url])
@@ -98,6 +57,59 @@ struct AccelerometerDetailView: View {
         .onChange(of: motion.accX) { _, _ in
             chartData.addPoint(x: motion.accX, y: motion.accY, z: motion.accZ)
         }
+    }
+}
+
+/// Seismometer monitor card — toggle, threshold slider, and recent alarm history.
+/// Extracted so the detail view's adaptive card grid reads as a clean list of cards.
+struct SeismometerCard: View {
+    @EnvironmentObject var locManager: LocalizationManager
+    @EnvironmentObject var motion: MotionSensorManager
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text(locManager.t("seismometer.title"))
+                    .font(.headline)
+                Spacer()
+                Toggle(locManager.t("seismometer.enable"), isOn: $motion.isSeismometerEnabled)
+                    .onChange(of: motion.isSeismometerEnabled) { _, enabled in
+                        if enabled {
+                            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
+                        }
+                    }
+            }
+            if motion.isSeismometerEnabled {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("\(locManager.t("seismometer.threshold")): \(String(format: "%.1f", motion.seismometerThreshold)) G")
+                        .font(.subheadline)
+                    Slider(value: $motion.seismometerThreshold, in: 0.5...5.0, step: 0.1)
+                    if !motion.seismometerAlarmHistory.isEmpty {
+                        Text(locManager.t("seismometer.alarmHistory"))
+                            .font(.subheadline)
+                            .padding(.top, 4)
+                        ForEach(motion.seismometerAlarmHistory.suffix(5).reversed()) { alarm in
+                            HStack {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .foregroundStyle(.red)
+                                Text("\(String(format: "%.2f", alarm.magnitude))G on \(alarm.axis)")
+                                    .font(.caption)
+                                Spacer()
+                                Text(alarm.timestamp, style: .time)
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    } else {
+                        Text(locManager.t("seismometer.noAlarms"))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+        .padding()
+        .glassCard()
     }
 }
 

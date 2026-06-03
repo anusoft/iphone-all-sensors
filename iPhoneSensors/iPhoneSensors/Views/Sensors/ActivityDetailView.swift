@@ -6,7 +6,7 @@ struct ActivityDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 VStack(spacing: 16) {
                     Text(locManager.t("section.currentActivity"))
                         .font(.headline)
@@ -35,6 +35,8 @@ struct ActivityDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.motionActivity)
+        .showOffEntry(sensorID: "10", accent: SO.activityAccent)
         .navigationTitle(locManager.t("sensor.activity"))
         .navigationBarTitleDisplayMode(.large)
             .toolbar {

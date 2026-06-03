@@ -11,7 +11,7 @@ struct MagnetometerDetailView: View {
     var body: some View {
         let totalMag = sqrt(motion.magX * motion.magX + motion.magY * motion.magY + motion.magZ * motion.magZ)
                 ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 ThreeAxisView(x: motion.magX, y: motion.magY, z: motion.magZ, title: locManager.t("sensor.magnetometer"), unit: "µT", color: .purple)
 
                 SensorChartView(chartData: chartData, title: locManager.t("sensor.magnetometer"), unit: "µT")
@@ -50,6 +50,8 @@ struct MagnetometerDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.magnetometer)
+        .showOffEntry(sensorID: "05", accent: SO.magAccent)
         .sheet(isPresented: $showShareSheet) {
             if let url = exportURL {
                 ShareSheet(items: [url])

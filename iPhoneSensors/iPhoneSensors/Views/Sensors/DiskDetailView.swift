@@ -11,7 +11,7 @@ struct DiskDetailView: View {
         let usagePercent = totalGB > 0 ? usedGB / totalGB : 0
 
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 VStack(spacing: 16) {
                     Text(String(format: "%.1f GB", freeGB))
                         .font(.system(size: 48, weight: .bold, design: .rounded))
@@ -54,6 +54,8 @@ struct DiskDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.disk)
+        .showOffEntry(sensorID: "13", accent: SO.diskAccent)
         .navigationTitle(locManager.t("sensor.storage"))
         .navigationBarTitleDisplayMode(.large)
             .toolbar {

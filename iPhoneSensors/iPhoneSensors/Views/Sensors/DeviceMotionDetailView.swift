@@ -98,7 +98,7 @@ struct DeviceMotionDetailView: View {
 
     var body: some View {
                 ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 VStack(spacing: 12) {
                     Text(locManager.t("section.attitude"))
 
@@ -161,6 +161,8 @@ struct DeviceMotionDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.deviceMotion)
+        .showOffEntry(sensorID: "06", accent: SO.motionAccent)
         .sheet(isPresented: $showShareSheet) {
             if let url = exportURL {
                 ShareSheet(items: [url])

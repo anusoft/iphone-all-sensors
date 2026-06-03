@@ -14,25 +14,41 @@ struct LoggerOverviewView: View {
             List {
                 Section {
                     LoggerStatusHeaderView(elapsed: sessionElapsed)
-                    HStack {
-                        Button(action: { Task { await loggingService.startSessionFromUI() } }) {
-                            Label(localization.t("logger.start"), systemImage: "record.circle.fill")
-                        }
-                        .disabled(loggingService.activeSessionDisplayID != nil)
+                    LoggerSessionControl(style: .fullWidth)
+                }
 
-                        Button(action: { Task { await loggingService.stopSessionFromUI() } }) {
-                            Label(localization.t("logger.stop"), systemImage: "stop.fill")
-                        }
-                        .disabled(loggingService.activeSessionDisplayID == nil)
+                Section(header: Text(localization.t("logger.bulk.section"))) {
+                    HStack {
+                        Label(localization.t("logger.bulk.allSensors"), systemImage: "square.stack.3d.up.fill")
+                        Spacer()
+                        Text("\(loggingService.sessionEnabledCount(in: SensorID.allCases))/\(SensorID.allCases.count)")
+                            .font(.caption.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                        LoggerBulkActionMenu(ids: SensorID.allCases)
                     }
                 }
 
                 ForEach(SensorCategory.allCases, id: \.self) { cat in
-                    Section(header: Text(localization.t("category.\(cat.rawValue)"))) {
-                        ForEach(SensorID.allCases.filter { $0.category == cat }, id: \.self) { id in
+                    let ids = SensorID.allCases.filter { $0.category == cat }
+                    Section {
+                        ForEach(ids, id: \.self) { id in
                             NavigationLink(destination: SensorLogConfigView(sensorID: id)) {
                                 SensorRowConfigPreview(sensorID: id)
                             }
+                            .swipeActions(edge: .trailing) {
+                                Button {
+                                    loggingService.resetToDefaults([id])
+                                } label: {
+                                    Label(localization.t("logger.resetSensor"), systemImage: "arrow.counterclockwise")
+                                }
+                                .tint(.orange)
+                            }
+                        }
+                    } header: {
+                        HStack {
+                            Text(localization.t("category.\(cat.rawValue)"))
+                            Spacer()
+                            LoggerBulkActionMenu(ids: ids)
                         }
                     }
                 }
@@ -62,7 +78,65 @@ struct LoggerOverviewView: View {
     }
 }
 
-private struct SensorRowConfigPreview: View {
+/// Bulk-action menu applied to a set of sensors (all sensors, or one
+/// category). Enables/disables, sets format/interval, or resets to defaults
+/// in a single store write.
+struct LoggerBulkActionMenu: View {
+    let ids: [SensorID]
+    @EnvironmentObject var loggingService: LoggingService
+    @EnvironmentObject var localization: LocalizationManager
+
+    private let bulkIntervals = [0, 100, 250, 500, 1_000, 2_000, 5_000]
+
+    var body: some View {
+        Menu {
+            Button {
+                loggingService.setSessionEnabled(true, for: ids)
+            } label: {
+                Label(localization.t("logger.bulk.enableAll"), systemImage: "checkmark.circle")
+            }
+            Button {
+                loggingService.setSessionEnabled(false, for: ids)
+            } label: {
+                Label(localization.t("logger.bulk.disableAll"), systemImage: "xmark.circle")
+            }
+
+            Menu {
+                ForEach(LogFormat.allCases, id: \.self) { fmt in
+                    Button(localization.t(fmt.localizationKey)) {
+                        loggingService.setSessionFormat(fmt, for: ids)
+                    }
+                }
+            } label: {
+                Label(localization.t("logger.bulk.setFormat"), systemImage: "doc.badge.gearshape")
+            }
+
+            Menu {
+                ForEach(bulkIntervals, id: \.self) { ms in
+                    Button(ms == 0 ? localization.t("logger.interval.everySample") : "\(ms) ms") {
+                        loggingService.setSessionInterval(ms, for: ids)
+                    }
+                }
+            } label: {
+                Label(localization.t("logger.bulk.setInterval"), systemImage: "timer")
+            }
+
+            Divider()
+
+            Button(role: .destructive) {
+                loggingService.resetToDefaults(ids)
+            } label: {
+                Label(localization.t("logger.bulk.reset"), systemImage: "arrow.counterclockwise")
+            }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+                .imageScale(.large)
+        }
+        .accessibilityLabel(localization.t("logger.bulk.section"))
+    }
+}
+
+struct SensorRowConfigPreview: View {
     let sensorID: SensorID
     @EnvironmentObject var loggingService: LoggingService
     @EnvironmentObject var localization: LocalizationManager
@@ -74,8 +148,7 @@ private struct SensorRowConfigPreview: View {
                 Text(localization.t(sensorID.localizationKey))
                 let cfg = loggingService.configStore.config(for: sensorID)
                 HStack(spacing: 6) {
-                    pill(stream: .continuous, cfg: cfg.continuous)
-                    pill(stream: .session, cfg: cfg.session)
+                    pill(cfg: cfg.session)
                 }
                 .font(.caption)
             }
@@ -83,19 +156,19 @@ private struct SensorRowConfigPreview: View {
     }
 
     @ViewBuilder
-    private func pill(stream: LogStream, cfg: PerStreamConfig) -> some View {
+    private func pill(cfg: PerStreamConfig) -> some View {
         switch cfg {
         case .off:
-            Text("\(stream.rawValue): off")
+            Text(localization.t("logger.sessionOff"))
                 .padding(.horizontal, 6)
                 .padding(.vertical, 2)
                 .background(Color.secondary.opacity(0.15))
                 .clipShape(Capsule())
         case let .on(format, ms, _):
-            Text("\(stream.rawValue): \(format.rawValue) @ \(ms == 0 ? "every" : "\(ms)ms")")
+            Text("\(format.rawValue) @ \(ms == 0 ? localization.t("logger.interval.everySample") : "\(ms)ms")")
                 .padding(.horizontal, 6)
                 .padding(.vertical, 2)
-                .background(stream == .continuous ? Color.green.opacity(0.15) : Color.blue.opacity(0.15))
+                .background(Color.blue.opacity(0.15))
                 .clipShape(Capsule())
         }
     }
