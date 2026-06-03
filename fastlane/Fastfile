@@ -47,15 +47,22 @@ platform :ios do
   # the 5 marketing pages per device and skip the numbered Show-Off pipeline assets.
   desc "Stage generated screenshots for deliver"
   private_lane :prepare_screenshots do
-    dest = "fastlane/screenshots/en-US"
-    sh("rm -rf '#{dest}' && mkdir -p '#{dest}'")
+    # Anchor to the repo root (parent of this fastlane/ dir) so paths don't depend
+    # on fastlane's working directory.
+    repo = File.expand_path("..", __dir__)
+    dest = File.join(repo, "fastlane", "screenshots", "en-US")
+    FileUtils.rm_rf(dest)
+    FileUtils.mkdir_p(dest)
+    staged = 0
     %w[iphone-6.9 ipad-13].each do |slot|
-      Dir.glob(File.join("screenshots", slot, "*.png")).sort.each do |src|
+      Dir.glob(File.join(repo, "screenshots", slot, "*.png")).sort.each do |src|
         base = File.basename(src)
         next if base =~ /\A\d/ # skip 01-*.png … (Show-Off clean captures)
         FileUtils.cp(src, File.join(dest, "#{slot}-#{base}"))
+        staged += 1
       end
     end
-    UI.success("Staged App Store screenshots into #{dest}")
+    UI.user_error!("No screenshots staged — check screenshots/iphone-6.9 and ipad-13") if staged.zero?
+    UI.success("Staged #{staged} App Store screenshots into #{dest}")
   end
 end
