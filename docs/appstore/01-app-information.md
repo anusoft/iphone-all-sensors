@@ -7,7 +7,7 @@ Top-level metadata that doesn't change between versions. Set once when you creat
 | Field                         | Value                                            | Notes                                                       |
 |-------------------------------|--------------------------------------------------|-------------------------------------------------------------|
 | **App Name** (30 char)         | `All Sensors`                                    | Already wired as `INFOPLIST_KEY_CFBundleDisplayName`. 11 chars. |
-| **Subtitle** (30 char)         | `Live data from 21 device sensors`               | 32 chars. See [03](03-promotional-and-keywords.md) for alternates. |
+| **Subtitle** (30 char)         | `Live data from 21 sensors`                      | 26 chars (the earlier "…21 device sensors" was 32, over the limit). See [03](03-promotional-and-keywords.md). |
 | **Bundle ID**                  | `com.1moby.allsensors`                           | Set in `PRODUCT_BUNDLE_IDENTIFIER`. Must match Developer Portal App ID. |
 | **SKU**                        | `ALLSENSORS-IOS-1`                               | Internal-only. Pick anything unique to your account.         |
 | **Primary Language**           | English (U.S.)                                   |                                                             |
@@ -28,16 +28,13 @@ Alternative pairs if `Developer Tools` isn't accepted: `Utilities` + `Education`
 
 | Field            | Value                                          | What goes there                                                       |
 |------------------|------------------------------------------------|-----------------------------------------------------------------------|
-| **Privacy Policy URL** *(required)*  | `[FILL: https://yourdomain.com/allsensors/privacy]` | Host the contents of [05-privacy-policy.md](05-privacy-policy.md). HTTPS only. |
-| **Support URL** *(required)*         | `[FILL: https://yourdomain.com/allsensors/support]` | Host the contents of [06-support-page.md](06-support-page.md).               |
-| **Marketing URL** (optional)         | `[FILL: https://yourdomain.com/allsensors]`         | A simple landing page — can be the same as Support if you want.        |
+| **Privacy Policy URL** *(required)*  | `https://anusoft.github.io/iphone-all-sensors/privacy.html` | Published from [`docs/privacy.html`](../privacy.html) (GitHub Pages, `main:/docs`). HTTPS. |
+| **Support URL** *(required)*         | `https://anusoft.github.io/iphone-all-sensors/support.html` | Published from [`docs/support.html`](../support.html).                      |
+| **Marketing URL** (optional)         | `https://anusoft.github.io/iphone-all-sensors/`             | The existing landing page [`docs/index.html`](../index.html).                |
 
-If you don't have a domain, the cheapest legitimate options are:
-- A GitHub Pages site under your repo (`https://<user>.github.io/all-sensors/privacy.html`)
-- A Notion public page (`https://yourname.notion.site/All-Sensors-Privacy-...`)
-- A Vercel/Netlify free hosted static site
-
-Reviewers DO follow these links. Make sure they actually load and are written for humans.
+These are live on GitHub Pages (the repo's `main` branch serves `/docs`). Reviewers DO follow
+these links — they load over HTTPS and are written for humans. See
+[12-appstore-connect-and-fastlane.md](12-appstore-connect-and-fastlane.md) for the publish setup.
 
 ## Contact (your developer record — separate from App Review contact)
 
@@ -45,9 +42,9 @@ These appear publicly on the App Store under the developer name.
 
 | Field                       | Value                                  |
 |-----------------------------|----------------------------------------|
-| **Seller / Developer Name** | `[FILL: legal entity name — exactly as registered with Apple Developer Program. Personal: your full legal name. Org: your DBA on the D-U-N-S record]` |
-| **Trade Name** (optional)   | `[FILL: e.g., "1Moby Labs" — leave blank to use legal name]` |
-| **Copyright** (4-digit year + holder) | `2026 [FILL: same as Seller / Developer Name]` |
+| **Seller / Developer Name** | `1Moby` — ⚠️ confirm this matches the **exact legal entity** registered with your Apple Developer Program account (personal: full legal name; org: DBA on the D-U-N-S record). |
+| **Trade Name** (optional)   | `1Moby` |
+| **Copyright** (4-digit year + holder) | `2026 1Moby` |
 
 ## Info.plist usage strings (already set — for reference)
 

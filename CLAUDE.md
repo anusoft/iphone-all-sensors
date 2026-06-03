@@ -53,6 +53,18 @@ the `app://` scheme can be contested by another app, so `capture.sh` defaults to
 deterministic `--method launch`; required 6.9″ = 1320×2868, iPad 13″ = 2064×2752, all
 images in a slot share dimensions.
 
+## App Store Connect & fastlane
+
+The app record must be **created once by hand** (the App Store Connect API has no
+create-app endpoint); the bundle id `com.1moby.allsensors` is already registered.
+Everything after — metadata + screenshots + build upload — is automated via fastlane
+using the App Store Connect API key (`~/.appstoreconnect/private_keys/AuthKey_<id>.p8`;
+`ASC_KEY_ID` / `ASC_ISSUER_ID` via env, never committed). Metadata **source of truth lives
+in `docs/appstore/metadata/`** (read directly by `deliver`); lanes: `fastlane metadata` /
+`screenshots` / `store_listing`.
+
+👉 **Read [`docs/appstore/12-appstore-connect-and-fastlane.md`](docs/appstore/12-appstore-connect-and-fastlane.md)** for the full workflow + the `TODO-FILL` items (URLs, seller name, review contact) that gate submission.
+
 ## Other docs
 
 `docs/sensors-show-off.md` (Show-Off Mode design spec), `docs/appstore/` (store metadata

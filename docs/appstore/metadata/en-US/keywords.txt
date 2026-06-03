@@ -1,0 +1,1 @@
+sensor,accelerometer,gyroscope,gps,compass,altimeter,barometer,magnetometer,pedometer,imu,logger,csv

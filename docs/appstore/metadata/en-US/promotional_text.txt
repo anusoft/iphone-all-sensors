@@ -1,0 +1,1 @@
+74 full-screen sensor visualisations in Show-Off Mode. Live IMU, GPS, barometer, magnetometer. CSV/JSON export. HealthKit-aware. No analytics. Everything stays on device.

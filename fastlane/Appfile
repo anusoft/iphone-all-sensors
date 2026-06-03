@@ -1,0 +1,11 @@
+app_identifier("com.1moby.allsensors")
+
+# Authentication uses the App Store Connect API key (.p8), configured via env vars
+# in the Fastfile (ASC_KEY_ID / ASC_ISSUER_ID / ASC_KEY_PATH). No Apple ID needed
+# for metadata/screenshot/build upload.
+#
+# If you ever switch to Apple-ID (Spaceship) auth — e.g. to *create* the app record,
+# which the API cannot do — fill these instead:
+# apple_id("[FILL: your Apple ID email]")
+# itc_team_id("[FILL: App Store Connect team id]")
+# team_id("[FILL: Developer Portal team id]")

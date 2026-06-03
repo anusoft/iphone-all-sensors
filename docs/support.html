@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support — All Sensors</title>
+<meta name="description" content="Support and FAQ for All Sensors: permissions, Show-Off Mode, Logger, HealthKit, Siri Shortcuts, and how to contact us.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="site">
+    <div class="mark">📡</div>
+    <div class="name">All Sensors</div>
+    <nav class="top">
+      <a href="index.html">Home</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </header>
+
+  <h1>Support</h1>
+  <p class="meta">Last updated: 2026-06-03 · App version 1.0 · Maintainer: 1Moby (Anu)</p>
+
+  <div class="panel">
+    <strong>Contact:</strong> <a href="mailto:anu@1moby.com">anu@1moby.com</a> — I read every email personally and aim to reply within 2–3 business days.
+    <br><br>When reporting a problem, please include: (1) iPhone/iPad model + iOS version, (2) app version, (3) which sensor and screen, (4) what you expected vs. what you saw, (5) a screenshot if possible.
+  </div>
+
+  <h2 id="permissions">Permissions troubleshooting</h2>
+  <h3>"I tapped Allow but the screen still shows 'Unavailable'"</h3>
+  <p>iOS sometimes caches an old permission state. Force-quit the app (swipe up from the App Switcher) and reopen. If that doesn't fix it: iOS Settings → Privacy &amp; Security → [the permission] → make sure "All Sensors" is set to your intended value.</p>
+  <h3>"I denied a permission, can I change it?"</h3>
+  <p>Yes. iOS Settings → Privacy &amp; Security → [permission] → All Sensors → toggle. Or: iOS Settings → All Sensors → re-enable any permission listed there.</p>
+  <h3>"Permission prompt didn't appear"</h3>
+  <p>A given permission only prompts the first time the app actually uses that capability. To re-trigger: delete the app and reinstall, then walk through the permission onboarding flow again.</p>
+
+  <h2 id="show-off-mode">Show-Off Mode</h2>
+  <h3>How do I enter it?</h3>
+  <p>Open any sensor's detail screen (tap a sensor card on the dashboard) and tap the gradient banner that says "Show-Off Mode" at the top.</p>
+  <h3>How do I navigate?</h3>
+  <ul>
+    <li><strong>Horizontal swipe</strong> — switch between sensors (21 total)</li>
+    <li><strong>Vertical swipe</strong> (up = next, down = previous) — switch between variants of the current sensor</li>
+    <li><strong>Bottom pills</strong> — tap to jump directly to a variant</li>
+    <li><strong>Top-right grid icon</strong> — opens a sensor index sheet; tap any sensor to jump to it</li>
+    <li><strong>Top-left X</strong> — exit back to the sensor detail screen</li>
+  </ul>
+  <h3>Why does my variant pick reset when I swipe to another sensor?</h3>
+  <p>It doesn't. Each sensor remembers its own selected variant for the duration of the session. Swipe back and the variant you last picked is still active.</p>
+  <h3>How does Show-Off Mode look on iPad?</h3>
+  <p>On iPad, Show-Off Mode scales the visualization up to fill the screen (in both portrait and landscape), so it commands the larger display while keeping the design's proportions.</p>
+
+  <h2 id="logger">Logger</h2>
+  <h3>How do I start a recording?</h3>
+  <p>Logger tab (record icon) → tap "Start Log Session for all sensors" on the dashboard, or open Logger Settings to pick specific sensors and per-sensor sample rates.</p>
+  <h3>What's the format?</h3>
+  <p>Sessions are stored as a SQLite database under your app's <code>Documents/Logging/</code> folder. You can export to CSV (one file per sensor) or JSON (a single file with all samples).</p>
+  <h3>How do I export to my Mac?</h3>
+  <ul>
+    <li><strong>AirDrop</strong> — long-press a session → Share → AirDrop.</li>
+    <li><strong>Files app</strong> — your sessions appear under "On My iPhone → All Sensors → Logging". Drag from Files into Finder over a USB cable.</li>
+    <li><strong>Email / iMessage / any share extension</strong> — long-press session → Share → pick.</li>
+  </ul>
+  <h3>My recording stopped early</h3>
+  <p>iOS can throttle background sensor work to save battery. The app shows a banner when this happens. To minimize throttling: keep the app in the foreground while recording, plug into power, and disable Low Power Mode.</p>
+  <h3>How big can a session get?</h3>
+  <p>A 1-minute recording of all 21 sensors at maximum rate is ~2 MB. A 1-hour recording at default rates (10 Hz for IMU, 1 Hz for slow sensors) is ~30 MB. Storage is your device's storage; the app does not upload anything.</p>
+
+  <h2 id="healthkit">HealthKit</h2>
+  <h3>Why does the Health tab show "No data"?</h3>
+  <p>Either you haven't granted Health permission yet, or your HealthKit store has no data for the requested types. Try moving around with your phone (steps), or check that your Apple Watch is syncing if that's your data source.</p>
+  <h3>Does the app write to HealthKit?</h3>
+  <p>By default, <strong>no</strong>. The app's HealthKit permission is read-only. Logger has an opt-in toggle to write workout sessions; that's the only write path.</p>
+
+  <h2 id="siri">Siri Shortcuts</h2>
+  <ul>
+    <li><strong>Get Sensor Reading</strong> — returns the current value for a sensor you pick</li>
+    <li><strong>Start Sensor Recording</strong> — begins a logger session for the picked sensor</li>
+    <li><strong>Stop Sensor Recording</strong> — ends the active session</li>
+    <li><strong>Export Sensor Data</strong> — exports the most recent session</li>
+  </ul>
+  <p>Add via Shortcuts app → Add Action → search "All Sensors". Or just say "Hey Siri, get the accelerometer reading" once you've added it.</p>
+
+  <h2 id="privacy">Privacy &amp; data</h2>
+  <p>The app does not collect, transmit, or share any of your data. See the full <a href="privacy.html">privacy policy</a>. The only outbound network call is a connectivity test you initiate yourself in the Network sensor.</p>
+
+  <h2>Known issues in v1.0</h2>
+  <ul>
+    <li><strong>Magnetometer baseline</strong> drifts on first launch — wave the phone in a figure-8 once to recalibrate.</li>
+    <li><strong>Pedometer</strong> shows "0 steps" until you've walked at least ~20 steps after install.</li>
+    <li><strong>Bluetooth scanning</strong> stops after ~30 seconds per iOS background-scan policy. Tap "Restart Scan" to resume.</li>
+  </ul>
+  <p>If you hit a different issue, please email <a href="mailto:anu@1moby.com">anu@1moby.com</a> — I'll fix it in 1.0.1.</p>
+
+  <h2>Why this app exists</h2>
+  <p>I built All Sensors because I was teaching myself iOS sensor APIs and couldn't find a single app that exposed them all in one place, honestly, with no marketing fluff. If it's useful to you too, that's great. If something's missing or wrong, write me and I'll fix it. — Anu</p>
+
+  <footer class="site">
+    © 2026 1Moby · <a href="index.html">Home</a> · <a href="privacy.html">Privacy</a>
+  </footer>
+</div>
+</body>
+</html>

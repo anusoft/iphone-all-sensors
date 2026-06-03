@@ -63,3 +63,6 @@ $RECYCLE.BIN/
 *.key
 *.crt
 *.mobileprovision
+*.p8
+fastlane/.env
+fastlane/.env.*

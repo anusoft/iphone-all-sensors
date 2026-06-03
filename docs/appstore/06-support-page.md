@@ -8,9 +8,11 @@ Replace `[FILL: …]` before publishing.
 
 # All Sensors — Support
 
-Last updated: [FILL: 2026-05-15]
+Last updated: 2026-06-03
 App version: 1.0
-Maintainer: [FILL: legal entity / your name]
+Maintainer: 1Moby (Anu)
+
+> Published live at https://anusoft.github.io/iphone-all-sensors/support.html (source: `docs/support.html`).
 
 ## Quick links
 
@@ -25,7 +27,7 @@ Maintainer: [FILL: legal entity / your name]
 
 ## Contact
 
-Email: [FILL: support@yourdomain.com]
+Email: anu@1moby.com
 
 I read every email personally. I aim to reply within 2–3 business days.
 
@@ -75,9 +77,9 @@ Open any sensor's detail screen (tap a sensor card on the dashboard) and tap the
 
 It doesn't. Each sensor remembers its own selected variant for the duration of the session. Swipe back and the variant you last picked is still active.
 
-### Show-Off Mode looks small on my iPad
+### How does Show-Off Mode look on iPad?
 
-That's intentional — the visualizations were designed for an iPhone-shaped frame, so on iPad we present them as a centered card so proportions stay correct. You still get the full screen for the chrome (close button, sensor name, sensor index).
+On iPad, Show-Off Mode scales the visualization up to fill the screen (in both portrait and landscape), so it commands the larger display while keeping the design's proportions.
 
 ---
 
@@ -135,7 +137,7 @@ Add via Shortcuts app → Add Action → search "All Sensors". Or just say "Hey 
 
 ## Privacy
 
-The app does not collect, transmit, or share any of your data. See the full [privacy policy]([FILL: https://yourdomain.com/allsensors/privacy]).
+The app does not collect, transmit, or share any of your data. See the full [privacy policy](https://anusoft.github.io/iphone-all-sensors/privacy.html).
 
 The only outbound network call is a connectivity test you initiate yourself in the Network sensor.
 
@@ -146,7 +148,6 @@ The only outbound network call is a connectivity test you initiate yourself in t
 - **Magnetometer baseline** drifts on first launch — wave the phone in a figure-8 once to recalibrate.
 - **Pedometer** shows "0 steps" until you've walked at least ~20 steps after install.
 - **Bluetooth scanning** stops after ~30 seconds per iOS background-scan policy. Tap "Restart Scan" to resume.
-- **iPad landscape** Show-Off Mode card stays portrait-shaped (this is intentional).
 
 If you hit a different issue, please [contact](#contact) — I'll fix it in 1.0.1.
 
@@ -156,4 +157,4 @@ If you hit a different issue, please [contact](#contact) — I'll fix it in 1.0.
 
 I built All Sensors because I was teaching myself iOS sensor APIs and couldn't find a single app that exposed them all in one place, honestly, with no marketing fluff. If it's useful to you too, that's great. If something's missing or wrong, write me and I'll fix it.
 
-— [FILL: your first name]
+— Anu

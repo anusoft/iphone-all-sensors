@@ -8,9 +8,11 @@ Replace `[FILL: …]` with your real values before publishing.
 
 # Privacy Policy — All Sensors
 
-**Effective date:** [FILL: e.g., 2026-05-15]
-**Developer:** [FILL: legal entity name — same as Seller / Developer Name in App Store]
-**Contact:** [FILL: privacy@yourdomain.com]
+**Effective date:** 2026-06-03
+**Developer:** 1Moby
+**Contact:** anu@1moby.com
+
+> Published live at https://anusoft.github.io/iphone-all-sensors/privacy.html (source: `docs/privacy.html`).
 
 ## TL;DR
 
@@ -90,7 +92,7 @@ Because we don't collect anything, there's nothing to access, correct, or delete
 - **Delete a single session:** Logger → Sessions, swipe → Delete
 - **Delete all data:** Delete the app from your device. iOS removes the sandbox.
 
-If you have a question, write to [FILL: privacy@yourdomain.com] and we'll respond within 30 days.
+If you have a question, write to anu@1moby.com and we'll respond within 30 days.
 
 ## Changes to this policy
 
@@ -102,9 +104,9 @@ This policy is written for users worldwide. To the extent GDPR (EU/UK), CCPA (Ca
 
 ## Contact
 
-[FILL: legal entity name]
-[FILL: postal address — required by some jurisdictions, e.g., for GDPR]
-Email: [FILL: privacy@yourdomain.com]
+1Moby
+Postal address available on request by email.
+Email: anu@1moby.com
 
 ---
 

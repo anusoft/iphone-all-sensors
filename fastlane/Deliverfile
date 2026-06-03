@@ -1,0 +1,23 @@
+# Shared `deliver` configuration for "All Sensors".
+# Single source of truth for paths so lanes don't repeat them.
+#
+# Metadata text lives in docs/ (the human source of truth) and is read directly
+# from there — see docs/appstore/metadata/. Screenshots are staged into
+# fastlane/screenshots/ by the `prepare_screenshots` lane (that folder is gitignored).
+#
+# Paths are relative to the repo root (where you run `fastlane`).
+
+app_identifier("com.1moby.allsensors")
+
+metadata_path("./docs/appstore/metadata")
+screenshots_path("./fastlane/screenshots")
+
+# This project uploads the binary via gym/pilot, not via deliver.
+skip_binary_upload(true)
+overwrite_screenshots(true)
+
+# Non-interactive (no HTML preview prompt).
+force(true)
+
+# Don't auto-submit for review; push to the draft and review in the web UI first.
+submit_for_review(false)
