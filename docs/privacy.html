@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — All Sensors</title>
+<meta name="description" content="All Sensors privacy policy: no data collection, no analytics, no servers. Every sensor reading stays on your device.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="site">
+    <div class="mark">📡</div>
+    <div class="name">All Sensors</div>
+    <nav class="top">
+      <a href="index.html">Home</a>
+      <a href="support.html">Support</a>
+    </nav>
+  </header>
+
+  <h1>Privacy Policy</h1>
+  <p class="meta"><strong>Effective date:</strong> 2026-06-03 &nbsp;·&nbsp; <strong>Developer:</strong> 1Moby &nbsp;·&nbsp; <strong>Contact:</strong> <a href="mailto:anu@1moby.com">anu@1moby.com</a></p>
+
+  <div class="panel">
+    <strong>TL;DR</strong> — All Sensors does not collect, transmit, or share any of your data. Every sensor reading is processed and stored on your device. We have no servers, no analytics, no advertising SDKs, no crash reporters. The only outbound network call is a connectivity test you initiate yourself.
+  </div>
+
+  <h2>What the app does</h2>
+  <p>All Sensors reads data from your iPhone or iPad's built-in sensors and APIs — accelerometer, gyroscope, magnetometer, GPS, barometer, motion activity classifier, pedometer, altimeter, battery monitor, thermal state monitor, processor info, memory monitor, disk usage, Wi-Fi/cellular path info, Bluetooth scanner, camera capability info, microphone audio levels, ambient light estimate, proximity sensor, screen brightness, and the torch — and shows them to you in real time on your device.</p>
+  <p>Optionally, you can record a logging session: pick which sensors to capture, set a sample rate, tap record. Sessions are saved to your device's app-private storage (sandbox) and you can browse, view, share, or delete them at any time.</p>
+
+  <h2>What we collect</h2>
+  <p><strong>Nothing.</strong> The app does not have a backend service. We do not collect your name, email, phone number, location, sensor readings, health data, device identifiers, IP address, advertising identifier, or anything else. We do not have a database that stores your data on a remote server.</p>
+
+  <h2>What stays on your device</h2>
+  <ul>
+    <li><strong>Logger sessions</strong> — sensor recordings you intentionally start, stored as a SQLite database under your app's private <code>Documents/Logging/</code> folder. You can browse, share, export (CSV/JSON), or delete these from inside the app.</li>
+    <li><strong>App preferences</strong> — small UserDefaults entries: which sensors are enabled in the logger, your selected theme, language, whether you've completed the permission onboarding flow.</li>
+    <li><strong>Cached HealthKit reads</strong> — when you view the Health tab, the app reads from HealthKit into RAM to render charts. Nothing is persisted.</li>
+  </ul>
+  <p>When you delete the app, iOS deletes everything in its sandbox. There is no copy on a server because we have no server.</p>
+
+  <h2>Permissions we request, and why</h2>
+  <table>
+    <thead><tr><th>Permission</th><th>What it lets the app do</th><th>What we don't do with it</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Location (When In Use)</strong></td><td>Display your GPS coordinates, altitude, speed, course, and compass heading on the GPS, Compass, and Show-Off Mode screens.</td><td>We do not log location anywhere outside your device, share it, or send it to ad networks.</td></tr>
+      <tr><td><strong>Motion &amp; Fitness</strong></td><td>Read accelerometer, gyroscope, magnetometer, device-motion fusion, pedometer, and motion activity classifier.</td><td>We do not transmit motion data off device.</td></tr>
+      <tr><td><strong>Camera</strong></td><td>Enumerate available cameras and zoom levels for the Camera sensor view, and toggle the torch (flashlight).</td><td>We do not capture photos, video frames, or save anything from the camera.</td></tr>
+      <tr><td><strong>Microphone</strong></td><td>Read audio input device list and live audio levels (VU meter) for the Camera → Audio variant.</td><td>We do not record audio to disk or transmit it.</td></tr>
+      <tr><td><strong>Bluetooth</strong></td><td>Scan for nearby Bluetooth peripherals to display them in the Bluetooth sensor view.</td><td>We do not connect, pair, or transmit data.</td></tr>
+      <tr><td><strong>Local Network</strong></td><td>Read your Wi-Fi network type and a basic path snapshot to display in the Network sensor view.</td><td>We do not scan your network or send data over it.</td></tr>
+      <tr><td><strong>HealthKit (read)</strong></td><td>Read steps, heart rate, active energy, distance, and sleep samples to display on the Health tab.</td><td>We do not write back unless you explicitly opt in.</td></tr>
+      <tr><td><strong>HealthKit (write)</strong></td><td>If you opt in, the app can write workout sessions you create via Logger. Off by default.</td><td>We do not write anything without your explicit action.</td></tr>
+      <tr><td><strong>Face ID</strong> (capability info)</td><td>Display whether Face ID is available — does NOT authenticate.</td><td>We never store biometric templates; iOS handles all biometric data.</td></tr>
+    </tbody>
+  </table>
+  <p>You can change every one of these at any time in iOS Settings → Privacy &amp; Security → [permission] → All Sensors.</p>
+
+  <h2>Network usage</h2>
+  <p>The app makes <strong>no</strong> outbound network requests as part of normal use. There are two exceptions, both initiated by you:</p>
+  <ul>
+    <li><strong>Connectivity test ping.</strong> When you open the Network sensor's "Throughput" variant and tap "Run Test", the app sends a single HTTPS request to <code>https://1.1.1.1/</code> and reads the round-trip time. The response status code is shown to you and discarded.</li>
+    <li><strong>Outbound traffic from system frameworks.</strong> Apple's frameworks may perform their own background activity (e.g., HealthKit syncing across your devices). That's iOS, not the app, and you control it from iOS Settings.</li>
+  </ul>
+  <p>The app <strong>never</strong> phones home with telemetry or analytics, loads ads, or communicates with any server we operate (we do not operate any).</p>
+
+  <h2>Children</h2>
+  <p>The app is not directed at children under 13. We do not knowingly collect any data — including from anyone under 13 — because we do not collect data at all.</p>
+
+  <h2>How long we keep data</h2>
+  <p>We don't keep any data, because we don't collect any. Locally stored data (logger sessions, preferences) lives on your device until you delete it or uninstall the app.</p>
+
+  <h2>Sharing, sale &amp; tracking</h2>
+  <p>We do not share or sell data — there is no data to share. We do not use, allow, or include any third-party advertising or analytics SDKs, and we do not track users across apps or websites, so the iOS App Tracking Transparency prompt is not displayed.</p>
+
+  <h2>Your rights</h2>
+  <p>Because we don't collect anything, there's nothing to access, correct, or delete from a server. Any local data lives on your device under your control:</p>
+  <ul>
+    <li><strong>View / export:</strong> Logger → Sessions, swipe a session → Export</li>
+    <li><strong>Delete a single session:</strong> Logger → Sessions, swipe → Delete</li>
+    <li><strong>Delete all data:</strong> Delete the app from your device. iOS removes the sandbox.</li>
+  </ul>
+  <p>If you have a question, write to <a href="mailto:anu@1moby.com">anu@1moby.com</a> and we'll respond within 30 days.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If we materially change how the app handles data — for example, by adding a backend service, an analytics SDK, or a sync feature — we will update this policy and bump the effective date at the top, <strong>before</strong> any such change ships. Material changes will be summarized in the version's "What's New" notes.</p>
+
+  <h2>Jurisdiction &amp; legal basis</h2>
+  <p>This policy is written for users worldwide. To the extent GDPR (EU/UK), CCPA (California), LGPD (Brazil), PIPL (China), or similar laws apply: the legal basis for any local processing is your consent, given by installing and using the app, and the processing is necessary to provide the functionality you've requested. The lawful basis for the optional connectivity test is your express action of running it.</p>
+
+  <h2>Contact</h2>
+  <p>1Moby<br>Email: <a href="mailto:anu@1moby.com">anu@1moby.com</a><br>Postal address available on request by email.</p>
+
+  <footer class="site">
+    © 2026 1Moby · <a href="index.html">Home</a> · <a href="support.html">Support</a>
+  </footer>
+</div>
+</body>
+</html>
