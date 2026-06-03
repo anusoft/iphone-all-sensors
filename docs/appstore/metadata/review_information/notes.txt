@@ -1,0 +1,30 @@
+Thanks for reviewing All Sensors!
+
+This app is a sensor visualization utility — it reads from device sensors and displays them in real time. There is no account, no sign-in, no in-app purchase, no ads, no remote backend, and no analytics SDK. Everything runs locally.
+
+To see the headline feature in 30 seconds:
+
+1. Launch the app — Dashboard appears with all 21 sensors grouped (Motion, Location, Environment, System, Connectivity, Camera).
+2. Tap any sensor card (e.g. "Accelerometer", "GPS Location", or "Battery"). You'll land on its detail screen with charts and live values.
+3. Tap the gradient banner labeled "Show-Off Mode" at the top of the detail screen. The sensor takes over fullscreen as a theatrical visualization.
+4. In Show-Off Mode: swipe horizontally to switch sensors, swipe vertically to cycle the variant within a sensor, tap the grid icon (top-right) to jump to any of the 21 sensors. Tap X (top-left) to exit.
+
+Other features worth noting:
+
+• Logger tab (record icon, last tab): records sensor samples to a local SQLite, exports to CSV/JSON via the share sheet. Sessions live entirely on device under the app's sandbox.
+• Health tab: reads from HealthKit (if granted) for steps, heart rate, active energy, distance. Read-only by default.
+• Siri Shortcuts: "Get Sensor Reading", "Start Sensor Recording", "Stop Sensor Recording", "Export Sensor Data" are wired as App Intents.
+
+Permissions:
+The app requests Location, Motion, Camera, Microphone, Bluetooth, Local Network, and HealthKit (read). Each permission is gated to the screens that need it. The app continues to function even if a permission is denied — that sensor's detail just shows "Unavailable" with a deep-link to iOS Settings.
+
+Network:
+The app makes ZERO outbound network requests in normal use. The Network sensor's "Throughput" variant has a button to ping 1.1.1.1 (Cloudflare); that is user-initiated, returns a status code, and is not logged or transmitted further.
+
+Why this isn't another sensor-app clone:
+Show-Off Mode contains 74 unique full-screen visualizations across the 21 sensors — flight HUDs, compass roses, gravity wells, oscilloscopes, fuel gauges, lighthouses, etc. — designed as a single visual system. We could not find another sensor app on the store with a comparable presentation layer.
+
+If anything is unclear or you'd like a video walkthrough, please email anu@1moby.com — I'll send you a 60-second screen recording immediately.
+
+Thanks again,
+Anu

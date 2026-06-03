@@ -103,12 +103,19 @@ Support / marketing / privacy URLs are **live** on GitHub Pages (repo serves `ma
 `copyright.txt` = `2026 1Moby`. The page content uses developer `1Moby` / contact
 `contact@1moby.com` / effective date `2026-06-03`.
 
+### Contact emails — two distinct addresses
+
+| Use | Email | Where |
+|-----|-------|-------|
+| **Public** (website, app, store listing) | `contact@1moby.com` | privacy.html / support.html / landing page |
+| **Apple-internal** (App Review contact + reviewer notes) | `anu@1moby.com` | `metadata/review_information/` ([07](07-review-information.md)) |
+
 ### ⚠️ Still TODO before submission
 
-- **Confirm the legal entity name** — `1Moby` is used as the trade/developer name; verify it
-  matches the exact entity registered with your Apple Developer Program (see [01](01-app-information.md)).
-- App Review contact + demo account ([07-review-information.md](07-review-information.md)).
-- Public contact mailbox is `contact@1moby.com` — make sure it's monitored.
+- App Review contact: fill **last name** + **phone** in `metadata/review_information/`
+  (`last_name.txt`, `phone_number.txt` are `TODO-FILL`); first name/email/notes are set.
+- Make sure both mailboxes are monitored (`contact@1moby.com` public, `anu@1moby.com` for Apple).
+- (Legal entity name `1Moby` confirmed by owner.)
 
 ### Consistency note
 

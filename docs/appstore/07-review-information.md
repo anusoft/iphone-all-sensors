@@ -12,12 +12,14 @@ App Store Connect → App Store → Version → "App Review Information". This i
 
 | Field        | Value                              |
 |--------------|------------------------------------|
-| First name   | `[FILL: your first name]`          |
+| First name   | `Anu`                              |
 | Last name    | `[FILL: your last name]`           |
 | Phone number | `[FILL: +country code with no spaces, e.g., +66812345678]` |
-| Email        | `[FILL: yourname@yourdomain.com]` |
+| Email        | `anu@1moby.com` |
 
-This must be a real, monitored email. Apple sends the rejection or "we have a question" message here. Watch it for 5–7 days after submission.
+Apple-facing only (reviewers email this — **not** shown publicly). The public/app contact is
+`contact@1moby.com`; this Apple contact is `anu@1moby.com`. It must be a real, monitored email —
+Apple sends the rejection or "we have a question" message here. Watch it for 5–7 days after submission.
 
 ## Notes for the reviewer (paste into "Notes")
 
@@ -48,10 +50,10 @@ The app makes ZERO outbound network requests in normal use. The Network sensor's
 Why this isn't another sensor-app clone:
 Show-Off Mode contains 74 unique full-screen visualizations across the 21 sensors — flight HUDs, compass roses, gravity wells, oscilloscopes, fuel gauges, lighthouses, etc. — designed as a single visual system. We could not find another sensor app on the store with a comparable presentation layer.
 
-If anything is unclear or you'd like a video walkthrough, please email [FILL: yourname@yourdomain.com] — I'll send you a 60-second screen recording immediately.
+If anything is unclear or you'd like a video walkthrough, please email anu@1moby.com — I'll send you a 60-second screen recording immediately.
 
 Thanks again,
-[FILL: your first name]
+Anu
 ```
 
 ## Attachments (optional but recommended)
