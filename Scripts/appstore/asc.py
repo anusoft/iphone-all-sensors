@@ -144,7 +144,7 @@ def cmd_age(_):
     did = age_declaration_id(aid)
     if not did:
         print("no ageRatingDeclaration found on appInfo"); return
-    attrs = {  # everything NONE/false -> 4+
+    attrs = {  # everything NONE/false -> 4+ (full current schema; PATCH must send all required)
         "violenceCartoonOrFantasy": "NONE", "violenceRealistic": "NONE",
         "violenceRealisticProlongedGraphicOrSadistic": "NONE",
         "profanityOrCrudeHumor": "NONE", "matureOrSuggestiveThemes": "NONE",
@@ -153,6 +153,11 @@ def cmd_age(_):
         "sexualContentOrNudity": "NONE", "sexualContentGraphicAndNudity": "NONE",
         "gambling": False, "unrestrictedWebAccess": False, "kidsAgeBand": None,
         "contests": "NONE",
+        # Newer required attributes (Apple expanded the age-rating questionnaire in 2025):
+        "gunsOrOtherWeapons": "NONE",          # enum
+        "ageAssurance": False, "userGeneratedContent": False, "lootBox": False,
+        "parentalControls": False, "advertising": False,
+        "healthOrWellnessTopics": False, "messagingAndChat": False,  # all booleans
     }
     st, _ = api("PATCH", f"/v1/ageRatingDeclarations/{did}",
                 {"data": {"type": "ageRatingDeclarations", "id": did, "attributes": attrs}}, raw_ok=True)

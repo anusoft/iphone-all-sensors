@@ -75,7 +75,12 @@ python3 scripts/appstore/asc.py submit                               # cancels s
   it 409s the localization PATCH. Omit for v1.0 (fastlane already skips it; `asc.py set-text`
   only sends it if present in the JSON).
 - **Age rating is app-INFO level**, not the version (`appInfos/{id}` → `ageRatingDeclaration`,
-  UPDATE only). `asc.py age-rating-4plus` handles it.
+  UPDATE only; the resource has **no GET-instance**). `asc.py age-rating-4plus` handles it.
+- **Age-rating schema expanded (2025):** the PATCH must now also include `ageAssurance`,
+  `userGeneratedContent`, `lootBox`, `parentalControls`, `advertising`, `healthOrWellnessTopics`,
+  `messagingAndChat` (all **booleans** → `false`) and `gunsOrOtherWeapons` (enum → `NONE`). A PATCH
+  must send the **full required set** or it 409s ("missing required attribute"). `asc.py` now
+  sends them all (verified 200 → 4+).
 - **Screenshot display types** (confirmed for this app): 6.9″ iPhone (1320×2868) → `APP_IPHONE_67`;
   13″ iPad (2064×2752) → `APP_IPAD_PRO_3GEN_129`.
 - **Resubmitting after rejection**: the rejected `reviewSubmission` stays `UNRESOLVED_ISSUES` and
