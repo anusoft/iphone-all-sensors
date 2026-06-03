@@ -10,7 +10,7 @@ Replace `[FILL: …]` with your real values before publishing.
 
 **Effective date:** 2026-06-03
 **Developer:** 1Moby
-**Contact:** anu@1moby.com
+**Contact:** contact@1moby.com
 
 > Published live at https://anusoft.github.io/iphone-all-sensors/privacy.html (source: `docs/privacy.html`).
 
@@ -92,7 +92,7 @@ Because we don't collect anything, there's nothing to access, correct, or delete
 - **Delete a single session:** Logger → Sessions, swipe → Delete
 - **Delete all data:** Delete the app from your device. iOS removes the sandbox.
 
-If you have a question, write to anu@1moby.com and we'll respond within 30 days.
+If you have a question, write to contact@1moby.com and we'll respond within 30 days.
 
 ## Changes to this policy
 
@@ -106,7 +106,7 @@ This policy is written for users worldwide. To the extent GDPR (EU/UK), CCPA (Ca
 
 1Moby
 Postal address available on request by email.
-Email: anu@1moby.com
+Email: contact@1moby.com
 
 ---
 

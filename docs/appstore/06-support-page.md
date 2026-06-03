@@ -27,7 +27,7 @@ Maintainer: 1Moby (Anu)
 
 ## Contact
 
-Email: anu@1moby.com
+Email: contact@1moby.com
 
 I read every email personally. I aim to reply within 2–3 business days.
 

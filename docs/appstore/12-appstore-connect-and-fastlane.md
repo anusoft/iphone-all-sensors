@@ -101,14 +101,14 @@ Support / marketing / privacy URLs are **live** on GitHub Pages (repo serves `ma
 | `en-US/marketing_url.txt` | https://anusoft.github.io/iphone-all-sensors/ | `docs/index.html` |
 
 `copyright.txt` = `2026 1Moby`. The page content uses developer `1Moby` / contact
-`anu@1moby.com` / effective date `2026-06-03`.
+`contact@1moby.com` / effective date `2026-06-03`.
 
 ### ⚠️ Still TODO before submission
 
 - **Confirm the legal entity name** — `1Moby` is used as the trade/developer name; verify it
   matches the exact entity registered with your Apple Developer Program (see [01](01-app-information.md)).
 - App Review contact + demo account ([07-review-information.md](07-review-information.md)).
-- (Optional) a dedicated `support@`/`privacy@` mailbox instead of `anu@1moby.com`.
+- Public contact mailbox is `contact@1moby.com` — make sure it's monitored.
 
 ### Consistency note
 
