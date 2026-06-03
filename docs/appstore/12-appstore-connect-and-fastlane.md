@@ -115,7 +115,7 @@ Support / marketing / privacy URLs are **live** on GitHub Pages (repo serves `ma
 - Create the **app record** in App Store Connect (manual — the API can't), then run
   `fastlane store_listing`.
 - Make sure both mailboxes are monitored (`contact@1moby.com` public, `anu@1moby.com` for Apple).
-- (Legal entity name `1Moby` confirmed; App Review contact = Anu Anu / +6689188052 / anu@1moby.com.)
+- (Legal entity name `1Moby` confirmed; App Review contact = Anu Anu / +66819188052 / anu@1moby.com.)
 
 ### Consistency note
 
