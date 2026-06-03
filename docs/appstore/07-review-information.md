@@ -13,8 +13,8 @@ App Store Connect → App Store → Version → "App Review Information". This i
 | Field        | Value                              |
 |--------------|------------------------------------|
 | First name   | `Anu`                              |
-| Last name    | `[FILL: your last name]`           |
-| Phone number | `[FILL: +country code with no spaces, e.g., +66812345678]` |
+| Last name    | `Anu`                              |
+| Phone number | `+6689188052`                      |
 | Email        | `anu@1moby.com` |
 
 Apple-facing only (reviewers email this — **not** shown publicly). The public/app contact is

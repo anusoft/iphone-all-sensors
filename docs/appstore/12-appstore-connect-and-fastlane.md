@@ -110,12 +110,12 @@ Support / marketing / privacy URLs are **live** on GitHub Pages (repo serves `ma
 | **Public** (website, app, store listing) | `contact@1moby.com` | privacy.html / support.html / landing page |
 | **Apple-internal** (App Review contact + reviewer notes) | `anu@1moby.com` | `metadata/review_information/` ([07](07-review-information.md)) |
 
-### ⚠️ Still TODO before submission
+### Still TODO before submission
 
-- App Review contact: fill **last name** + **phone** in `metadata/review_information/`
-  (`last_name.txt`, `phone_number.txt` are `TODO-FILL`); first name/email/notes are set.
+- Create the **app record** in App Store Connect (manual — the API can't), then run
+  `fastlane store_listing`.
 - Make sure both mailboxes are monitored (`contact@1moby.com` public, `anu@1moby.com` for Apple).
-- (Legal entity name `1Moby` confirmed by owner.)
+- (Legal entity name `1Moby` confirmed; App Review contact = Anu Anu / +6689188052 / anu@1moby.com.)
 
 ### Consistency note
 
