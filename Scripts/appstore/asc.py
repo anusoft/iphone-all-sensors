@@ -18,6 +18,8 @@ Subcommands:
   status                                  Summarise app / version / build / metadata
   set-text   --locale en-US --json FILE   Patch version + appInfo localizations from JSON
   age-rating-4plus                        Declare no objectionable content (-> 4+)
+  content-rights                          Declare DOES_NOT_USE_THIRD_PARTY_CONTENT
+  price-free [--territory USA]            Create a $0 (Free) price schedule
   screenshots --device {iphone69|ipad13} --replace FILE...   Upload a screenshot set
   encryption --build-version N            Declare non-exempt encryption = NO on a build
   wait-build  --build-version N           Poll until the build is PROCESSING -> VALID
@@ -163,6 +165,30 @@ def cmd_age(_):
                 {"data": {"type": "ageRatingDeclarations", "id": did, "attributes": attrs}}, raw_ok=True)
     print("age rating PATCH", st)
 
+def cmd_content_rights(_):
+    aid = app_id()
+    st, _ = api("PATCH", f"/v1/apps/{aid}",
+                {"data": {"type": "apps", "id": aid,
+                          "attributes": {"contentRightsDeclaration": "DOES_NOT_USE_THIRD_PARTY_CONTENT"}}})
+    print("content rights PATCH", st)
+
+def cmd_price_free(args):
+    # Create a $0 (Free) price schedule. Find the territory's free appPricePoint, then POST an
+    # appPriceSchedule referencing a new appPrice via the "${p}" temp-id included-resource pattern.
+    aid = app_id()
+    _, pp = api("GET", f"/v1/apps/{aid}/appPricePoints?filter[territory]={args.territory}&limit=200")
+    free = next((p["id"] for p in pp.get("data", []) if p["attributes"].get("customerPrice") in ("0", "0.00", "0.0")), None)
+    if not free:
+        sys.exit(f"no $0 price point found for {args.territory}")
+    body = {"data": {"type": "appPriceSchedules",
+                     "relationships": {"app": {"data": {"type": "apps", "id": aid}},
+                                       "baseTerritory": {"data": {"type": "territories", "id": args.territory}},
+                                       "manualPrices": {"data": [{"type": "appPrices", "id": "${p}"}]}}},
+            "included": [{"type": "appPrices", "id": "${p}", "attributes": {"startDate": None},
+                          "relationships": {"appPricePoint": {"data": {"type": "appPricePoints", "id": free}}}}]}
+    st, _ = api("POST", "/v1/appPriceSchedules", body, raw_ok=True)
+    print("price schedule (Free) POST", st, "(409 = already set, benign)")
+
 def _displaytype_for(loc_id, device):
     # find existing set or determine the accepted enum
     _, sets = api("GET", f"/v1/appStoreVersionLocalizations/{loc_id}/appScreenshotSets")
@@ -285,6 +311,8 @@ def main():
     sub.add_parser("status").set_defaults(fn=cmd_status)
     s = sub.add_parser("set-text"); s.add_argument("--locale", default="en-US"); s.add_argument("--json", required=True); s.set_defaults(fn=cmd_set_text)
     sub.add_parser("age-rating-4plus").set_defaults(fn=cmd_age)
+    sub.add_parser("content-rights").set_defaults(fn=cmd_content_rights)
+    s = sub.add_parser("price-free"); s.add_argument("--territory", default="USA"); s.set_defaults(fn=cmd_price_free)
     s = sub.add_parser("screenshots"); s.add_argument("--device", required=True, choices=list(DISPLAY_TYPES)); s.add_argument("--locale", default="en-US"); s.add_argument("--replace", action="store_true"); s.add_argument("files", nargs="+"); s.set_defaults(fn=cmd_screenshots)
     s = sub.add_parser("encryption"); s.add_argument("--build-version", required=True); s.set_defaults(fn=cmd_encryption)
     s = sub.add_parser("wait-build"); s.add_argument("--build-version", required=True); s.set_defaults(fn=cmd_wait_build)

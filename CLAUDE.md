@@ -67,8 +67,10 @@ in `docs/appstore/metadata/`** (read directly by `deliver`); lanes: `fastlane me
 
 For **build → upload → age-rating → submit-for-review via the App Store Connect REST API**, use
 [`docs/appstore/13-api-publish-runbook.md`](docs/appstore/13-api-publish-runbook.md) with the
-helper **`scripts/appstore/asc.py`** (`status` / `age-rating-4plus` / `wait-build` / `encryption` /
-`attach-build` / `submit`). App id `6776145177`, team `D62Y8JVXB9`. ⚠️ The runbook flags the
+helper **`scripts/appstore/asc.py`** (`status` / `age-rating-4plus` / `content-rights` /
+`price-free` / `wait-build` / `encryption` / `attach-build` / `submit`). App id `6776145177`,
+team `D62Y8JVXB9`. App Privacy is the one UI-only step that gates `submit` (publish "Data Not
+Collected"). 1.0 build 1 submitted 2026-06-03. ⚠️ The runbook flags the
 **Guideline 4.3(a) "Design–Spam"** risk for this multi-app account — lead with Show-Off Mode (74
 visualizations) + fully-on-device differentiation; Resolution Center replies are manual.
 

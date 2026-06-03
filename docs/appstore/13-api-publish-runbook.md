@@ -63,9 +63,12 @@ export ASC_KEY_ID=Y7U2DJCZQK ASC_ISSUER_ID=69a6de71-ebf1-47e3-e053-5b8c7c11a4d1
 # asc.py can also do them if needed:
 python3 scripts/appstore/asc.py status
 python3 scripts/appstore/asc.py age-rating-4plus                     # -> 4+ (all NONE/false)
+python3 scripts/appstore/asc.py content-rights                       # DOES_NOT_USE_THIRD_PARTY_CONTENT
+python3 scripts/appstore/asc.py price-free                           # create a $0 (Free) price schedule, base USA
 python3 scripts/appstore/asc.py wait-build  --build-version 1        # poll until VALID
-python3 scripts/appstore/asc.py encryption  --build-version 1        # usesNonExemptEncryption=false
+python3 scripts/appstore/asc.py encryption  --build-version 1        # only if Info.plist key absent (we set it)
 python3 scripts/appstore/asc.py attach-build --build-version 1       # attach build to the editable version
+# --> Do the manual App Privacy step in the UI here (see below), THEN:
 python3 scripts/appstore/asc.py submit                               # cancels stale rejected sub, then submits
 ```
 
@@ -88,6 +91,24 @@ python3 scripts/appstore/asc.py submit                               # cancels s
   version to a fresh submission. `asc.py submit` does this automatically.
 - **Encryption PATCH 409 "value already set"** is benign.
 - **`xcrun altool`** is the upload path (the bare `altool` isn't on PATH; always invoke via `xcrun`).
+- **Unused `UIBackgroundModes` fails the UPLOAD** — `altool` rejected the build with
+  *"Info.plist key 'BGTaskSchedulerPermittedIdentifiers' must contain … when 'UIBackgroundModes' has
+  'processing'."* All Sensors registers no `BGTaskScheduler`/background-location/fetch, so the modes
+  were unused; **removed `UIBackgroundModes` entirely** (foreground sensor reads are unaffected).
+  Unused `location`/`fetch` also commonly trigger review rejection. Only re-add a mode if the code
+  truly uses it (and `processing` needs `BGTaskSchedulerPermittedIdentifiers`).
+- **`ITSAppUsesNonExemptEncryption=NO` in Info.plist** (added) → the build self-declares export
+  compliance; no per-build `encryption` step and no export-compliance prompt at submit.
+- **Submit add-item 409 `STATE_ERROR.ENTITY_STATE_INVALID` ("this resource cannot be reviewed")**
+  is the API's *vague* catch-all for "the version has unmet required items" — it does **not**
+  enumerate them. Open the version page / click **Add for Review** in the UI to see the red list.
+  For this app the blockers were **App Privacy** + **Pricing** (now scripted via `price-free`).
+- **App Privacy must be PUBLISHED, not just answered** — selecting "Data Not Collected" isn't
+  enough; you must click **Publish** on the App Privacy page, and it takes a moment to propagate
+  before `submit` succeeds.
+- **Pricing & content-rights ARE API-automatable** (the older runbook called pricing manual):
+  `asc.py content-rights` and `asc.py price-free` (the latter finds the territory's `$0`
+  `appPricePoint` and POSTs an `appPriceSchedule` using the `${temp-id}` included-resource pattern).
 
 ## ⚠️ Guideline 4.3(a) "Design – Spam" risk — READ BEFORE SUBMITTING
 
@@ -108,9 +129,19 @@ differentiation argument there; don't resubmit unchanged.
 
 ## Still MANUAL (no reliable public API — do in the App Store Connect UI)
 
+- **App Privacy** data-collection ("nutrition label") — answer "No data collected" and **Publish**.
+  This is Admin-only and has no public API; it's the one step that gates `submit`. Direct URL:
+  `https://appstoreconnect.apple.com/apps/6776145177/distribution/privacy`.
 - **Resolution Center** rejection reasons/replies.
-- **App Privacy** data-collection ("nutrition label") — declare **Data Not Collected**.
 - **Agreements / Tax / Banking** — sign the **Free Apps Agreement** (required before a free app
   goes live; not required to submit).
-- **Pricing = Free / Availability** and the **release choice** (Manual recommended for v1.0) —
+- **Release choice** after approval (Manual recommended for v1.0) —
   see [10-categories-pricing-availability.md](10-categories-pricing-availability.md).
+  *(Pricing = Free and content-rights are now scripted — see `asc.py price-free` / `content-rights`.)*
+
+## Submission record
+
+- **2026-06-03** — All Sensors **1.0 (build 1)** submitted via this flow → state
+  `WAITING_FOR_REVIEW`. Headless archive/export/upload (cloud-signed, admin key) after fixing the
+  `UIBackgroundModes` upload rejection; age-rating 4+, content-rights, Free pricing, review contact
+  set via `asc.py`; App Privacy "Data Not Collected" published in the UI; submitted via `asc.py submit`.
