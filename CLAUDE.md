@@ -63,7 +63,14 @@ using the App Store Connect API key (`~/.appstoreconnect/private_keys/AuthKey_<i
 in `docs/appstore/metadata/`** (read directly by `deliver`); lanes: `fastlane metadata` /
 `screenshots` / `store_listing`.
 
-👉 **Read [`docs/appstore/12-appstore-connect-and-fastlane.md`](docs/appstore/12-appstore-connect-and-fastlane.md)** for the full workflow + the `TODO-FILL` items (URLs, seller name, review contact) that gate submission.
+👉 **Read [`docs/appstore/12-appstore-connect-and-fastlane.md`](docs/appstore/12-appstore-connect-and-fastlane.md)** for the fastlane metadata/screenshot workflow.
+
+For **build → upload → age-rating → submit-for-review via the App Store Connect REST API**, use
+[`docs/appstore/13-api-publish-runbook.md`](docs/appstore/13-api-publish-runbook.md) with the
+helper **`scripts/appstore/asc.py`** (`status` / `age-rating-4plus` / `wait-build` / `encryption` /
+`attach-build` / `submit`). App id `6776145177`, team `D62Y8JVXB9`. ⚠️ The runbook flags the
+**Guideline 4.3(a) "Design–Spam"** risk for this multi-app account — lead with Show-Off Mode (74
+visualizations) + fully-on-device differentiation; Resolution Center replies are manual.
 
 ## Other docs
 
