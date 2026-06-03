@@ -8,12 +8,6 @@ struct LoggerStatusHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Image(systemName: "circle.fill")
-                    .foregroundStyle(.green)
-                    .font(.caption2)
-                Text("\(loggingService.continuousActiveCount()) " + localization.t("logger.continuousActive"))
-            }
-            HStack {
                 Image(systemName: loggingService.activeSessionDisplayID != nil ? "record.circle.fill" : "circle")
                     .foregroundStyle(loggingService.activeSessionDisplayID != nil ? .red : .secondary)
                 Text(loggingService.activeSessionDisplayID != nil

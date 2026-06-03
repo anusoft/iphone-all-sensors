@@ -5,6 +5,8 @@ import Combine
 @MainActor
 class HealthSensorManager: ObservableObject {
     private let healthStore = HKHealthStore()
+    static let authorizationRequestedKey = "healthAuthorizationRequested"
+    private let authorizationRequestedKey = HealthSensorManager.authorizationRequestedKey
 
     /// Combine publisher emitting per-metric samples for the LoggingService.
     let samplePublisher = PassthroughSubject<SensorSample, Never>()
@@ -37,10 +39,33 @@ class HealthSensorManager: ObservableObject {
     @Published var bloodType: String = "Not Set"
 
     @Published var isHealthDataAvailable = false
-    @Published var authorizationStatus: String = "Not Authorized"
+    @Published var authorizationStatus: String = "Needs Permission"
     @Published var isAuthorized = false
     @Published var authorizationError: String?
+    @Published var hasRequestedAuthorization: Bool
+    @Published var latestFetchStatus: String = "Health data has not been loaded yet."
     private var isStarted = false
+
+    init() {
+        hasRequestedAuthorization = UserDefaults.standard.bool(forKey: authorizationRequestedKey)
+        isHealthDataAvailable = HKHealthStore.isHealthDataAvailable()
+        authorizationStatus = Self.authorizationStatusText(
+            isHealthDataAvailable: isHealthDataAvailable,
+            authorizationRequested: hasRequestedAuthorization,
+            authorizationError: nil
+        )
+        isAuthorized = hasRequestedAuthorization && isHealthDataAvailable
+    }
+
+    nonisolated static func authorizationStatusText(
+        isHealthDataAvailable: Bool,
+        authorizationRequested: Bool,
+        authorizationError: String?
+    ) -> String {
+        if authorizationError != nil { return "Error" }
+        guard isHealthDataAvailable else { return "Unavailable" }
+        return authorizationRequested ? "Ready" : "Needs Permission"
+    }
 
     func startUpdates() {
         guard !isStarted else {
@@ -57,17 +82,12 @@ class HealthSensorManager: ObservableObject {
             return
         }
 
-        // Only fetch data if already authorized — do NOT auto-request
-        let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
-        let status = healthStore.authorizationStatus(for: heartRateType)
-        if status == .sharingAuthorized {
-            isAuthorized = true
-            authorizationStatus = "Authorized"
+        refreshAuthorizationState()
+
+        if hasRequestedAuthorization {
             fetchAllHealthData()
         } else {
-            isAuthorized = false
-            authorizationStatus = "Not Authorized"
-            print("[Health] ⏭ HealthKit not authorized — skipping data fetch")
+            print("[Health] ⏭ HealthKit permission has not been requested — skipping data fetch")
         }
     }
 
@@ -77,8 +97,15 @@ class HealthSensorManager: ObservableObject {
         print("[Health] ■ Stopping health sensors")
     }
 
-    func requestAuthorization() {
+    func requestAuthorization(completion: ((Bool) -> Void)? = nil) {
         print("[Health] Requesting HealthKit authorization...")
+
+        isHealthDataAvailable = HKHealthStore.isHealthDataAvailable()
+        guard isHealthDataAvailable else {
+            refreshAuthorizationState(error: nil)
+            completion?(false)
+            return
+        }
 
         let readTypes: Set<HKObjectType> = [
             HKQuantityType.quantityType(forIdentifier: .heartRate)!,
@@ -109,22 +136,54 @@ class HealthSensorManager: ObservableObject {
 
         healthStore.requestAuthorization(toShare: nil, read: readTypes) { [weak self] success, error in
             Task { @MainActor in
-                self?.isAuthorized = success
-                self?.authorizationStatus = success ? "Authorized" : "Not Authorized"
+                guard let self else {
+                    completion?(false)
+                    return
+                }
                 if let error = error {
-                    self?.authorizationError = error.localizedDescription
+                    self.authorizationError = error.localizedDescription
                     print("[Health] ❌ Authorization error: \(error.localizedDescription)")
+                } else {
+                    self.authorizationError = nil
                 }
-                print("[Health] Authorization result: \(success ? "✅ Authorized" : "❌ Denied")")
+                self.hasRequestedAuthorization = success
+                UserDefaults.standard.set(success, forKey: self.authorizationRequestedKey)
+                self.refreshAuthorizationState(error: error?.localizedDescription)
+                print("[Health] Authorization request processed: \(success ? "✅ Ready to query" : "❌ Failed")")
                 if success {
-                    self?.fetchAllHealthData()
+                    self.fetchAllHealthData()
+                } else {
+                    self.latestFetchStatus = "Health permission request failed."
                 }
+                completion?(success)
             }
         }
     }
 
+    func refreshHealthData() {
+        refreshAuthorizationState()
+        guard isHealthDataAvailable else { return }
+        guard hasRequestedAuthorization else {
+            requestAuthorization()
+            return
+        }
+        fetchAllHealthData()
+    }
+
+    private func refreshAuthorizationState(error: String? = nil) {
+        authorizationError = error
+        isHealthDataAvailable = HKHealthStore.isHealthDataAvailable()
+        isAuthorized = isHealthDataAvailable && hasRequestedAuthorization && authorizationError == nil
+        authorizationStatus = Self.authorizationStatusText(
+            isHealthDataAvailable: isHealthDataAvailable,
+            authorizationRequested: hasRequestedAuthorization,
+            authorizationError: authorizationError
+        )
+    }
+
     private func fetchAllHealthData() {
         print("[Health] Fetching all health data...")
+        latestFetchStatus = "Loading Health data..."
 
         fetchLatestQuantity(.heartRate) { [weak self] value, ts in
             self?.heartRate = value
@@ -226,6 +285,7 @@ class HealthSensorManager: ObservableObject {
         }
 
         fetchCharacteristicData()
+        latestFetchStatus = "Health queries started. Missing categories will stay empty until the iPhone has samples and permission is enabled."
         print("[Health] ✅ Health data fetch initiated")
     }
 
@@ -236,17 +296,21 @@ class HealthSensorManager: ObservableObject {
         }
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
         let query = HKSampleQuery(sampleType: quantityType, predicate: nil, limit: 1, sortDescriptors: [sortDescriptor]) { _, samples, error in
-            if let error = error {
-                print("[Health] ❌ Query error for \(identifier.rawValue): \(error.localizedDescription)")
-                return
+            Task { @MainActor in
+                if let error = error {
+                    print("[Health] ❌ Query error for \(identifier.rawValue): \(error.localizedDescription)")
+                    self.latestFetchStatus = "HealthKit query error for \(identifier.rawValue): \(error.localizedDescription)"
+                    return
+                }
+                guard let sample = samples?.first as? HKQuantitySample else {
+                    print("[Health] ⚠ No data for \(identifier.rawValue)")
+                    return
+                }
+                let unit = self.preferredUnit(for: identifier)
+                let value = sample.quantity.doubleValue(for: unit)
+                completion(value, sample.endDate)
+                self.latestFetchStatus = "Health data loaded. Some categories can still be empty if there are no samples."
             }
-            guard let sample = samples?.first as? HKQuantitySample else {
-                print("[Health] ⚠ No data for \(identifier.rawValue)")
-                return
-            }
-            let unit = self.preferredUnit(for: identifier)
-            let value = sample.quantity.doubleValue(for: unit)
-            completion(value, sample.endDate)
         }
         healthStore.execute(query)
     }
@@ -260,17 +324,21 @@ class HealthSensorManager: ObservableObject {
         let startOfDay = calendar.startOfDay(for: Date())
         let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: Date(), options: .strictStartDate)
         let query = HKStatisticsQuery(quantityType: quantityType, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, error in
-            if let error = error {
-                print("[Health] ❌ Stats query error for \(identifier.rawValue): \(error.localizedDescription)")
-                return
+            Task { @MainActor in
+                if let error = error {
+                    print("[Health] ❌ Stats query error for \(identifier.rawValue): \(error.localizedDescription)")
+                    self.latestFetchStatus = "HealthKit query error for \(identifier.rawValue): \(error.localizedDescription)"
+                    return
+                }
+                let unit = self.preferredUnit(for: identifier)
+                guard let sum = result?.sumQuantity() else {
+                    print("[Health] ⚠ No data for \(identifier.rawValue) today")
+                    return
+                }
+                let value = sum.doubleValue(for: unit)
+                completion(value, Date())
+                self.latestFetchStatus = "Health data loaded. Some categories can still be empty if there are no samples."
             }
-            let unit = self.preferredUnit(for: identifier)
-            guard let sum = result?.sumQuantity() else {
-                // No data — skip publish to avoid emitting zero rows for missing data.
-                return
-            }
-            let value = sum.doubleValue(for: unit)
-            completion(value, Date())
         }
         healthStore.execute(query)
     }
@@ -329,10 +397,10 @@ class HealthSensorManager: ObservableObject {
         case .bodyTemperature: return .degreeCelsius()
         case .bloodPressureSystolic, .bloodPressureDiastolic: return .millimeterOfMercury()
         case .electrodermalActivity: return .count()
-        case .stepCount, .flightsClimbed, .appleStandTime: return .count()
+        case .stepCount, .flightsClimbed: return .count()
         case .distanceWalkingRunning, .waistCircumference: return .meter()
         case .activeEnergyBurned, .basalEnergyBurned: return .kilocalorie()
-        case .appleExerciseTime: return .minute()
+        case .appleExerciseTime, .appleStandTime: return .minute()
         case .height: return .meter()
         case .bodyMass, .leanBodyMass: return .gramUnit(with: .kilo)
         case .bodyMassIndex, .bodyFatPercentage: return .percent()

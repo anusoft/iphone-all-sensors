@@ -24,6 +24,7 @@
 		3EE8A05CCB873346F114E824 /* LoggerOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E8F1119E05DF41030829C7B /* LoggerOverviewView.swift */; };
 		3EF9F1084EC7C7687BF8B41E /* LoggerSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67D29CBD9E93F7D2280A5C2 /* LoggerSettingsView.swift */; };
 		3FBE03A3D73A42464DFC257A /* LogWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16447308C00155CADFCF41D7 /* LogWriter.swift */; };
+		42B8250E1D098D3ABBA7F879 /* HealthSensorManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B810314120053E09BBA210D /* HealthSensorManagerTests.swift */; };
 		47CBF35FE8CBD82F123112B4 /* FilesBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62D3DBD569DB1E7A08522C4 /* FilesBrowserView.swift */; };
 		4B5FCC46FE55BED5741331FF /* LogStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC53B5C7301DA9E76759A58 /* LogStream.swift */; };
 		567A7657B342B57C17CFB926 /* SensorPayloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDF764D65243C574012269C /* SensorPayloadTests.swift */; };
@@ -40,6 +41,7 @@
 		9DEC0AB6C2FEE6BA727938C6 /* DatabaseSchemaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E58D9F43A870BD554E69B0 /* DatabaseSchemaTests.swift */; };
 		A10001 /* iPhoneSensorsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20001 /* iPhoneSensorsApp.swift */; };
 		A10002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20002 /* ContentView.swift */; };
+		A10068 /* ScreenshotHeroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20068 /* ScreenshotHeroView.swift */; };
 		A10004 /* SensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20004 /* SensorManager.swift */; };
 		A10005 /* MotionSensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20005 /* MotionSensorManager.swift */; };
 		A10006 /* LocationSensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20006 /* LocationSensorManager.swift */; };
@@ -85,6 +87,13 @@
 		A10046 /* PermissionGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20048 /* PermissionGate.swift */; };
 		A10047 /* PermissionRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20049 /* PermissionRequestView.swift */; };
 		A10048 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20050 /* LocalizationManager.swift */; };
+		A10060 /* ShowOffComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20060 /* ShowOffComponents.swift */; };
+		A10061 /* ShowOffMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20061 /* ShowOffMode.swift */; };
+		A10062 /* ShowOffVariantRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20062 /* ShowOffVariantRouter.swift */; };
+		A10063 /* ShowOffVariants_Motion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20063 /* ShowOffVariants_Motion.swift */; };
+		A10064 /* ShowOffVariants_Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20064 /* ShowOffVariants_Environment.swift */; };
+		A10065 /* ShowOffVariants_System.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20065 /* ShowOffVariants_System.swift */; };
+		A10066 /* ShowOffVariants_Connectivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20066 /* ShowOffVariants_Connectivity.swift */; };
 		A27EC14DE73457245629B18F /* LoggingCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66433F054CC0C3994CB0BBB7 /* LoggingCoordinatorTests.swift */; };
 		A423A98759AD37FE1AACAF19 /* SessionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2778EF4BABC4D036F2275D8 /* SessionDetailView.swift */; };
 		A43539FCEA85E9C7AF07347C /* LoggingConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B4804C98528F1A395AA87C5 /* LoggingConfigStore.swift */; };
@@ -103,6 +112,7 @@
 		ECC35A4E0C1EDBB33835AB3E /* DatabaseSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE05FF706F49B07AEF568AF9 /* DatabaseSchema.swift */; };
 		F64720ED9B96924C552A0AF8 /* LoggingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB05EE7AC57F8E507059D80 /* LoggingService.swift */; };
 		FED114EB00C8FE3AF1C9C1B2 /* SensorIDTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F8A2FB8054F8FD6B7B6FD7 /* SensorIDTests.swift */; };
+		A10067 /* LocationMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20067 /* LocationMapView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -129,6 +139,7 @@
 		343C0ACC130BB19B2ADBA475 /* SensorEventBus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorEventBus.swift; sourceTree = "<group>"; };
 		3DEAE21F318BC9742FB63796 /* SensorDataView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorDataView.swift; sourceTree = "<group>"; };
 		4411AE2D68C774D24A5397C6 /* JSONLogWriterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = JSONLogWriterTests.swift; sourceTree = "<group>"; };
+		4B810314120053E09BBA210D /* HealthSensorManagerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HealthSensorManagerTests.swift; sourceTree = "<group>"; };
 		56058C4BF0225270B8C2678C /* LoggingConfigStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingConfigStoreTests.swift; sourceTree = "<group>"; };
 		5B90DA5947AD3DC86360DF6A /* LoggingConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingConfiguration.swift; sourceTree = "<group>"; };
 		657018A9A78479B1694B4F1E /* SmokeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
@@ -147,6 +158,7 @@
 		A179785AC4D9C75D245A168B /* SessionLifecycleTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SessionLifecycleTests.swift; sourceTree = "<group>"; };
 		A20001 /* iPhoneSensorsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPhoneSensorsApp.swift; sourceTree = "<group>"; };
 		A20002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A20068 /* ScreenshotHeroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotHeroView.swift; sourceTree = "<group>"; };
 		A20004 /* SensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorManager.swift; sourceTree = "<group>"; };
 		A20005 /* MotionSensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionSensorManager.swift; sourceTree = "<group>"; };
 		A20006 /* LocationSensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSensorManager.swift; sourceTree = "<group>"; };
@@ -194,6 +206,13 @@
 		A20048 /* PermissionGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionGate.swift; sourceTree = "<group>"; };
 		A20049 /* PermissionRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionRequestView.swift; sourceTree = "<group>"; };
 		A20050 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
+		A20060 /* ShowOffComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowOffComponents.swift; sourceTree = "<group>"; };
+		A20061 /* ShowOffMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowOffMode.swift; sourceTree = "<group>"; };
+		A20062 /* ShowOffVariantRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowOffVariantRouter.swift; sourceTree = "<group>"; };
+		A20063 /* ShowOffVariants_Motion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowOffVariants_Motion.swift; sourceTree = "<group>"; };
+		A20064 /* ShowOffVariants_Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowOffVariants_Environment.swift; sourceTree = "<group>"; };
+		A20065 /* ShowOffVariants_System.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowOffVariants_System.swift; sourceTree = "<group>"; };
+		A20066 /* ShowOffVariants_Connectivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowOffVariants_Connectivity.swift; sourceTree = "<group>"; };
 		A30001 /* iPhoneSensors.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iPhoneSensors.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4B14182F5B60F60AF8FD957 /* LogFormat.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogFormat.swift; sourceTree = "<group>"; };
 		A62D3DBD569DB1E7A08522C4 /* FilesBrowserView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FilesBrowserView.swift; sourceTree = "<group>"; };
@@ -214,6 +233,7 @@
 		F7FE86079943BF19E6C9FCB9 /* SessionManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		FD8E2A83103997A9D038042D /* SessionsListView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SessionsListView.swift; sourceTree = "<group>"; };
 		FE05FF706F49B07AEF568AF9 /* DatabaseSchema.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DatabaseSchema.swift; sourceTree = "<group>"; };
+A20067 /* LocationMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationMapView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -259,6 +279,7 @@
 			isa = PBXGroup;
 			children = (
 				657018A9A78479B1694B4F1E /* SmokeTests.swift */,
+				4B810314120053E09BBA210D /* HealthSensorManagerTests.swift */,
 				71F8A2FB8054F8FD6B7B6FD7 /* SensorIDTests.swift */,
 				28A3431A40FBA3DF65A7A324 /* LogFormatTests.swift */,
 				EFDF764D65243C574012269C /* SensorPayloadTests.swift */,
@@ -354,8 +375,32 @@
 				A60006 /* Sensors */,
 				A60007 /* Components */,
 				0E437EAE59BDBDBF56603E9E /* Logger */,
+				A60020 /* ShowOff */,
+				A60021 /* Screenshots */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		A60021 /* Screenshots */ = {
+			isa = PBXGroup;
+			children = (
+				A20068 /* ScreenshotHeroView.swift */,
+			);
+			path = Screenshots;
+			sourceTree = "<group>";
+		};
+		A60020 /* ShowOff */ = {
+			isa = PBXGroup;
+			children = (
+				A20060 /* ShowOffComponents.swift */,
+				A20061 /* ShowOffMode.swift */,
+				A20062 /* ShowOffVariantRouter.swift */,
+				A20063 /* ShowOffVariants_Motion.swift */,
+				A20064 /* ShowOffVariants_Environment.swift */,
+				A20065 /* ShowOffVariants_System.swift */,
+				A20066 /* ShowOffVariants_Connectivity.swift */,
+			);
+			path = ShowOff;
 			sourceTree = "<group>";
 		};
 		A60005 /* Dashboard */ = {
@@ -410,6 +455,7 @@
 				A20048 /* PermissionGate.swift */,
 				A20049 /* PermissionRequestView.swift */,
 				03932041F371814AD9569130 /* LoggerInlineCard.swift */,
+				A20067 /* LocationMapView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -533,7 +579,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 2630;
 			};
 			buildConfigurationList = A90001 /* Build configuration list for PBXProject "iPhoneSensors" */;
 			compatibilityVersion = "Xcode 14.0";
@@ -545,7 +591,7 @@
 			);
 			mainGroup = A60001;
 			packageReferences = (
-				2E38194F9E378D163241D6EC /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+				2E38194F9E378D163241D6EC /* XCRemoteSwiftPackageReference "GRDB" */,
 			);
 			productRefGroup = A60011 /* Products */;
 			projectDirPath = "";
@@ -582,6 +628,7 @@
 			files = (
 				A10001 /* iPhoneSensorsApp.swift in Sources */,
 				A10002 /* ContentView.swift in Sources */,
+				A10068 /* ScreenshotHeroView.swift in Sources */,
 				A10004 /* SensorManager.swift in Sources */,
 				A10005 /* MotionSensorManager.swift in Sources */,
 				A10006 /* LocationSensorManager.swift in Sources */,
@@ -626,6 +673,14 @@
 				A10046 /* PermissionGate.swift in Sources */,
 				A10047 /* PermissionRequestView.swift in Sources */,
 				A10048 /* LocalizationManager.swift in Sources */,
+				A10060 /* ShowOffComponents.swift in Sources */,
+				A10061 /* ShowOffMode.swift in Sources */,
+				A10062 /* ShowOffVariantRouter.swift in Sources */,
+				A10063 /* ShowOffVariants_Motion.swift in Sources */,
+				A10064 /* ShowOffVariants_Environment.swift in Sources */,
+				A10065 /* ShowOffVariants_System.swift in Sources */,
+				A10066 /* ShowOffVariants_Connectivity.swift in Sources */,
+				A10067 /* LocationMapView.swift in Sources */,
 				A7B15E3127C68F71B78B982C /* SensorID.swift in Sources */,
 				38DBF935D6C89EB00077DE5C /* LogFormat.swift in Sources */,
 				4B5FCC46FE55BED5741331FF /* LogStream.swift in Sources */,
@@ -666,6 +721,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C1A3AD6FF9DD9F8E82618779 /* SmokeTests.swift in Sources */,
+				42B8250E1D098D3ABBA7F879 /* HealthSensorManagerTests.swift in Sources */,
 				FED114EB00C8FE3AF1C9C1B2 /* SensorIDTests.swift in Sources */,
 				5A2EF99ACBE5C105449F3C4C /* LogFormatTests.swift in Sources */,
 				567A7657B342B57C17CFB926 /* SensorPayloadTests.swift in Sources */,
@@ -701,7 +757,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.allsensors.iPhoneSensorsTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.1moby.allsensorsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -768,6 +824,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -824,6 +881,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -842,15 +900,18 @@
 				INFOPLIST_FILE = iPhoneSensors/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "All Sensors";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app uses Bluetooth to discover and display nearby devices.";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "We use Bluetooth to scan for nearby devices and display Bluetooth status.";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app uses Bluetooth to discover and display nearby devices.";
-				INFOPLIST_KEY_NSCameraUsageDescription = "This app accesses the camera to display camera capabilities and sensor information.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We use the camera to show camera capabilities and control the torch/flashlight.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "This app uses Face ID for biometric authentication testing.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We read health data such as steps, heart rate, and activity to display in the Health tab.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We can write workout and activity data to HealthKit.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app uses the local network to display network connectivity information.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app uses your location to display GPS coordinates and compass heading.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app uses your location to display GPS coordinates and compass heading.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app accesses the microphone to display audio input information.";
-				INFOPLIST_KEY_NSMotionUsageDescription = "This app uses motion sensors to display accelerometer, gyroscope, and device motion data.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We use your location to display GPS coordinates, altitude, speed, and compass heading.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use the microphone to show audio input device information.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "We use motion sensors to display accelerometer, gyroscope, pedometer, and activity data.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -861,7 +922,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.1moby.iPhoneSensors;
+				PRODUCT_BUNDLE_IDENTIFIER = com.1moby.allsensors;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -884,15 +945,18 @@
 				INFOPLIST_FILE = iPhoneSensors/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "All Sensors";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app uses Bluetooth to discover and display nearby devices.";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "We use Bluetooth to scan for nearby devices and display Bluetooth status.";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app uses Bluetooth to discover and display nearby devices.";
-				INFOPLIST_KEY_NSCameraUsageDescription = "This app accesses the camera to display camera capabilities and sensor information.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We use the camera to show camera capabilities and control the torch/flashlight.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "This app uses Face ID for biometric authentication testing.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We read health data such as steps, heart rate, and activity to display in the Health tab.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We can write workout and activity data to HealthKit.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app uses the local network to display network connectivity information.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app uses your location to display GPS coordinates and compass heading.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app uses your location to display GPS coordinates and compass heading.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app accesses the microphone to display audio input information.";
-				INFOPLIST_KEY_NSMotionUsageDescription = "This app uses motion sensors to display accelerometer, gyroscope, and device motion data.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We use your location to display GPS coordinates, altitude, speed, and compass heading.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use the microphone to show audio input device information.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "We use motion sensors to display accelerometer, gyroscope, pedometer, and activity data.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -903,7 +967,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.1moby.iPhoneSensors;
+				PRODUCT_BUNDLE_IDENTIFIER = com.1moby.allsensors;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -920,7 +984,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.allsensors.iPhoneSensorsTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.1moby.allsensorsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -961,7 +1025,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		2E38194F9E378D163241D6EC /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+		2E38194F9E378D163241D6EC /* XCRemoteSwiftPackageReference "GRDB" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/groue/GRDB.swift";
 			requirement = {
@@ -974,12 +1038,12 @@
 /* Begin XCSwiftPackageProductDependency section */
 		40573D4123C48D7BDA7E7BCE /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2E38194F9E378D163241D6EC /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			package = 2E38194F9E378D163241D6EC /* XCRemoteSwiftPackageReference "GRDB" */;
 			productName = GRDB;
 		};
 		C792843E1C0D187A3CFB8747 /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2E38194F9E378D163241D6EC /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			package = 2E38194F9E378D163241D6EC /* XCRemoteSwiftPackageReference "GRDB" */;
 			productName = GRDB;
 		};
 /* End XCSwiftPackageProductDependency section */

@@ -6,7 +6,7 @@ struct CameraDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 VStack(spacing: 16) {
                     Image(systemName: "camera.fill")
                         .font(.system(size: 50))
@@ -42,6 +42,8 @@ struct CameraDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.camera)
+        .showOffEntry(sensorID: "18", accent: SO.camAccent)
         .navigationTitle(locManager.t("sensor.camera"))
         .navigationBarTitleDisplayMode(.large)
             .toolbar {

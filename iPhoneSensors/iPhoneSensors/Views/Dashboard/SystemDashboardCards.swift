@@ -5,7 +5,7 @@ struct SystemDashboardCards: View {
     @EnvironmentObject var locManager: LocalizationManager
 
     var body: some View {
-        VStack(spacing: 10) {
+        AdaptiveCardGrid(spacing: 10) {
             NavigationLink {
                 BatteryDetailView()
             } label: {

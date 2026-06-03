@@ -10,6 +10,7 @@ struct iPhoneSensorsApp: App {
     @StateObject private var themeManager = ThemeManager()
     @StateObject private var diagnosticManager = DiagnosticManager()
     @StateObject private var recorder = SensorRecorder()
+    @StateObject private var screenshotRouter = ScreenshotRouter()
 
     var body: some Scene {
         WindowGroup {
@@ -27,7 +28,13 @@ struct iPhoneSensorsApp: App {
                 .environmentObject(themeManager)
                 .environmentObject(diagnosticManager)
                 .environmentObject(recorder)
+                .environmentObject(screenshotRouter)
                 .preferredColorScheme(themeManager.colorScheme)
+                .onOpenURL { url in
+                    // Deep link: app://<namespace>.<app>/screenshots/<page-name>
+                    // Routes into ScreenshotHeroView for App Store capture.
+                    screenshotRouter.handle(url)
+                }
                 .task {
                     await loggingService.bootstrap()
                     // Register publishers for every sensor manager. Per-sensor logging is
@@ -77,6 +84,18 @@ enum SensorType: String, AppEnum {
         .barometer: DisplayRepresentation(title: "Barometer"),
         .battery: DisplayRepresentation(title: "Battery")
     ]
+
+    var sensorID: SensorID {
+        switch self {
+        case .accelerometer: return .accelerometer
+        case .gyroscope: return .gyroscope
+        case .magnetometer: return .magnetometer
+        case .gps: return .gps
+        case .compass: return .heading
+        case .barometer: return .altimeter
+        case .battery: return .battery
+        }
+    }
 }
 
 struct GetSensorReadingIntent: AppIntent {
@@ -113,9 +132,21 @@ struct StartRecordingIntent: AppIntent {
     @Parameter(title: "Sensor")
     var sensor: SensorType
 
+    @MainActor
     func perform() async throws -> some IntentResult {
-        // Would integrate with SensorRecorder
+        await AppDelegate.loggingService?.startSessionFromUI(note: "Siri", only: sensor.sensorID)
         return .result(dialog: "Started recording \(sensor.rawValue) data.")
+    }
+}
+
+struct StopRecordingIntent: AppIntent {
+    static var title: LocalizedStringResource = "Stop Sensor Recording"
+    static var description = IntentDescription("Stop the active sensor logging session.")
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        await AppDelegate.loggingService?.stopSessionFromUI()
+        return .result(dialog: "Stopped sensor recording.")
     }
 }
 

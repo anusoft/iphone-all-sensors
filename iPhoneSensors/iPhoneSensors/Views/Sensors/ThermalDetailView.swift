@@ -6,7 +6,7 @@ struct ThermalDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 VStack(spacing: 16) {
                     Image(systemName: "thermometer.medium")
                         .font(.system(size: 60))
@@ -28,6 +28,8 @@ struct ThermalDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.thermal)
+        .showOffEntry(sensorID: "12", accent: SO.thermAccent)
         .navigationTitle(locManager.t("sensor.thermal"))
         .navigationBarTitleDisplayMode(.large)
             .toolbar {

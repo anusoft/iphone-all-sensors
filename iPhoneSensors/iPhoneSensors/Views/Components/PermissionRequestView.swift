@@ -8,6 +8,7 @@ struct PermissionRequestView: View {
     @Binding var isPresented: Bool
     var onComplete: () -> Void
     @EnvironmentObject var locManager: LocalizationManager
+    @EnvironmentObject var sensorManager: SensorManager
     @Environment(\.colorScheme) var colorScheme
 
     @State private var currentStep = 0
@@ -191,6 +192,8 @@ struct PermissionRequestView: View {
                 }
                 .padding(.bottom, 20)
             }
+            .frame(maxWidth: 540)
+            .frame(maxWidth: .infinity)
         }
     }
 
@@ -293,9 +296,7 @@ struct PermissionRequestView: View {
 
     private func requestHealth() {
         isProcessing = true
-        // HealthKit permission is requested in the HealthSensorManager
-        // Just proceed to next step after a brief delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        sensorManager.healthManager.requestAuthorization { _ in
             isProcessing = false
             nextStep()
         }

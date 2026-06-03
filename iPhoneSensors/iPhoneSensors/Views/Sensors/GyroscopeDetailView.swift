@@ -10,7 +10,7 @@ struct GyroscopeDetailView: View {
     var body: some View {
         let mag = sqrt(motion.gyroX * motion.gyroX + motion.gyroY * motion.gyroY + motion.gyroZ * motion.gyroZ)
                 ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 ThreeAxisView(x: motion.gyroX, y: motion.gyroY, z: motion.gyroZ, title: locManager.t("sensor.gyroscope"), unit: "rad/s", color: .indigo)
 
                 SensorChartView(chartData: chartData, title: locManager.t("sensor.gyroscope"), unit: "rad/s")
@@ -45,6 +45,8 @@ struct GyroscopeDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.gyroscope)
+        .showOffEntry(sensorID: "04", accent: SO.gyroAccent)
         .sheet(isPresented: $showShareSheet) {
             if let url = exportURL {
                 ShareSheet(items: [url])

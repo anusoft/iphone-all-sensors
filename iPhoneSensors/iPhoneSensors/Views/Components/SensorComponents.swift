@@ -1,5 +1,127 @@
 import SwiftUI
 
+// MARK: - Adaptive Layout Primitives
+//
+// One small set of size-class-aware containers used across every page so layout
+// reflows fluidly from iPhone SE portrait up to iPad Pro landscape without any
+// per-view hardcoded widths. See docs / CLAUDE.md adaptive-design rules.
+
+/// Size-class-derived metrics shared by the adaptive/responsive layer.
+/// Centralizing these keeps the iPhone constants and iPad scale factors in sync.
+private enum AdaptiveLayoutMetrics {
+    static let regularWidthCardScale: CGFloat = 1.25
+    static let compactWidthPagePadding: CGFloat = 16
+    static let regularWidthPagePadding: CGFloat = 24
+    static let compactWidthSensorIconBox: CGFloat = 40
+    static let regularWidthSensorIconBox: CGFloat = 56
+    static let regularWidthGaugeScale: CGFloat = 1.55
+    static let compactWidthChartHeight: CGFloat = 200
+    static let regularWidthChartHeight: CGFloat = 320
+
+    static func isRegularWidth(_ horizontalSizeClass: UserInterfaceSizeClass?) -> Bool {
+        horizontalSizeClass == .regular
+    }
+
+    static func pagePadding(for horizontalSizeClass: UserInterfaceSizeClass?) -> CGFloat {
+        isRegularWidth(horizontalSizeClass) ? regularWidthPagePadding : compactWidthPagePadding
+    }
+
+    static func cardMinimumWidth(_ minWidth: CGFloat, for horizontalSizeClass: UserInterfaceSizeClass?) -> CGFloat {
+        minWidth * (isRegularWidth(horizontalSizeClass) ? regularWidthCardScale : 1)
+    }
+
+    static func sensorIconBoxSize(for horizontalSizeClass: UserInterfaceSizeClass?) -> CGFloat {
+        isRegularWidth(horizontalSizeClass) ? regularWidthSensorIconBox : compactWidthSensorIconBox
+    }
+
+    static func gaugeSize(_ size: CGFloat, for horizontalSizeClass: UserInterfaceSizeClass?) -> CGFloat {
+        size * (isRegularWidth(horizontalSizeClass) ? regularWidthGaugeScale : 1)
+    }
+
+    static func chartHeight(for horizontalSizeClass: UserInterfaceSizeClass?) -> CGFloat {
+        isRegularWidth(horizontalSizeClass) ? regularWidthChartHeight : compactWidthChartHeight
+    }
+}
+
+/// A grid that collapses to a single column on narrow screens (iPhone portrait / SE)
+/// and reflows into 2–4 columns as the available width grows (iPad, large-iPhone
+/// landscape). Cards are top-aligned so heterogeneous card heights don't stretch
+/// their row-mates. Drop-in replacement for a `VStack(spacing:)` of cards.
+struct AdaptiveCardGrid<Content: View>: View {
+    var minWidth: CGFloat
+    var spacing: CGFloat
+    @ViewBuilder var content: () -> Content
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    init(minWidth: CGFloat = 340, spacing: CGFloat = 12, @ViewBuilder content: @escaping () -> Content) {
+        self.minWidth = minWidth
+        self.spacing = spacing
+        self.content = content
+    }
+
+    // Wider cards on iPad so the enlarged (accessibility-size) text has room, while
+    // still reflowing into multiple columns on the larger screen.
+    private var effectiveMinimumWidth: CGFloat {
+        AdaptiveLayoutMetrics.cardMinimumWidth(minWidth, for: horizontalSizeClass)
+    }
+
+    var body: some View {
+        LazyVGrid(
+            columns: [GridItem(.adaptive(minimum: effectiveMinimumWidth), spacing: spacing, alignment: .top)],
+            alignment: .center,
+            spacing: spacing
+        ) {
+            content()
+        }
+    }
+}
+
+/// Lays its children out vertically in a `.compact` width environment (iPhone portrait)
+/// and horizontally in a `.regular` one (iPad / large-iPhone landscape). Use for
+/// naturally-paired blocks such as side-by-side gauges or summary tiles.
+struct AdaptiveStack<Content: View>: View {
+    var spacing: CGFloat
+    var alignment: VerticalAlignment
+    @ViewBuilder var content: () -> Content
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    init(spacing: CGFloat = 16, alignment: VerticalAlignment = .center, @ViewBuilder content: @escaping () -> Content) {
+        self.spacing = spacing
+        self.alignment = alignment
+        self.content = content
+    }
+
+    var body: some View {
+        if horizontalSizeClass == .regular {
+            HStack(alignment: alignment, spacing: spacing) { content() }
+        } else {
+            VStack(spacing: spacing) { content() }
+        }
+    }
+}
+
+/// Standard page wrapper for a `ScrollView`'s content: lets the content expand to fill
+/// the container (`maxWidth: .infinity`) and applies consistent, size-class-aware padding.
+/// Replaces the bespoke trailing `.padding()` on each page.
+struct ResponsivePageModifier: ViewModifier {
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    func body(content: Content) -> some View {
+        content
+            .frame(maxWidth: .infinity)
+            .padding(AdaptiveLayoutMetrics.pagePadding(for: horizontalSizeClass))
+    }
+}
+
+extension View {
+    /// Expands content to fill its container and applies adaptive page padding.
+    func responsivePage() -> some View { modifier(ResponsivePageModifier()) }
+
+    /// Forces a card to fill the width of its grid cell / column instead of sizing to
+    /// its intrinsic content. Use on cards that don't already stretch (no inner `Spacer`).
+    func adaptiveCardWidth() -> some View { frame(maxWidth: .infinity) }
+}
+
 struct SensorCard: View {
     let title: String
     let icon: String
@@ -9,7 +131,12 @@ struct SensorCard: View {
     let isAvailable: Bool
     var isLoading: Bool = false
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @EnvironmentObject var locManager: LocalizationManager
+
+    private var iconBoxSize: CGFloat {
+        AdaptiveLayoutMetrics.sensorIconBoxSize(for: horizontalSizeClass)
+    }
 
     var body: some View {
         HStack(spacing: 14) {
@@ -17,10 +144,10 @@ struct SensorCard: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .fill(color.opacity(colorScheme == .dark ? 0.18 : 0.12))
-                    .frame(width: 40, height: 40)
-                
+                    .frame(width: iconBoxSize, height: iconBoxSize)
+
                 Image(systemName: icon)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: iconBoxSize * 0.45, weight: .semibold))
                     .foregroundStyle(color)
             }
             
@@ -223,6 +350,7 @@ struct CircularGauge: View {
     let unit: String
     let color: Color
     let size: CGFloat
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     init(value: Double, maxValue: Double, title: String, unit: String, color: Color, size: CGFloat = 120) {
         self.value = value
@@ -233,26 +361,31 @@ struct CircularGauge: View {
         self.size = size
     }
 
+    // Enlarge the gauge on iPad (regular width) so it fills the bigger panels.
+    private var scaledSize: CGFloat {
+        AdaptiveLayoutMetrics.gaugeSize(size, for: horizontalSizeClass)
+    }
+
     var body: some View {
         VStack(spacing: 6) {
             ZStack {
                 Circle()
-                    .stroke(color.opacity(0.15), lineWidth: size * 0.08)
+                    .stroke(color.opacity(0.15), lineWidth: scaledSize * 0.08)
                 Circle()
-                    .trim(from: 0, to: min(value / maxValue, 1.0))
-                    .stroke(color, style: StrokeStyle(lineWidth: size * 0.08, lineCap: .round))
+                    .trim(from: 0, to: min(abs(value) / maxValue, 1.0))
+                    .stroke(color, style: StrokeStyle(lineWidth: scaledSize * 0.08, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                     .animation(.easeOut(duration: 0.5), value: value)
                 VStack(spacing: 2) {
                     Text(formatValue(value))
-                        .font(.system(size: size * 0.2, weight: .bold, design: .rounded))
+                        .font(.system(size: scaledSize * 0.2, weight: .bold, design: .rounded))
                         .monospacedDigit()
                     Text(unit)
-                        .font(.system(size: size * 0.1))
+                        .font(.system(size: scaledSize * 0.1))
                         .foregroundStyle(.secondary)
                 }
             }
-            .frame(width: size, height: size)
+            .frame(width: scaledSize, height: scaledSize)
             Text(title)
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -674,8 +807,14 @@ struct SensorChartView: View {
     let title: String
     let unit: String
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @EnvironmentObject var locManager: LocalizationManager
-    
+
+    // Taller charts on iPad.
+    private var chartHeight: CGFloat {
+        AdaptiveLayoutMetrics.chartHeight(for: horizontalSizeClass)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -693,7 +832,7 @@ struct SensorChartView: View {
                 Text(locManager.t("status.waiting"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                    .frame(height: 200)
+                    .frame(height: chartHeight)
                     .frame(maxWidth: .infinity)
             } else {
                 Chart {
@@ -733,7 +872,7 @@ struct SensorChartView: View {
                         }
                     }
                 }
-                .frame(height: 200)
+                .frame(height: chartHeight)
             }
             
             HStack(spacing: 20) {
@@ -773,8 +912,14 @@ struct SingleValueChartView: View {
     let unit: String
     let color: Color
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @EnvironmentObject var locManager: LocalizationManager
-    
+
+    // Taller charts on iPad.
+    private var chartHeight: CGFloat {
+        AdaptiveLayoutMetrics.chartHeight(for: horizontalSizeClass)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
@@ -785,7 +930,7 @@ struct SingleValueChartView: View {
                 Text(locManager.t("status.waiting"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                    .frame(height: 200)
+                    .frame(height: chartHeight)
                     .frame(maxWidth: .infinity)
             } else {
                 Chart {
@@ -808,7 +953,7 @@ struct SingleValueChartView: View {
                 .chartYAxis {
                     AxisMarks(position: .leading)
                 }
-                .frame(height: 200)
+                .frame(height: chartHeight)
             }
             
             HStack {

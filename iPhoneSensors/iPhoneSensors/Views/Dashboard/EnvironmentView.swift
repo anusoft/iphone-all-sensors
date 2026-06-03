@@ -12,11 +12,12 @@ struct EnvironmentView: View {
                 VStack(spacing: 16) {
                     HStack(spacing: 16) {
                         CircularGauge(value: env.pressure, maxValue: 120, title: locManager.t("label.pressure"), unit: locManager.t("unit.kpa"), color: .orange, size: 120)
-                        CircularGauge(value: env.relativeAltitude, maxValue: 100, title: locManager.t("label.altitude"), unit: locManager.t("unit.meters"), color: .cyan, size: 120)
+                        CircularGauge(value: env.relativeAltitude, maxValue: 500, title: locManager.t("label.altitude"), unit: locManager.t("unit.meters"), color: .cyan, size: 120)
                     }
                     .padding()
                     .glassCard()
 
+                    AdaptiveCardGrid {
                     NavigationLink {
                         BarometerDetailView()
                     } label: {
@@ -70,6 +71,7 @@ struct EnvironmentView: View {
                         .padding()
                         .dashboardRow()
                     }
+                    }
 
                     VStack(alignment: .leading, spacing: 12) {
                         Text(locManager.t("section.audioSession"))
@@ -85,7 +87,7 @@ struct EnvironmentView: View {
                     .padding()
                     .glassCard()
                 }
-                .padding()
+                .responsivePage()
             }
             .appBackground()
             .navigationTitle(locManager.t("sensor.environment"))

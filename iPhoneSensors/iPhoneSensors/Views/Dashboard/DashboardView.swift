@@ -16,6 +16,8 @@ struct DashboardView: View {
         NavigationStack {
             ScrollView {
                 LazyVStack(spacing: 16) {
+                    AllSensorsLogSessionBar()
+
                     if sensorManager.isThrottled {
                         ThrottleBanner(reason: sensorManager.throttleReason)
                     }
@@ -42,7 +44,7 @@ struct DashboardView: View {
                         searchResults
                     }
                 }
-                .padding()
+                .responsivePage()
             }
             .appBackground()
             .navigationTitle(locManager.t("dashboard.title"))
@@ -98,15 +100,17 @@ struct DashboardView: View {
             .frame(maxWidth: .infinity)
             .padding(.top, 60)
         } else {
-            ForEach(filtered, id: \.0) { sensor in
-                SensorCard(
-                    title: sensor.0,
-                    icon: sensor.1,
-                    value: "",
-                    unit: "",
-                    color: sensor.2,
-                    isAvailable: sensor.3
-                )
+            AdaptiveCardGrid(spacing: 8) {
+                ForEach(filtered, id: \.0) { sensor in
+                    SensorCard(
+                        title: sensor.0,
+                        icon: sensor.1,
+                        value: "",
+                        unit: "",
+                        color: sensor.2,
+                        isAvailable: sensor.3
+                    )
+                }
             }
         }
     }

@@ -7,7 +7,7 @@ struct BluetoothDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 VStack(spacing: 16) {
                     Image(systemName: "antenna.radiowaves.left.and.right")
                         .font(.system(size: 50))
@@ -64,6 +64,8 @@ struct BluetoothDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.bluetoothState)
+        .showOffEntry(sensorID: "16", accent: SO.btAccent)
         .navigationTitle(locManager.t("sensor.bluetooth"))
         .navigationBarTitleDisplayMode(.large)
             .toolbar {

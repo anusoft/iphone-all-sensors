@@ -6,7 +6,7 @@ struct HeadingDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 VStack(spacing: 16) {
                     Text(locManager.t("section.compass"))
                         .font(.headline)
@@ -48,6 +48,8 @@ struct HeadingDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.heading)
+        .showOffEntry(sensorID: "02", accent: SO.headingAccent)
         .navigationTitle(locManager.t("sensor.compass"))
         .navigationBarTitleDisplayMode(.large)
             .toolbar {

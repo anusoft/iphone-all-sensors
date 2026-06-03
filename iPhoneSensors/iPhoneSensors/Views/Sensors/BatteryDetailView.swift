@@ -6,7 +6,7 @@ struct BatteryDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 VStack(spacing: 16) {
                     Image(systemName: batteryIcon(level: sys.batteryLevel))
                         .font(.system(size: 60))
@@ -28,6 +28,8 @@ struct BatteryDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.battery)
+        .showOffEntry(sensorID: "11", accent: SO.battAccent)
         .navigationTitle(locManager.t("sensor.battery"))
         .navigationBarTitleDisplayMode(.large)
             .toolbar {

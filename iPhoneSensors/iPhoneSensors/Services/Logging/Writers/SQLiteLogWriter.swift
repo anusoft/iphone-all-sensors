@@ -14,7 +14,7 @@ actor SQLiteLogWriter: LogWriter {
         self.pool = pool
         self.sensorID = sensorID
         self.sessionID = sessionID
-        self.batchSize = batchSize
+        self.batchSize = max(1, batchSize)
     }
 
     func write(_ sample: SensorSample) async {

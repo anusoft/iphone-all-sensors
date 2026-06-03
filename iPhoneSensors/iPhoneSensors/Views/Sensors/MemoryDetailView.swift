@@ -6,7 +6,7 @@ struct MemoryDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 VStack(spacing: 16) {
                     Image(systemName: "memorychip")
                         .font(.system(size: 50))
@@ -30,6 +30,8 @@ struct MemoryDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.disk)
+        .showOffEntry(sensorID: "14", accent: SO.memAccent)
         .navigationTitle(locManager.t("sensor.memory"))
         .navigationBarTitleDisplayMode(.large)
             .toolbar {

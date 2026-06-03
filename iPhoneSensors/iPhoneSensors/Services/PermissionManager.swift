@@ -65,9 +65,8 @@ class PermissionManager: ObservableObject {
             healthAuthorized = false
             return false
         }
-        let status = HKHealthStore().authorizationStatus(for: HKQuantityType.quantityType(forIdentifier: .heartRate)!)
-        healthAuthorized = status == .sharingAuthorized
-        print("[Permission] Health status: \(status.rawValue) (authorized: \(healthAuthorized))")
+        healthAuthorized = UserDefaults.standard.bool(forKey: HealthSensorManager.authorizationRequestedKey)
+        print("[Permission] HealthKit available; prompt processed: \(healthAuthorized)")
         return healthAuthorized
     }
 

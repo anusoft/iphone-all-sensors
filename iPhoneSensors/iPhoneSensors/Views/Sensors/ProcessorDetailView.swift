@@ -6,7 +6,7 @@ struct ProcessorDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 HStack(spacing: 24) {
                     CircularGauge(value: Double(sys.activeProcessorCount), maxValue: Double(sys.processorCount), title: "Active Cores", unit: "cores", color: .purple, size: 130)
                     CircularGauge(value: Double(sys.processorCount), maxValue: 10, title: "Total Cores", unit: "cores", color: .indigo, size: 130)
@@ -26,6 +26,8 @@ struct ProcessorDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.uptime)
+        .showOffEntry(sensorID: "15", accent: SO.cpuAccent)
         .navigationTitle(locManager.t("sensor.processor"))
         .navigationBarTitleDisplayMode(.large)
             .toolbar {

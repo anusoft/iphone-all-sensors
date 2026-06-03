@@ -1,0 +1,25 @@
+{
+  "page": "dashboard",
+  "headline": "See every sensor, live",
+  "subheadline": "21 iPhone sensors — motion, GPS, health & more, all in real time.",
+  "feature_callouts": [
+    {
+      "label": "Live charts",
+      "note": "Smooth, high-rate plots for every signal.",
+      "zone": { "x": 0.06, "y": 0.30, "w": 0.88, "h": 0.16 }
+    },
+    {
+      "label": "At-a-glance tiles",
+      "note": "Tap any tile to dive into full detail.",
+      "zone": { "x": 0.06, "y": 0.52, "w": 0.88, "h": 0.36 }
+    }
+  ],
+  "background": {
+    "type": "linear-gradient",
+    "colors": ["#071A2F", "#0B3A63"],
+    "angle": 160
+  },
+  "text_color": "#FFFFFF",
+  "accent_color": "#3B82F6",
+  "caption_position": "top"
+}

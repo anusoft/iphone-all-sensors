@@ -8,28 +8,38 @@ struct SensorLogConfigView: View {
 
     var body: some View {
         Form {
-            section(stream: .continuous, binding: $cfg.continuous,
-                    title: localization.t("logger.stream.continuous"))
-            section(stream: .session, binding: $cfg.session,
-                    title: localization.t("logger.stream.session"))
+            section(binding: $cfg.session, title: localization.t("logger.stream.session"))
             Section { Text(estimatedRate()).font(.caption).foregroundStyle(.secondary) }
+            Section {
+                Button(role: .destructive) {
+                    let def = sanitized(LoggingConfiguration.default(for: sensorID))
+                    cfg = def
+                    loggingService.configStore.set(def, for: sensorID)
+                } label: {
+                    Label(localization.t("logger.resetSensor"), systemImage: "arrow.counterclockwise")
+                }
+                .disabled(cfg == sanitized(LoggingConfiguration.default(for: sensorID)))
+            }
         }
         .navigationTitle(localization.t(sensorID.localizationKey))
-        .onAppear { cfg = loggingService.configStore.config(for: sensorID) }
-        .onChange(of: cfg) { _, new in loggingService.configStore.set(new, for: sensorID) }
+        .onAppear {
+            cfg = sanitized(loggingService.configStore.config(for: sensorID))
+            loggingService.configStore.set(cfg, for: sensorID)
+        }
+        .onChange(of: cfg) { _, new in
+            loggingService.configStore.set(sanitized(new), for: sensorID)
+        }
     }
 
     @ViewBuilder
-    private func section(stream: LogStream, binding: Binding<PerStreamConfig>, title: String) -> some View {
+    private func section(binding: Binding<PerStreamConfig>, title: String) -> some View {
         Section(header: Text(title)) {
             Toggle(isOn: Binding(
                 get: { binding.wrappedValue.isOn },
                 set: { on in
-                    if on {
-                        binding.wrappedValue = .on(format: .jsonl, intervalMs: max(0, sensorID.minIntervalMs), options: .default)
-                    } else {
-                        binding.wrappedValue = .off
-                    }
+                    // Enabling uses the sensor's curated default (format + interval),
+                    // matching the inline card — not a hard-coded format.
+                    binding.wrappedValue = on ? defaultSessionConfig() : .off
                 })) { Text(localization.t("logger.enabled")) }
 
             if case let .on(format, ms, options) = binding.wrappedValue {
@@ -51,14 +61,24 @@ struct SensorLogConfigView: View {
         }
     }
 
+    private func defaultSessionConfig() -> PerStreamConfig {
+        let session = LoggingConfiguration.default(for: sensorID).session
+        // Defaults are all `.on`, but fall back defensively to a sane stream.
+        if case .on = session { return session }
+        return .on(format: .jsonl, intervalMs: sensorID.minIntervalMs, options: .default)
+    }
+
     private var intervalPresets: [Int] {
         let base = [0, 10, 50, 100, 250, 500, 1_000, 2_000, 5_000, 10_000, 30_000, 60_000]
         return base.filter { $0 == 0 || $0 >= sensorID.minIntervalMs }
     }
+    private func sanitized(_ value: LoggingConfiguration) -> LoggingConfiguration {
+        LoggingConfiguration(continuous: .off, session: value.session)
+    }
+
     private func estimatedRate() -> String {
         let perSample: Double = 200
         var perMin: Double = 0
-        if case let .on(_, ms, _) = cfg.continuous { perMin += ms == 0 ? 60.0 : 60_000.0 / Double(ms) }
         if case let .on(_, ms, _) = cfg.session { perMin += ms == 0 ? 60.0 : 60_000.0 / Double(ms) }
         let kbPerMin = (perMin * perSample) / 1024.0
         return String(format: "≈ %.1f KB/min · %.1f MB/day", kbPerMin, kbPerMin * 60 * 24 / 1024)

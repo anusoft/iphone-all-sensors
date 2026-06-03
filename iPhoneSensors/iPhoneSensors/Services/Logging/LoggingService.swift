@@ -18,6 +18,9 @@ final class LoggingService: ObservableObject {
     /// Mirror of `sessionManager.activeSessionID` for SwiftUI binding.
     @Published var activeSessionDisplayID: UUID?
 
+    private var scopedSessionConfigSnapshot: [SensorID: LoggingConfiguration]?
+    private var cancellables = Set<AnyCancellable>()
+
     init(storage: LogStorageManager? = nil,
          configStore: LoggingConfigStore? = nil) {
         let s = storage ?? LogStorageManager()
@@ -27,6 +30,12 @@ final class LoggingService: ObservableObject {
         self.bus = SensorEventBus()
         self.coordinator = LoggingCoordinator(storage: s, configStore: c)
         self.sessionManager = SessionManager(storage: s)
+
+        // Forward config-store mutations so any view bound to LoggingService
+        // (e.g. the Logger overview rows) refreshes when a batch action runs.
+        c.objectWillChange
+            .sink { [weak self] _ in self?.objectWillChange.send() }
+            .store(in: &cancellables)
     }
 
     func bootstrap() async {
@@ -81,21 +90,50 @@ extension LoggingService {
     }
 
     @MainActor
-    func startSessionFromUI(note: String? = nil) async {
-        try? await sessionManager.startSession(note: note)
-        let id = await sessionManager.activeSessionID
-        let pool = await sessionManager.activePool
-        await coordinator.setActiveSession(id, pool: pool)
-        sessionStartedAt = Date()
-        activeSessionDisplayID = id
+    func startSessionFromUI(note: String? = nil, only sensorID: SensorID? = nil) async {
+        if activeSessionDisplayID != nil {
+            await stopSessionFromUI()
+        }
+
+        if let sensorID {
+            scopedSessionConfigSnapshot = configStore.all()
+            for id in SensorID.allCases {
+                var cfg = configStore.config(for: id)
+                cfg.session = id == sensorID ? LoggingConfiguration.default(for: id).session : .off
+                configStore.set(cfg, for: id)
+            }
+        }
+
+        do {
+            try await sessionManager.startSession(note: note)
+            let id = await sessionManager.activeSessionID
+            let pool = await sessionManager.activePool
+            await coordinator.setActiveSession(id, pool: pool)
+            sessionStartedAt = Date()
+            activeSessionDisplayID = id
+        } catch {
+            restoreScopedSessionConfigIfNeeded()
+            sessionStartedAt = nil
+            activeSessionDisplayID = nil
+        }
     }
 
     @MainActor
     func stopSessionFromUI() async {
         try? await sessionManager.stopSession()
         await coordinator.setActiveSession(nil, pool: nil)
+        restoreScopedSessionConfigIfNeeded()
         sessionStartedAt = nil
         activeSessionDisplayID = nil
+    }
+
+    @MainActor
+    private func restoreScopedSessionConfigIfNeeded() {
+        guard let snapshot = scopedSessionConfigSnapshot else { return }
+        for (id, cfg) in snapshot {
+            configStore.set(cfg, for: id)
+        }
+        scopedSessionConfigSnapshot = nil
     }
 
     @MainActor
@@ -142,5 +180,74 @@ extension LoggingService {
             }
         }
         return dst
+    }
+}
+
+// MARK: - Batch configuration (Logger overview bulk actions)
+
+extension LoggingService {
+    /// All sensors belonging to a category, in declaration order.
+    @MainActor
+    func sensorIDs(in category: SensorCategory) -> [SensorID] {
+        SensorID.allCases.filter { $0.category == category }
+    }
+
+    /// Enable session logging (using each sensor's curated default format and
+    /// interval) or disable it, for a set of sensors. One store write.
+    @MainActor
+    func setSessionEnabled(_ on: Bool, for ids: [SensorID]) {
+        var updates: [SensorID: LoggingConfiguration] = [:]
+        for id in ids {
+            var cfg = configStore.config(for: id)
+            cfg.session = on ? LoggingConfiguration.default(for: id).session : .off
+            updates[id] = cfg
+        }
+        configStore.setMany(updates)
+    }
+
+    /// Change the output format for every *enabled* sensor in the set.
+    /// Sensors that are off are left untouched (we don't silently enable them).
+    @MainActor
+    func setSessionFormat(_ format: LogFormat, for ids: [SensorID]) {
+        var updates: [SensorID: LoggingConfiguration] = [:]
+        for id in ids {
+            var cfg = configStore.config(for: id)
+            guard case let .on(_, ms, options) = cfg.session else { continue }
+            cfg.session = .on(format: format, intervalMs: ms, options: options)
+            updates[id] = cfg
+        }
+        configStore.setMany(updates)
+    }
+
+    /// Change the sampling interval for every *enabled* sensor in the set.
+    /// Per-sensor clamping to the native minimum happens in the config store.
+    @MainActor
+    func setSessionInterval(_ intervalMs: Int, for ids: [SensorID]) {
+        var updates: [SensorID: LoggingConfiguration] = [:]
+        for id in ids {
+            var cfg = configStore.config(for: id)
+            guard case let .on(format, _, options) = cfg.session else { continue }
+            cfg.session = .on(format: format, intervalMs: intervalMs, options: options)
+            updates[id] = cfg
+        }
+        configStore.setMany(updates)
+    }
+
+    /// Restore curated defaults for a set of sensors.
+    @MainActor
+    func resetToDefaults(_ ids: [SensorID]) {
+        configStore.resetToDefaults(ids)
+    }
+
+    /// Restore curated defaults for every sensor.
+    @MainActor
+    func resetAllToDefaults() {
+        configStore.resetToDefaults(SensorID.allCases)
+    }
+
+    /// Count of sensors with session logging currently enabled.
+    @MainActor
+    func sessionEnabledCount(in ids: [SensorID]) -> Int {
+        ids.filter { configStore.config(for: $0).session.isOn }.count
     }
 }

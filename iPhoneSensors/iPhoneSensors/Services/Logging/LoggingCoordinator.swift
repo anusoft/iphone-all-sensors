@@ -44,13 +44,13 @@ actor LoggingCoordinator {
         let cfg = await MainActor.run { configStore.config(for: sample.sensorID) }
         for stream in LogStream.allCases {
             let pcfg: PerStreamConfig = (stream == .continuous) ? cfg.continuous : cfg.session
-            guard case let .on(format, intervalMs, _) = pcfg else { continue }
+            guard case let .on(format, intervalMs, options) = pcfg else { continue }
             // Session stream is gated on an active session; otherwise we drop.
             if stream == .session && activeSessionID == nil { continue }
             // When throttled, drop session writes; only continuous proceeds.
             if throttled && stream == .session { continue }
             if !shouldWrite(sample, stream: stream, intervalMs: intervalMs) { continue }
-            guard let writer = await writer(for: sample.sensorID, stream: stream, format: format) else { continue }
+            guard let writer = await writer(for: sample.sensorID, stream: stream, format: format, options: options) else { continue }
             await writer.write(sample)
         }
     }
@@ -77,7 +77,7 @@ actor LoggingCoordinator {
         return true
     }
 
-    private func writer(for id: SensorID, stream: LogStream, format: LogFormat) async -> (any LogWriter)? {
+    private func writer(for id: SensorID, stream: LogStream, format: LogFormat, options: FormatOptions) async -> (any LogWriter)? {
         let key = WriterKey(sensorID: id, stream: stream, format: format)
         if let w = writers[key] { return w }
         let url: URL
@@ -94,17 +94,17 @@ actor LoggingCoordinator {
         let writer: any LogWriter
         switch format {
         case .jsonl: writer = JSONLogWriter(url: url)
-        case .csv:   writer = CSVLogWriter(url: url, options: .default)
+        case .csv:   writer = CSVLogWriter(url: url, options: options)
         case .sqlite:
             if stream == .continuous {
                 let p = (try? ensureContinuousPool()) ?? (try! DatabasePool(path: ":memory:"))
-                writer = SQLiteLogWriter(pool: p, sensorID: id, sessionID: nil)
+                writer = SQLiteLogWriter(pool: p, sensorID: id, sessionID: nil, batchSize: options.sqliteBatchSize)
             } else {
                 // Session-stream SQLite writes route to the active session pool.
                 // Ingest gate ensures activeSessionID != nil, but sessionPool may be
                 // unset if the caller hasn't wired it — drop in that case.
                 guard let p = sessionPool, let sid = activeSessionID else { return nil }
-                writer = SQLiteLogWriter(pool: p, sensorID: id, sessionID: sid)
+                writer = SQLiteLogWriter(pool: p, sensorID: id, sessionID: sid, batchSize: options.sqliteBatchSize)
             }
         }
         writers[key] = writer

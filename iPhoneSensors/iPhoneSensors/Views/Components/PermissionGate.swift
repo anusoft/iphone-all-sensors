@@ -59,10 +59,6 @@ struct PermissionGate<Content: View>: View {
                 }
             case .health:
                 isAuthorized = HKHealthStore.isHealthDataAvailable()
-                if isAuthorized {
-                    let status = HKHealthStore().authorizationStatus(for: HKQuantityType.quantityType(forIdentifier: .heartRate)!)
-                    isAuthorized = status == .sharingAuthorized
-                }
             case .camera:
                 let status = AVCaptureDevice.authorizationStatus(for: .video)
                 isAuthorized = status == .authorized

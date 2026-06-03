@@ -6,7 +6,7 @@ struct ProximityDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            AdaptiveCardGrid(spacing: 20) {
                 VStack(spacing: 16) {
                     Image(systemName: "sensor.tag.radiowaves.forward")
                         .font(.system(size: 60))
@@ -29,6 +29,8 @@ struct ProximityDetailView: View {
             .padding()
         }
         .appBackground()
+        .loggerInlineCard(.proximity)
+        .showOffEntry(sensorID: "20", accent: SO.proxAccent)
         .navigationTitle("Proximity Sensor")
         .navigationBarTitleDisplayMode(.large)
             .toolbar {

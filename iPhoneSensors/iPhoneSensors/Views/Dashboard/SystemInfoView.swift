@@ -9,7 +9,7 @@ struct SystemInfoView: View {
         let sys = sensorManager.systemManager
         return NavigationStack {
             ScrollView {
-                VStack(spacing: 16) {
+                AdaptiveCardGrid(spacing: 16) {
                     VStack(spacing: 12) {
                         Image(systemName: "iphone.gen3")
                             .font(.system(size: 50))
@@ -134,7 +134,7 @@ struct SystemInfoView: View {
                         .dashboardRow()
                     }
                 }
-                .padding()
+                .responsivePage()
             }
             .appBackground()
             .navigationTitle(locManager.t("sensor.systemInfo"))
@@ -215,7 +215,7 @@ struct DiagnosticView: View {
                         .padding(.horizontal)
                     }
                 }
-                .padding()
+                .responsivePage()
             }
             .appBackground()
             .navigationTitle(locManager.t("diagnostic.title"))
