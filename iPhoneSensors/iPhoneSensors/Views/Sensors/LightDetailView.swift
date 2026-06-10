@@ -35,7 +35,7 @@ struct LightDetailView: View {
         .appBackground()
         .loggerInlineCard(.brightness)
         .showOffEntry(sensorID: "19", accent: SO.lightAccent)
-        .navigationTitle("Ambient Light")
+        .navigationTitle(locManager.t("label.ambientLight"))
         .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

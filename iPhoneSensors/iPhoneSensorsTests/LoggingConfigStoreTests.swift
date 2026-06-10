@@ -10,9 +10,16 @@ final class LoggingConfigStoreTests: XCTestCase {
         d.removePersistentDomain(forName: suite)
         return d
     }
-    func testReturnsDefaultsForUnknownSensor() {
+    func testReturnsAllOffForUnconfiguredSensor() {
+        // Logging is opt-in: a sensor the user has never configured reports
+        // fully off (not its curated default, which is only applied on enable).
         let store = LoggingConfigStore(defaults: makeIsolatedDefaults())
-        XCTAssertEqual(store.config(for: .gps), LoggingConfiguration.default(for: .gps))
+        XCTAssertEqual(store.config(for: .gps), .allOff)
+    }
+
+    func testMasterSwitchDefaultsOff() {
+        let store = LoggingConfigStore(defaults: makeIsolatedDefaults())
+        XCTAssertFalse(store.isLoggingEnabled)
     }
     func testRoundTripPersistence() {
         let d = makeIsolatedDefaults()

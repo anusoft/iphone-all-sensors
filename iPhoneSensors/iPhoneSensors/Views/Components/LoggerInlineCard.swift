@@ -11,6 +11,7 @@ struct LoggerSessionControl: View {
     var stopTitleKey = "logger.stop"
     @EnvironmentObject var loggingService: LoggingService
     @EnvironmentObject var localization: LocalizationManager
+    @AppStorage(LoggingService.masterEnabledKey) private var masterEnabled = false
 
     private var isRecording: Bool {
         loggingService.activeSessionDisplayID != nil
@@ -36,6 +37,7 @@ struct LoggerSessionControl: View {
         .buttonStyle(.borderedProminent)
         .controlSize(style == .fullWidth ? .large : .regular)
         .tint(isRecording ? .red : .blue)
+        .disabled(!masterEnabled)
         .accessibilityHint(isRecording ? localization.t("logger.sessionControl.stopHint") : localization.t("logger.sessionControl.startHint"))
     }
 }
@@ -63,6 +65,7 @@ struct LoggerInlineCard: View {
     let sensorID: SensorID
     @EnvironmentObject var loggingService: LoggingService
     @EnvironmentObject var localization: LocalizationManager
+    @AppStorage(LoggingService.masterEnabledKey) private var masterEnabled = false
     @State private var cfg: LoggingConfiguration = LoggingConfiguration(continuous: .off, session: .off)
 
     var body: some View {
@@ -73,6 +76,11 @@ struct LoggerInlineCard: View {
                 Spacer()
             }
 
+            if !masterEnabled {
+                Text(localization.t("logger.master.disabledNote"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } else {
             Toggle(isOn: Binding(
                 get: { cfg.session.isOn },
                 set: { on in
@@ -113,6 +121,7 @@ struct LoggerInlineCard: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            } // end master-enabled branch
         }
         .padding()
         .background(Color.secondary.opacity(0.1))

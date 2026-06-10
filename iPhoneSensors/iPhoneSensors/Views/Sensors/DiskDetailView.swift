@@ -45,9 +45,9 @@ struct DiskDetailView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(locManager.t("section.details"))
                         .font(.headline)
-                    DataRow(label: "Total Space", value: ByteCountFormatter.string(fromByteCount: sys.totalDiskSpace, countStyle: .file), icon: "internaldrive")
-                    DataRow(label: "Free Space", value: ByteCountFormatter.string(fromByteCount: sys.freeDiskSpace, countStyle: .file), icon: "internaldrive")
-                    DataRow(label: "Used Space", value: ByteCountFormatter.string(fromByteCount: sys.usedDiskSpace, countStyle: .file), icon: "internaldrive")
+                    DataRow(label: locManager.t("label.totalSpace"), value: ByteCountFormatter.string(fromByteCount: sys.totalDiskSpace, countStyle: .file), icon: "internaldrive")
+                    DataRow(label: locManager.t("label.freeSpace"), value: ByteCountFormatter.string(fromByteCount: sys.freeDiskSpace, countStyle: .file), icon: "internaldrive")
+                    DataRow(label: locManager.t("label.usedSpace"), value: ByteCountFormatter.string(fromByteCount: sys.usedDiskSpace, countStyle: .file), icon: "internaldrive")
                 }
                 .glassCard()
             }

@@ -8,16 +8,16 @@ struct ProcessorDetailView: View {
         ScrollView {
             AdaptiveCardGrid(spacing: 20) {
                 HStack(spacing: 24) {
-                    CircularGauge(value: Double(sys.activeProcessorCount), maxValue: Double(sys.processorCount), title: "Active Cores", unit: "cores", color: .purple, size: 130)
-                    CircularGauge(value: Double(sys.processorCount), maxValue: 10, title: "Total Cores", unit: "cores", color: .indigo, size: 130)
+                    CircularGauge(value: Double(sys.activeProcessorCount), maxValue: Double(sys.processorCount), title: locManager.t("label.activeCores"), unit: "cores", color: .purple, size: 130)
+                    CircularGauge(value: Double(sys.processorCount), maxValue: 10, title: locManager.t("label.totalCores"), unit: "cores", color: .indigo, size: 130)
                 }
                 .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
                     Text(locManager.t("section.info"))
                         .font(.headline)
-                    DataRow(label: "Total Cores", value: "\(sys.processorCount)", icon: "cpu")
-                    DataRow(label: "Active Cores", value: "\(sys.activeProcessorCount)", icon: "cpu")
+                    DataRow(label: locManager.t("label.totalCores"), value: "\(sys.processorCount)", icon: "cpu")
+                    DataRow(label: locManager.t("label.activeCores"), value: "\(sys.activeProcessorCount)", icon: "cpu")
                     DataRow(label: locManager.t("label.uptime"), value: formatUptime(sys.systemUptime), icon: "clock")
                     DataRow(label: locManager.t("label.lowPowerMode"), value: sys.isLowPowerModeEnabled ? locManager.t("value.enabled") : locManager.t("value.disabled"), icon: "bolt.circle")
                 }

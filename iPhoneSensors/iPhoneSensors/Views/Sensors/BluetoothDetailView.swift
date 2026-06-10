@@ -32,7 +32,7 @@ struct BluetoothDetailView: View {
                     Button(action: {
                         if conn.isScanning { conn.stopScanning() } else { conn.startScanning() }
                     }) {
-                        Label(conn.isScanning ? locManager.t("label.scanning") : locManager.t("label.scanning"), systemImage: conn.isScanning ? "stop.circle" : "magnifyingglass")
+                        Label(conn.isScanning ? locManager.t("bluetooth.stopScan") : locManager.t("bluetooth.startScan"), systemImage: conn.isScanning ? "stop.circle" : "magnifyingglass")
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(conn.isScanning ? Color.red : Color.blue)

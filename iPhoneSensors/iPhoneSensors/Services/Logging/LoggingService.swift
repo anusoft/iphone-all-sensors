@@ -76,6 +76,18 @@ final class LoggingService: ObservableObject {
 // MARK: - UI helpers (Logger tab)
 
 extension LoggingService {
+    /// Master logging switch. Logging is opt-in and disabled by default;
+    /// no session can be started while this is off. Backed by `@AppStorage`.
+    static let masterEnabledKey = "logger.masterEnabled"
+
+    /// Reads through the config store's `UserDefaults` (which is `.standard`
+    /// in production — the same store the UI's `@AppStorage` writes to — and an
+    /// isolated suite under test), so behavior stays consistent and testable.
+    @MainActor
+    var isLoggingEnabled: Bool {
+        configStore.isLoggingEnabled
+    }
+
     /// Number of sensors with a continuous stream currently configured `on`.
     @MainActor
     func continuousActiveCount() -> Int {
@@ -91,6 +103,10 @@ extension LoggingService {
 
     @MainActor
     func startSessionFromUI(note: String? = nil, only sensorID: SensorID? = nil) async {
+        // Respect the master switch: logging is disabled by default and no
+        // session may start until the user opts in.
+        guard isLoggingEnabled else { return }
+
         if activeSessionDisplayID != nil {
             await stopSessionFromUI()
         }

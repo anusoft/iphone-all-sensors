@@ -14,8 +14,8 @@ struct PedometerDetailView: View {
                 .glassCard()
 
                 HStack(spacing: 12) {
-                    StatBox(title: "Floors Up", value: "\(motion.floorsAscended)", icon: "arrow.up.circle.fill", color: .green)
-                    StatBox(title: "Floors Down", value: "\(motion.floorsDescended)", icon: "arrow.down.circle.fill", color: .orange)
+                    StatBox(title: locManager.t("label.floorsUp"), value: "\(motion.floorsAscended)", icon: "arrow.up.circle.fill", color: .green)
+                    StatBox(title: locManager.t("label.floorsDown"), value: "\(motion.floorsDescended)", icon: "arrow.down.circle.fill", color: .orange)
                 }
 
                 VStack(alignment: .leading, spacing: 12) {

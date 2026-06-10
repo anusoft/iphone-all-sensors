@@ -21,16 +21,16 @@ struct AccelerometerDetailView: View {
                 VStack(spacing: 16) {
                     Text(locManager.t("label.magnitude"))
                         .font(.headline)
-                    CircularGauge(value: mag, maxValue: 4, title: "Total G", unit: "G", color: .blue, size: 140)
+                    CircularGauge(value: mag, maxValue: 4, title: locManager.t("label.totalG"), unit: "G", color: .blue, size: 140)
                 }
                 .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
                     Text(locManager.t("section.details"))
                         .font(.headline)
-                    DataRow(label: "X-Axis", value: String(format: "%.4f G", motion.accX), icon: "arrow.left.and.right")
-                    DataRow(label: "Y-Axis", value: String(format: "%.4f G", motion.accY), icon: "arrow.up.and.down")
-                    DataRow(label: "Z-Axis", value: String(format: "%.4f G", motion.accZ), icon: "arrow.up")
+                    DataRow(label: locManager.t("label.xaxis"), value: String(format: "%.4f G", motion.accX), icon: "arrow.left.and.right")
+                    DataRow(label: locManager.t("label.yaxis"), value: String(format: "%.4f G", motion.accY), icon: "arrow.up.and.down")
+                    DataRow(label: locManager.t("label.zaxis"), value: String(format: "%.4f G", motion.accZ), icon: "arrow.up")
                     Divider()
                     DataRow(label: locManager.t("label.magnitude"), value: String(format: "%.4f G", mag), icon: "scope")
                     DataRow(label: locManager.t("label.status"), value: motion.isAccelerometerAvailable ? locManager.t("status.active") : locManager.t("status.unavailable"), icon: "checkmark.circle")
@@ -194,21 +194,21 @@ struct RecordingListView: View {
                             Button(role: .destructive) {
                                 recorder.deleteRecording(id: recording.id)
                             } label: {
-                                Label("Delete", systemImage: "trash")
+                                Label(locManager.t("dataviewer.delete"), systemImage: "trash")
                             }
-                            
+
                             Button {
                                 exportURL = recorder.exportRecording(id: recording.id, format: .csv)
                                 showShareSheet = true
                             } label: {
-                                Label("Export", systemImage: "square.and.arrow.up")
+                                Label(locManager.t("button.export"), systemImage: "square.and.arrow.up")
                             }
                             .tint(.blue)
                         }
                 }
             }
         }
-        .navigationTitle("Recordings")
+        .navigationTitle(locManager.t("label.recordings"))
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -258,7 +258,7 @@ struct RecordingRow: View {
             
             HStack(spacing: 16) {
                 Label(formatDuration(recording.duration), systemImage: "clock")
-                Label("\(recording.dataPoints.count) points", systemImage: "chart.xyaxis.line")
+                Label("\(recording.dataPoints.count) \(locManager.t("unit.points"))", systemImage: "chart.xyaxis.line")
             }
             .font(.caption)
             .foregroundStyle(.secondary)

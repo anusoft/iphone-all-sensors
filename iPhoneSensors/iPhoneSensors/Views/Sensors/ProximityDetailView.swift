@@ -11,10 +11,10 @@ struct ProximityDetailView: View {
                     Image(systemName: "sensor.tag.radiowaves.forward")
                         .font(.system(size: 60))
                         .foregroundStyle(env.proximityState ? .red : .green)
-                    Text(env.proximityState ? "Object Detected Nearby" : "No Object Nearby")
+                    Text(env.proximityState ? locManager.t("label.objectDetected") : locManager.t("label.noObject"))
                         .font(.title2)
                         .fontWeight(.bold)
-                    StatusBadge(text: env.proximityState ? "NEAR" : "FAR", color: env.proximityState ? .red : .green)
+                    StatusBadge(text: env.proximityState ? locManager.t("value.near") : locManager.t("value.far"), color: env.proximityState ? .red : .green)
                 }
                 .glassCard()
 
@@ -31,7 +31,7 @@ struct ProximityDetailView: View {
         .appBackground()
         .loggerInlineCard(.proximity)
         .showOffEntry(sensorID: "20", accent: SO.proxAccent)
-        .navigationTitle("Proximity Sensor")
+        .navigationTitle(locManager.t("label.proximitySensor"))
         .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

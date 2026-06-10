@@ -19,7 +19,7 @@ struct MagnetometerDetailView: View {
                 VStack(spacing: 16) {
                     Text(locManager.t("section.fieldStrength"))
                         .font(.headline)
-                    CircularGauge(value: totalMag, maxValue: 100, title: "Total Field", unit: "µT", color: .purple, size: 140)
+                    CircularGauge(value: totalMag, maxValue: 100, title: locManager.t("label.totalField"), unit: "µT", color: .purple, size: 140)
                 }
                 .glassCard()
 
@@ -121,14 +121,14 @@ struct CompassView: View {
 
     private func cardinalDirection(_ h: Double) -> String {
         switch h {
-        case 0..<22.5, 337.5...360: return "N"
-        case 22.5..<67.5: return "NE"
-        case 67.5..<112.5: return "E"
-        case 112.5..<157.5: return "SE"
-        case 157.5..<202.5: return "S"
-        case 202.5..<247.5: return "SW"
-        case 247.5..<292.5: return "W"
-        case 292.5..<337.5: return "NW"
+        case 0..<22.5, 337.5...360: return locManager.t("compass.n")
+        case 22.5..<67.5: return locManager.t("compass.ne")
+        case 67.5..<112.5: return locManager.t("compass.e")
+        case 112.5..<157.5: return locManager.t("compass.se")
+        case 157.5..<202.5: return locManager.t("compass.s")
+        case 202.5..<247.5: return locManager.t("compass.sw")
+        case 247.5..<292.5: return locManager.t("compass.w")
+        case 292.5..<337.5: return locManager.t("compass.nw")
         default: return ""
         }
     }

@@ -8,7 +8,7 @@ struct AltimeterDetailView: View {
         ScrollView {
             AdaptiveCardGrid(spacing: 20) {
                 HStack(spacing: 24) {
-                    CircularGauge(value: motion.relativeAltitude, maxValue: 500, title: "Relative Altitude", unit: "m", color: .cyan, size: 130)
+                    CircularGauge(value: motion.relativeAltitude, maxValue: 500, title: locManager.t("label.relativeAltitude"), unit: "m", color: .cyan, size: 130)
                     CircularGauge(value: motion.pressure, maxValue: 120, title: locManager.t("label.pressure"), unit: "kPa", color: .orange, size: 130)
                 }
                 .glassCard()

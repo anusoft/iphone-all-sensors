@@ -11,9 +11,16 @@ final class LoggingConfigStore: ObservableObject {
         self.defaults = defaults
     }
 
+    /// Master logging switch — logging is opt-in / disabled by default. Stored
+    /// in the same `UserDefaults` the UI's `@AppStorage` binds to.
+    var isLoggingEnabled: Bool { defaults.bool(forKey: "logger.masterEnabled") }
+
     func config(for id: SensorID) -> LoggingConfiguration {
+        // Logging is opt-in: a sensor the user has never configured is OFF.
+        // `default(for:)` remains the curated preset applied when the user
+        // explicitly enables a sensor or taps "Reset to defaults".
         guard let dict = decoded(),
-              let raw = dict[id.rawValue] else { return sanitized(.default(for: id), id: id) }
+              let raw = dict[id.rawValue] else { return .allOff }
         return sanitized(raw, id: id)
     }
 

@@ -10,6 +10,10 @@ enum PerStreamConfig: Codable, Equatable, Sendable {
 struct LoggingConfiguration: Codable, Equatable, Sendable {
     var continuous: PerStreamConfig
     var session: PerStreamConfig
+
+    /// Fully-disabled configuration — the initial state for any sensor the user
+    /// has not explicitly turned on. Logging is opt-in / disabled by default.
+    static let allOff = LoggingConfiguration(continuous: .off, session: .off)
 }
 
 extension LoggingConfiguration {

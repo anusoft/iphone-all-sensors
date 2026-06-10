@@ -174,14 +174,14 @@ struct NetworkDetailView: View {
                             Circle()
                                 .fill(.red)
                                 .frame(width: 8, height: 8)
-                            Text("Recording...")
+                            Text(locManager.t("record.recording"))
                                 .font(.caption)
                                 .foregroundStyle(.red)
                         }
                     }
 
                     if !signalPoints.isEmpty {
-                        Text("\(signalPoints.count) points recorded")
+                        Text("\(signalPoints.count) \(locManager.t("signalMap.pointsRecorded"))")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         ForEach(signalPoints.suffix(5).reversed()) { point in

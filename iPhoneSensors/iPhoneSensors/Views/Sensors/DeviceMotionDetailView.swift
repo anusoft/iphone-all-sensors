@@ -41,9 +41,9 @@ struct SurfaceLevelView: View {
             .frame(width: 120, height: 120)
 
             HStack(spacing: 20) {
-                Text("\(locManager.t("level.angle")): \(String(format: "%.1f°", abs(rollDeg)))")
+                Text("\(locManager.t("label.roll")): \(String(format: "%.1f°", rollDeg))")
                     .font(.caption)
-                Text("\(locManager.t("level.angle")): \(String(format: "%.1f°", abs(pitchDeg)))")
+                Text("\(locManager.t("label.pitch")): \(String(format: "%.1f°", pitchDeg))")
                     .font(.caption)
             }
 
@@ -105,9 +105,9 @@ struct DeviceMotionDetailView: View {
                 SensorChartView(chartData: chartData, title: locManager.t("section.attitude"), unit: "rad")
                         .font(.headline)
                     HStack(spacing: 16) {
-                        CircularGauge(value: abs(motion.roll * 180 / .pi), maxValue: 180, title: locManager.t("label.roll"), unit: "°", color: .red, size: 100)
-                        CircularGauge(value: abs(motion.pitch * 180 / .pi), maxValue: 180, title: locManager.t("label.pitch"), unit: "°", color: .green, size: 100)
-                        CircularGauge(value: abs(motion.yaw * 180 / .pi), maxValue: 180, title: locManager.t("label.yaw"), unit: "°", color: .blue, size: 100)
+                        CircularGauge(value: motion.roll * 180 / .pi, maxValue: 180, title: locManager.t("label.roll"), unit: "°", color: .red, size: 100)
+                        CircularGauge(value: motion.pitch * 180 / .pi, maxValue: 180, title: locManager.t("label.pitch"), unit: "°", color: .green, size: 100)
+                        CircularGauge(value: motion.yaw * 180 / .pi, maxValue: 180, title: locManager.t("label.yaw"), unit: "°", color: .blue, size: 100)
                     }
                     Image(systemName: "iphone.gen3")
                         .font(.system(size: 60))

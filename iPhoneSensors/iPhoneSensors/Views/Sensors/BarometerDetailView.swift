@@ -23,7 +23,7 @@ struct BarometerDetailView: View {
                         .font(.headline)
                     DataRow(label: locManager.t("label.pressure"), value: String(format: "%.2f kPa", motion.pressure), icon: "barometer")
                     DataRow(label: locManager.t("label.hectopascals"), value: String(format: "%.1f hPa", motion.pressure * 10), icon: "barometer")
-                    DataRow(label: "Inches of Mercury", value: String(format: "%.2f inHg", motion.pressure * 0.2953), icon: "barometer")
+                    DataRow(label: locManager.t("label.inchesHg"), value: String(format: "%.2f inHg", motion.pressure * 0.2953), icon: "barometer")
                     DataRow(label: locManager.t("label.millibars"), value: String(format: "%.1f mbar", motion.pressure * 10), icon: "barometer")
                 }
                 .glassCard()

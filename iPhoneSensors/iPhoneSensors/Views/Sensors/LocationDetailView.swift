@@ -69,7 +69,7 @@ struct LocationDetailView: View {
         .appBackground()
         .loggerInlineCard(.gps)
         .showOffEntry(sensorID: "01", accent: SO.gpsAccent)
-        .navigationTitle("GPS Location")
+        .navigationTitle(locManager.t("sensor.gps"))
         .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

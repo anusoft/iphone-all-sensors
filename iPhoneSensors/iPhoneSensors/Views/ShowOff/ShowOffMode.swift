@@ -70,11 +70,17 @@ enum SOSensors {
 struct ShowOffMode: View {
     let initialSensorID: String
     var initialVariant: Int = 0
+    /// Suppressed for deterministic screenshot captures so the first-run
+    /// instruction overlay never bleeds into App Store images.
+    var showsTutorial: Bool = true
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var locManager: LocalizationManager
 
     @State private var sensorIdx: Int = 0
     @State private var variantIdx: [String: Int] = [:]
     @State private var showIndex = false
+    @State private var showTutorial = false
+    @AppStorage("hasSeenShowOffTutorial") private var hasSeenShowOffTutorial = false
 
     var body: some View {
         let sensor = SOSensors.all[sensorIdx]
@@ -174,6 +180,17 @@ struct ShowOffMode: View {
                 }
                 .padding(.bottom, 30)
             }
+
+            // First-run gesture coach. Shown once (tracked via AppStorage),
+            // dismissed by tap; suppressed entirely in screenshot mode.
+            if showTutorial {
+                ShowOffTutorialOverlay(accent: sensor.accent) {
+                    hasSeenShowOffTutorial = true
+                    withAnimation(.easeOut(duration: 0.25)) { showTutorial = false }
+                }
+                .transition(.opacity)
+                .zIndex(10)
+            }
         }
         .preferredColorScheme(.dark)
         .statusBarHidden(true)
@@ -190,6 +207,9 @@ struct ShowOffMode: View {
             sensorIdx = SOSensors.index(of: initialSensorID)
             if variantIdx[initialSensorID] == nil {
                 variantIdx[initialSensorID] = initialVariant
+            }
+            if showsTutorial && !hasSeenShowOffTutorial {
+                showTutorial = true
             }
         }
     }
@@ -272,12 +292,94 @@ struct SOPage: View {
     }
 }
 
+// MARK: - First-run gesture coach overlay
+
+/// One-time instructional overlay explaining the two Show-Off swipe axes.
+/// Tap anywhere to dismiss. Fully localized.
+struct ShowOffTutorialOverlay: View {
+    let accent: Color
+    let onDismiss: () -> Void
+    @EnvironmentObject private var locManager: LocalizationManager
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.82).ignoresSafeArea()
+                .background(.ultraThinMaterial)
+
+            VStack(spacing: 28) {
+                Spacer()
+
+                VStack(spacing: 10) {
+                    Image(systemName: "hand.draw.fill")
+                        .font(.system(size: 40, weight: .semibold))
+                        .foregroundStyle(accent)
+                    Text(locManager.t("showoff.tutorial.title"))
+                        .font(.system(size: 26, weight: .heavy).width(.condensed))
+                        .tracking(1)
+                        .foregroundStyle(.white)
+                    Text(locManager.t("showoff.tutorial.subtitle"))
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.65))
+                        .multilineTextAlignment(.center)
+                }
+
+                VStack(spacing: 18) {
+                    gestureRow(icon: "arrow.up.arrow.down",
+                               title: locManager.t("showoff.tutorial.vertical.title"),
+                               detail: locManager.t("showoff.tutorial.vertical.detail"))
+                    gestureRow(icon: "arrow.left.arrow.right",
+                               title: locManager.t("showoff.tutorial.horizontal.title"),
+                               detail: locManager.t("showoff.tutorial.horizontal.detail"))
+                }
+                .padding(.horizontal, 32)
+
+                Spacer()
+
+                Button(action: onDismiss) {
+                    Text(locManager.t("showoff.tutorial.gotIt"))
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(.black)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 15)
+                        .background(accent, in: Capsule())
+                }
+                .padding(.horizontal, 40)
+                .padding(.bottom, 50)
+            }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture(perform: onDismiss)
+        .accessibilityAddTraits(.isModal)
+    }
+
+    private func gestureRow(icon: String, title: String, detail: String) -> some View {
+        HStack(spacing: 16) {
+            Image(systemName: icon)
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(accent)
+                .frame(width: 44, height: 44)
+                .background(accent.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(.white)
+                Text(detail)
+                    .font(.system(size: 13, weight: .regular))
+                    .foregroundStyle(.white.opacity(0.6))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 0)
+        }
+    }
+}
+
 // MARK: - Sensor index sheet — grid of all sensors w/ accent dots
 
 struct SOSensorIndex: View {
     let currentID: String
     let onSelect: (String) -> Void
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var locManager: LocalizationManager
 
     private let cols = [GridItem(.adaptive(minimum: 110), spacing: 10)]
 
@@ -306,7 +408,7 @@ struct SOSensorIndex: View {
                                 Text(s.short)
                                     .font(.system(size: 16, weight: .heavy).width(.condensed))
                                     .tracking(0.5)
-                                Text("\(s.variants.count) variants")
+                                Text("\(s.variants.count) \(locManager.t("showoff.variants"))")
                                     .font(.system(size: 10, weight: .medium, design: .monospaced))
                                     .foregroundStyle(.secondary)
                             }
@@ -329,11 +431,11 @@ struct SOSensorIndex: View {
                 }
                 .padding(16)
             }
-            .navigationTitle("All Sensors")
+            .navigationTitle(locManager.t("showoff.allSensors"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { dismiss() }
+                    Button(locManager.t("button.done")) { dismiss() }
                 }
             }
             .preferredColorScheme(.dark)
@@ -347,6 +449,7 @@ struct ShowOffEntryButton: View {
     let sensorID: String
     let accent: Color
     @State private var present = false
+    @EnvironmentObject private var locManager: LocalizationManager
     var body: some View {
         Button {
             present = true
@@ -354,7 +457,7 @@ struct ShowOffEntryButton: View {
             HStack(spacing: 10) {
                 Image(systemName: "rectangle.inset.filled.and.cursorarrow")
                     .font(.system(size: 14, weight: .semibold))
-                Text("Show-Off Mode")
+                Text(locManager.t("showoff.mode"))
                     .font(.system(size: 14, weight: .semibold))
                 Spacer()
                 Image(systemName: "chevron.right")
@@ -397,5 +500,57 @@ struct ShowOffEntryModifier: ViewModifier {
 extension View {
     func showOffEntry(sensorID: String, accent: Color) -> some View {
         modifier(ShowOffEntryModifier(sensorID: sensorID, accent: accent))
+    }
+}
+
+// MARK: - Dashboard launcher — prominent Show-Off button on the main screen.
+
+/// Hero call-to-action on the Dashboard. Launches Show-Off Mode at the very
+/// first sensor; first-ever launch surfaces the gesture coach overlay.
+struct DashboardShowOffButton: View {
+    @State private var present = false
+    @EnvironmentObject private var locManager: LocalizationManager
+
+    private var accent: Color { SOSensors.all.first?.accent ?? .blue }
+
+    var body: some View {
+        Button {
+            present = true
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 22, weight: .bold))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(locManager.t("showoff.button.title"))
+                        .font(.system(size: 17, weight: .heavy))
+                    Text(locManager.t("showoff.button.subtitle"))
+                        .font(.system(size: 12, weight: .medium))
+                        .opacity(0.85)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .bold))
+                    .opacity(0.7)
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 16)
+            .frame(maxWidth: .infinity)
+            .background(
+                LinearGradient(
+                    colors: [Color(red: 0.49, green: 0.23, blue: 0.93),
+                             Color(red: 0.93, green: 0.27, blue: 0.60)],
+                    startPoint: .topLeading, endPoint: .bottomTrailing)
+            )
+            .foregroundStyle(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .shadow(color: Color(red: 0.49, green: 0.23, blue: 0.93).opacity(0.35),
+                    radius: 12, x: 0, y: 6)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(locManager.t("showoff.button.title"))
+        .accessibilityHint(locManager.t("showoff.button.subtitle"))
+        .fullScreenCover(isPresented: $present) {
+            ShowOffMode(initialSensorID: SOSensors.all.first?.id ?? "01")
+        }
     }
 }

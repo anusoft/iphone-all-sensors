@@ -4,6 +4,7 @@ import Combine
 struct LoggerOverviewView: View {
     @EnvironmentObject var loggingService: LoggingService
     @EnvironmentObject var localization: LocalizationManager
+    @AppStorage(LoggingService.masterEnabledKey) private var masterEnabled = false
     @State private var sessionElapsed: TimeInterval = 0
     @State private var sessionTimer: AnyCancellable?
     @State private var showingDataViewer = false
@@ -13,43 +14,59 @@ struct LoggerOverviewView: View {
         NavigationStack {
             List {
                 Section {
+                    LoggerMasterToggle(isOn: $masterEnabled)
+                }
+
+                Section {
                     LoggerStatusHeaderView(elapsed: sessionElapsed)
                     LoggerSessionControl(style: .fullWidth)
                 }
+                .disabled(!masterEnabled)
 
-                Section(header: Text(localization.t("logger.bulk.section"))) {
-                    HStack {
-                        Label(localization.t("logger.bulk.allSensors"), systemImage: "square.stack.3d.up.fill")
-                        Spacer()
-                        Text("\(loggingService.sessionEnabledCount(in: SensorID.allCases))/\(SensorID.allCases.count)")
-                            .font(.caption.monospacedDigit())
-                            .foregroundStyle(.secondary)
-                        LoggerBulkActionMenu(ids: SensorID.allCases)
-                    }
-                }
-
-                ForEach(SensorCategory.allCases, id: \.self) { cat in
-                    let ids = SensorID.allCases.filter { $0.category == cat }
-                    Section {
-                        ForEach(ids, id: \.self) { id in
-                            NavigationLink(destination: SensorLogConfigView(sensorID: id)) {
-                                SensorRowConfigPreview(sensorID: id)
-                            }
-                            .swipeActions(edge: .trailing) {
-                                Button {
-                                    loggingService.resetToDefaults([id])
-                                } label: {
-                                    Label(localization.t("logger.resetSensor"), systemImage: "arrow.counterclockwise")
-                                }
-                                .tint(.orange)
-                            }
-                        }
-                    } header: {
+                if masterEnabled {
+                    Section(header: Text(localization.t("logger.bulk.section"))) {
                         HStack {
-                            Text(localization.t("category.\(cat.rawValue)"))
+                            Label(localization.t("logger.bulk.allSensors"), systemImage: "square.stack.3d.up.fill")
                             Spacer()
-                            LoggerBulkActionMenu(ids: ids)
+                            Text(enabledSummary(for: SensorID.allCases))
+                                .font(.caption.monospacedDigit())
+                                .foregroundStyle(.secondary)
+                            LoggerBulkActionMenu(ids: SensorID.allCases)
                         }
+                    }
+
+                    ForEach(SensorCategory.allCases, id: \.self) { cat in
+                        let ids = SensorID.allCases.filter { $0.category == cat }
+                        Section {
+                            ForEach(ids, id: \.self) { id in
+                                NavigationLink(destination: SensorLogConfigView(sensorID: id)) {
+                                    SensorRowConfigPreview(sensorID: id)
+                                }
+                                .swipeActions(edge: .trailing) {
+                                    Button {
+                                        loggingService.resetToDefaults([id])
+                                    } label: {
+                                        Label(localization.t("logger.resetSensor"), systemImage: "arrow.counterclockwise")
+                                    }
+                                    .tint(.orange)
+                                }
+                            }
+                        } header: {
+                            HStack {
+                                Text(localization.t("category.\(cat.rawValue)"))
+                                Spacer()
+                                Text(enabledSummary(for: ids))
+                                    .font(.caption2.monospacedDigit())
+                                    .foregroundStyle(.secondary)
+                                LoggerBulkActionMenu(ids: ids)
+                            }
+                        }
+                    }
+                } else {
+                    Section {
+                        Label(localization.t("logger.master.disabledNote"), systemImage: "info.circle")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
@@ -75,6 +92,43 @@ struct LoggerOverviewView: View {
             }
         }
         .onDisappear { sessionTimer?.cancel() }
+    }
+
+    /// "All on" / "All off" / "n of m on" summary for a set of sensors.
+    private func enabledSummary(for ids: [SensorID]) -> String {
+        let on = loggingService.sessionEnabledCount(in: ids)
+        if on == 0 { return localization.t("logger.noneEnabled") }
+        if on == ids.count { return localization.t("logger.allEnabled") }
+        return String(format: localization.t("logger.someEnabled"), on, ids.count)
+    }
+}
+
+/// Master enable/disable switch for the whole logging subsystem. Off by
+/// default — logging is opt-in. Disabling it stops any active session.
+struct LoggerMasterToggle: View {
+    @Binding var isOn: Bool
+    @EnvironmentObject var loggingService: LoggingService
+    @EnvironmentObject var localization: LocalizationManager
+
+    var body: some View {
+        Toggle(isOn: Binding(
+            get: { isOn },
+            set: { newValue in
+                isOn = newValue
+                if !newValue {
+                    // Turning logging off ends any session in progress.
+                    Task { await loggingService.stopSessionFromUI() }
+                }
+            })) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(localization.t("logger.master.title"))
+                    .font(.body.weight(.semibold))
+                Text(localization.t("logger.master.subtitle"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .tint(.green)
     }
 }
 

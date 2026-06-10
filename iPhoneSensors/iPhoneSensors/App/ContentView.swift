@@ -46,7 +46,7 @@ struct ContentView: View {
             ScreenshotHeroView(page: page)
                 .transition(.opacity)
         } else if let (sid, variant) = screenshotShowOff {
-            ShowOffMode(initialSensorID: sid, initialVariant: variant)
+            ShowOffMode(initialSensorID: sid, initialVariant: variant, showsTutorial: false)
                 .onAppear { sensorManager.startAllSensors() }
         } else {
             mainBody

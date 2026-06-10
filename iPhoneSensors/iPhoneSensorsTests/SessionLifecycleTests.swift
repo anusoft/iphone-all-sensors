@@ -8,6 +8,7 @@ final class SessionLifecycleTests: XCTestCase {
         let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
         let storage = LogStorageManager(rootURL: tmp)
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        defaults.set(true, forKey: "logger.masterEnabled")  // logging is opt-in
         let service = LoggingService(storage: storage, configStore: LoggingConfigStore(defaults: defaults))
 
         await service.bootstrap()
@@ -27,7 +28,12 @@ final class SessionLifecycleTests: XCTestCase {
         let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
         let storage = LogStorageManager(rootURL: tmp)
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        defaults.set(true, forKey: "logger.masterEnabled")  // logging is opt-in
         let service = LoggingService(storage: storage, configStore: LoggingConfigStore(defaults: defaults))
+
+        // Give gyroscope a known prior state so we can verify it's restored.
+        service.configStore.set(LoggingConfiguration.default(for: .gyroscope), for: .gyroscope)
+        XCTAssertTrue(service.configStore.config(for: .gyroscope).session.isOn)
 
         await service.bootstrap()
         await service.startSessionFromUI(note: "accelerometer", only: .accelerometer)
@@ -37,7 +43,23 @@ final class SessionLifecycleTests: XCTestCase {
 
         await service.stopSessionFromUI()
 
+        // Prior gyroscope state is restored after the scoped session ends.
         XCTAssertTrue(service.configStore.config(for: .gyroscope).session.isOn)
+    }
+
+    @MainActor
+    func testSessionDoesNotStartWhenLoggingDisabled() async {
+        // Master switch off (the default) → no session may start.
+        let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let storage = LogStorageManager(rootURL: tmp)
+        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let service = LoggingService(storage: storage, configStore: LoggingConfigStore(defaults: defaults))
+
+        await service.bootstrap()
+        await service.startSessionFromUI(note: "blocked")
+
+        XCTAssertNil(service.activeSessionDisplayID)
+        XCTAssertNil(service.sessionStartedAt)
     }
 
     func testStartAndStop() async throws {

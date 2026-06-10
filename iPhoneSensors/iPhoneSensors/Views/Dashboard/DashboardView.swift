@@ -16,6 +16,8 @@ struct DashboardView: View {
         NavigationStack {
             ScrollView {
                 LazyVStack(spacing: 16) {
+                    DashboardShowOffButton()
+
                     AllSensorsLogSessionBar()
 
                     if sensorManager.isThrottled {

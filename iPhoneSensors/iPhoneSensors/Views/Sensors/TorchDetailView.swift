@@ -12,7 +12,7 @@ struct TorchDetailView: View {
                     Image(systemName: torchLevel > 0 ? "flashlight.on.fill" : "flashlight.off.fill")
                         .font(.system(size: 60))
                         .foregroundStyle(torchLevel > 0 ? .yellow : .gray)
-                    Text(torchLevel > 0 ? "ON" : "OFF")
+                    Text(torchLevel > 0 ? locManager.t("value.on") : locManager.t("value.off"))
                         .font(.system(size: 36, weight: .bold, design: .rounded))
                 }
                 .glassCard()
