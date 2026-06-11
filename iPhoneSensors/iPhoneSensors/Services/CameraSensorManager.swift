@@ -25,27 +25,27 @@ class CameraSensorManager: ObservableObject {
 
     func startUpdates() {
         guard !isStarted else {
-            print("[Camera] ⚠ Already started")
+            appLog("[Camera] ⚠ Already started")
             return
         }
         isStarted = true
-        print("[Camera] ── Starting Camera Sensors ──")
+        appLog("[Camera] ── Starting Camera Sensors ──")
 
         isFrontCameraAvailable = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) != nil
         isRearCameraAvailable = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) != nil
 
-        print("[Camera] Front camera: \(isFrontCameraAvailable)")
-        print("[Camera] Rear camera: \(isRearCameraAvailable)")
+        appLog("[Camera] Front camera: \(isFrontCameraAvailable)")
+        appLog("[Camera] Rear camera: \(isRearCameraAvailable)")
 
         if let backCamera = AVCaptureDevice.default(for: .video) {
             isFlashAvailable = backCamera.hasFlash
             isTorchAvailable = backCamera.hasTorch
             torchLevel = backCamera.torchLevel
             maxZoomFactor = backCamera.activeFormat.videoMaxZoomFactor
-            print("[Camera] Flash: \(isFlashAvailable), Torch: \(isTorchAvailable)")
-            print("[Camera] Max zoom: \(maxZoomFactor)x")
+            appLog("[Camera] Flash: \(isFlashAvailable), Torch: \(isTorchAvailable)")
+            appLog("[Camera] Max zoom: \(maxZoomFactor)x")
         } else {
-            print("[Camera] ⚠ No back camera device found")
+            appLog("[Camera] ⚠ No back camera device found")
         }
 
         checkCameraAccess()
@@ -65,32 +65,32 @@ class CameraSensorManager: ObservableObject {
                 hasLiDAR: hasLiDAR,
                 zoom: Double(maxZoomFactor)))))
 
-        print("[Camera] ✅ Camera sensors initialization complete")
+        appLog("[Camera] ✅ Camera sensors initialization complete")
     }
 
     func stopUpdates() {
         guard isStarted else { return }
         isStarted = false
-        print("[Camera] ■ Stopping camera sensors")
+        appLog("[Camera] ■ Stopping camera sensors")
     }
 
     func checkCameraAccess() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
             cameraAccessGranted = true
-            print("[Camera] ✓ Camera access: Authorized")
+            appLog("[Camera] ✓ Camera access: Authorized")
         case .notDetermined:
             cameraAccessGranted = false
-            print("[Camera] ? Camera access: Not Determined — will request in welcome flow")
+            appLog("[Camera] ? Camera access: Not Determined — will request in welcome flow")
         case .denied:
             cameraAccessGranted = false
-            print("[Camera] ❌ Camera access: Denied")
+            appLog("[Camera] ❌ Camera access: Denied")
         case .restricted:
             cameraAccessGranted = false
-            print("[Camera] ⚠ Camera access: Restricted")
+            appLog("[Camera] ⚠ Camera access: Restricted")
         @unknown default:
             cameraAccessGranted = false
-            print("[Camera] ⚠ Camera access: Unknown status")
+            appLog("[Camera] ⚠ Camera access: Unknown status")
         }
     }
 
@@ -98,16 +98,16 @@ class CameraSensorManager: ObservableObject {
         switch AVCaptureDevice.authorizationStatus(for: .audio) {
         case .authorized:
             microphoneAccessGranted = true
-            print("[Camera] ✓ Microphone access: Authorized")
+            appLog("[Camera] ✓ Microphone access: Authorized")
         case .notDetermined:
             microphoneAccessGranted = false
-            print("[Camera] ? Microphone access: Not Determined — will request in welcome flow")
+            appLog("[Camera] ? Microphone access: Not Determined — will request in welcome flow")
         case .denied:
             microphoneAccessGranted = false
-            print("[Camera] ❌ Microphone access: Denied")
+            appLog("[Camera] ❌ Microphone access: Denied")
         case .restricted:
             microphoneAccessGranted = false
-            print("[Camera] ⚠ Microphone access: Restricted")
+            appLog("[Camera] ⚠ Microphone access: Restricted")
         @unknown default:
             microphoneAccessGranted = false
         }
@@ -118,7 +118,7 @@ class CameraSensorManager: ObservableObject {
         AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
             Task { @MainActor in
                 self?.cameraAccessGranted = granted
-                print("[Camera] \(granted ? "✓" : "❌") Camera access: \(granted ? "Granted" : "Denied")")
+                appLog("[Camera] \(granted ? "✓" : "❌") Camera access: \(granted ? "Granted" : "Denied")")
             }
         }
     }
@@ -128,7 +128,7 @@ class CameraSensorManager: ObservableObject {
         AVCaptureDevice.requestAccess(for: .audio) { [weak self] granted in
             Task { @MainActor in
                 self?.microphoneAccessGranted = granted
-                print("[Camera] \(granted ? "✓" : "❌") Microphone access: \(granted ? "Granted" : "Denied")")
+                appLog("[Camera] \(granted ? "✓" : "❌") Microphone access: \(granted ? "Granted" : "Denied")")
             }
         }
     }
@@ -139,14 +139,14 @@ class CameraSensorManager: ObservableObject {
         isAudioInputAvailable = session.isInputAvailable
         audioSampleRate = session.sampleRate
         audioInputChannels = session.inputNumberOfChannels
-        print("[Camera] Audio category: \(audioSessionCategory)")
-        print("[Camera] Sample rate: \(audioSampleRate) Hz")
-        print("[Camera] Input channels: \(audioInputChannels)")
+        appLog("[Camera] Audio category: \(audioSessionCategory)")
+        appLog("[Camera] Sample rate: \(audioSampleRate) Hz")
+        appLog("[Camera] Input channels: \(audioInputChannels)")
     }
 
     func setTorch(level: Float) {
         guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else {
-            print("[Camera] ❌ Cannot set torch")
+            appLog("[Camera] ❌ Cannot set torch")
             return
         }
         try? device.lockForConfiguration()
@@ -157,6 +157,6 @@ class CameraSensorManager: ObservableObject {
         }
         device.unlockForConfiguration()
         torchLevel = level
-        print("[Camera] 🔦 Torch: \(level)")
+        appLog("[Camera] 🔦 Torch: \(level)")
     }
 }

@@ -56,11 +56,11 @@ class SystemSensorManager: ObservableObject {
 
     func startUpdates() {
         guard !isStarted else {
-            print("[System] ⚠ Already started")
+            appLog("[System] ⚠ Already started")
             return
         }
         isStarted = true
-        print("[System] ── Starting System Sensors ──")
+        appLog("[System] ── Starting System Sensors ──")
 
         let device = UIDevice.current
         device.isBatteryMonitoringEnabled = true
@@ -76,18 +76,18 @@ class SystemSensorManager: ObservableObject {
         systemVersion = device.systemVersion
         deviceIdentifierForVendor = device.identifierForVendor?.uuidString ?? "N/A"
 
-        print("[System] Device: \(deviceName)")
-        print("[System] Model: \(deviceModel)")
-        print("[System] System: \(systemName) \(systemVersion)")
-        print("[System] Battery: \(batteryLevel * 100)% (\(batteryStateKey))")
-        print("[System] Identifier: \(deviceIdentifierForVendor)")
+        appLog("[System] Device: \(deviceName)")
+        appLog("[System] Model: \(deviceModel)")
+        appLog("[System] System: \(systemName) \(systemVersion)")
+        appLog("[System] Battery: \(batteryLevel * 100)% (\(batteryStateKey))")
+        appLog("[System] Identifier: \(deviceIdentifierForVendor)")
 
         screenBounds = UIScreen.main.bounds
         screenScale = UIScreen.main.scale
         screenNativeScale = UIScreen.main.nativeScale
         screenBrightness = UIScreen.main.brightness
 
-        print("[System] Screen: \(Int(screenBounds.width))x\(Int(screenBounds.height)) @\(screenScale)x")
+        appLog("[System] Screen: \(Int(screenBounds.width))x\(Int(screenBounds.height)) @\(screenScale)x")
 
         let processInfo = ProcessInfo.processInfo
         isMultitaskingSupported = true
@@ -99,11 +99,11 @@ class SystemSensorManager: ObservableObject {
         systemUptime = processInfo.systemUptime
         isLowPowerModeEnabled = processInfo.isLowPowerModeEnabled
 
-        print("[System] Processor: \(activeProcessorCount)/\(processorCount) cores")
-        print("[System] Memory: \(ByteCountFormatter.string(fromByteCount: Int64(physicalMemory), countStyle: .memory))")
-        print("[System] Thermal: \(thermalStateKey)")
-        print("[System] Low Power Mode: \(isLowPowerModeEnabled)")
-        print("[System] Uptime: \(String(format: "%.0f", systemUptime))s")
+        appLog("[System] Processor: \(activeProcessorCount)/\(processorCount) cores")
+        appLog("[System] Memory: \(ByteCountFormatter.string(fromByteCount: Int64(physicalMemory), countStyle: .memory))")
+        appLog("[System] Thermal: \(thermalStateKey)")
+        appLog("[System] Low Power Mode: \(isLowPowerModeEnabled)")
+        appLog("[System] Uptime: \(String(format: "%.0f", systemUptime))s")
 
         updateDiskSpace()
         updateCameraInfo()
@@ -118,7 +118,7 @@ class SystemSensorManager: ObservableObject {
                     sensorID: .battery,
                     payload: .battery(level: Double(level),
                                       state: self.batteryStateLowercase(UIDevice.current.batteryState))))
-                print("[System] 🔋 Battery: \(level * 100)%")
+                appLog("[System] 🔋 Battery: \(level * 100)%")
             }
         }
         let obs2 = NotificationCenter.default.addObserver(forName: UIDevice.batteryStateDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
@@ -131,7 +131,7 @@ class SystemSensorManager: ObservableObject {
                     sensorID: .battery,
                     payload: .battery(level: Double(UIDevice.current.batteryLevel),
                                       state: self.batteryStateLowercase(state))))
-                print("[System] 🔋 Battery state: \(self.batteryStateKey)")
+                appLog("[System] 🔋 Battery state: \(self.batteryStateKey)")
             }
         }
         let obs3 = NotificationCenter.default.addObserver(forName: UIDevice.orientationDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
@@ -152,7 +152,7 @@ class SystemSensorManager: ObservableObject {
                 self.samplePublisher.send(SensorSample(
                     sensorID: .thermal,
                     payload: .thermal(state: self.thermalStateLowercase(state))))
-                print("[System] 🌡️ Thermal state: \(self.thermalStateKey)")
+                appLog("[System] 🌡️ Thermal state: \(self.thermalStateKey)")
             }
         }
 
@@ -179,13 +179,13 @@ class SystemSensorManager: ObservableObject {
             }
         }
 
-        print("[System] ✅ System sensors initialization complete")
+        appLog("[System] ✅ System sensors initialization complete")
     }
 
     func stopUpdates() {
         guard isStarted else { return }
         isStarted = false
-        print("[System] ■ Stopping system sensors")
+        appLog("[System] ■ Stopping system sensors")
         timer?.invalidate()
         timer = nil
         for observer in observers {
@@ -201,7 +201,7 @@ class SystemSensorManager: ObservableObject {
                 totalDiskSpace = (attrs[.systemSize] as? Int64) ?? 0
                 freeDiskSpace = (attrs[.systemFreeSize] as? Int64) ?? 0
                 usedDiskSpace = totalDiskSpace - freeDiskSpace
-                print("[System] 💾 Disk: \(ByteCountFormatter.string(fromByteCount: freeDiskSpace, countStyle: .memory)) free / \(ByteCountFormatter.string(fromByteCount: totalDiskSpace, countStyle: .memory)) total")
+                appLog("[System] 💾 Disk: \(ByteCountFormatter.string(fromByteCount: freeDiskSpace, countStyle: .memory)) free / \(ByteCountFormatter.string(fromByteCount: totalDiskSpace, countStyle: .memory)) total")
             }
         }
     }
@@ -210,7 +210,7 @@ class SystemSensorManager: ObservableObject {
         isFrontCameraAvailable = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) != nil
         isRearCameraAvailable = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) != nil
         isFlashAvailable = AVCaptureDevice.default(for: .video)?.hasFlash ?? false
-        print("[System] 📷 Front camera: \(isFrontCameraAvailable), Rear: \(isRearCameraAvailable), Flash: \(isFlashAvailable)")
+        appLog("[System] 📷 Front camera: \(isFrontCameraAvailable), Rear: \(isRearCameraAvailable), Flash: \(isFlashAvailable)")
     }
 
     private func updateOrientation() {

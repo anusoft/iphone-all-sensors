@@ -154,16 +154,16 @@ output is upload-safe by construction.
 The app registers the `app` URL scheme (`iPhoneSensors/Info.plist`) and routes:
 
 ```
-app://<namespace>.<app>/screenshots/<page-name>     e.g. app://1moby.allsensors/screenshots/dashboard
+allsensors://<namespace>.<app>/screenshots/<page-name>     e.g. allsensors://1moby.allsensors/screenshots/dashboard
 ```
 
 | Page | URL | Launch-arg equivalent | Showcases |
 |------|-----|------------------------|-----------|
-| `dashboard`   | `app://1moby.allsensors/screenshots/dashboard`   | `--screenshot dashboard`   | 21 sensors + live chart |
-| `motion`      | `app://1moby.allsensors/screenshots/motion`      | `--screenshot motion`      | Accel/gyro chart + RPY rings |
-| `health`      | `app://1moby.allsensors/screenshots/health`      | `--screenshot health`      | HR ring + trend + vitals |
-| `environment` | `app://1moby.allsensors/screenshots/environment` | `--screenshot environment` | Barometer, altitude, light |
-| `logger`      | `app://1moby.allsensors/screenshots/logger`      | `--screenshot logger`      | Recording + CSV/JSON/SQLite |
+| `dashboard`   | `allsensors://1moby.allsensors/screenshots/dashboard`   | `--screenshot dashboard`   | 21 sensors + live chart |
+| `motion`      | `allsensors://1moby.allsensors/screenshots/motion`      | `--screenshot motion`      | Accel/gyro chart + RPY rings |
+| `health`      | `allsensors://1moby.allsensors/screenshots/health`      | `--screenshot health`      | HR ring + trend + vitals |
+| `environment` | `allsensors://1moby.allsensors/screenshots/environment` | `--screenshot environment` | Barometer, altitude, light |
+| `logger`      | `allsensors://1moby.allsensors/screenshots/logger`      | `--screenshot logger`      | Recording + CSV/JSON/SQLite |
 
 Routing: `ScreenshotRouter` + `.onOpenURL` (`iPhoneSensorsApp.swift`) and the
 `--screenshot <page>` launch arg (`ContentView.swift`) both render `ScreenshotHeroView`.
@@ -171,7 +171,7 @@ Routing: `ScreenshotRouter` + `.onOpenURL` (`iPhoneSensorsApp.swift`) and the
 **Why two entry points (launch is the unattended default):** `capture.sh` defaults to
 `--method launch` (`simctl launch … --screenshot <page>`) because it is deterministic and
 prompt-free. `simctl openurl` to a **custom URL scheme** raises a SpringBoard consent
-prompt ("Open in …?") — and if more than one installed app claims `app://`, a chooser
+prompt ("Open in …?") — and if more than one installed app claims `allsensors://`, a chooser
 instead — either of which overlays the screenshot and blocks unattended/CI capture.
 (Confirmed on both this app and the qwen3-asr Konjac pipeline.) `--method openurl` still
 exercises the real `.onOpenURL` deep link for interactive verification.

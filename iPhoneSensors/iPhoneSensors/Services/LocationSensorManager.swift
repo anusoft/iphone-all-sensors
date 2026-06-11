@@ -42,31 +42,31 @@ class LocationSensorManager: NSObject, ObservableObject, CLLocationManagerDelega
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = kCLDistanceFilterNone
         locationManager.headingFilter = kCLHeadingFilterNone
-        print("[Location] ── Manager initialized ──")
+        appLog("[Location] ── Manager initialized ──")
     }
 
     func startUpdates() {
         guard !isStarted else {
-            print("[Location] ⚠ Already started")
+            appLog("[Location] ⚠ Already started")
             return
         }
         let status = locationManager.authorizationStatus
         guard status == .authorizedWhenInUse || status == .authorizedAlways else {
-            print("[Location] ⏭ Location not authorized (status: \(authorizationStatusString(status))). Skipping location updates.")
+            appLog("[Location] ⏭ Location not authorized (status: \(authorizationStatusString(status))). Skipping location updates.")
             return
         }
         isStarted = true
-        print("[Location] ═══════════════════════════════════")
-        print("[Location] STARTING LOCATION SENSORS")
-        print("[Location] ═══════════════════════════════════")
-        print("[Location] Auth status: \(authorizationStatusString(status))")
+        appLog("[Location] ═══════════════════════════════════")
+        appLog("[Location] STARTING LOCATION SENSORS")
+        appLog("[Location] ═══════════════════════════════════")
+        appLog("[Location] Auth status: \(authorizationStatusString(status))")
 
         locationManager.startUpdatingLocation()
         locationManager.startUpdatingHeading()
 
-        print("[Location] ✓ Location updates started")
-        print("[Location] ✓ Heading updates started")
-        print("[Location] ═══════════════════════════════════")
+        appLog("[Location] ✓ Location updates started")
+        appLog("[Location] ✓ Heading updates started")
+        appLog("[Location] ═══════════════════════════════════")
     }
 
     func stopUpdates() {
@@ -74,14 +74,14 @@ class LocationSensorManager: NSObject, ObservableObject, CLLocationManagerDelega
         isStarted = false
         locationManager.stopUpdatingLocation()
         locationManager.stopUpdatingHeading()
-        print("[Location] ■ Stopped")
+        appLog("[Location] ■ Stopped")
     }
 
     // MARK: - CLLocationManagerDelegate
 
     nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else {
-            print("[Location] ⚠ Empty locations")
+            appLog("[Location] ⚠ Empty locations")
             return
         }
         Task { @MainActor [weak self] in
@@ -112,7 +112,7 @@ class LocationSensorManager: NSObject, ObservableObject, CLLocationManagerDelega
                     courseAccuracy: location.courseAccuracy,
                     floor: location.floor?.level))))
             if self.locationUpdateCount <= 5 || self.locationUpdateCount % 20 == 0 {
-                print("[Location] 📍 #\(self.locationUpdateCount): \(String(format: "%.6f", location.coordinate.latitude)), \(String(format: "%.6f", location.coordinate.longitude)) alt:\(String(format: "%.1f", location.altitude))m hAcc:\(String(format: "%.1f", location.horizontalAccuracy))m")
+                appLog("[Location] 📍 #\(self.locationUpdateCount): \(String(format: "%.6f", location.coordinate.latitude)), \(String(format: "%.6f", location.coordinate.longitude)) alt:\(String(format: "%.1f", location.altitude))m hAcc:\(String(format: "%.1f", location.horizontalAccuracy))m")
             }
         }
     }
@@ -133,7 +133,7 @@ class LocationSensorManager: NSObject, ObservableObject, CLLocationManagerDelega
                     magneticHeading: newHeading.magneticHeading,
                     accuracy: newHeading.headingAccuracy)))
             if self.headingUpdateCount <= 5 || self.headingUpdateCount % 20 == 0 {
-                print("[Location] 🧭 #\(self.headingUpdateCount): true=\(String(format: "%.1f", newHeading.trueHeading))° mag=\(String(format: "%.1f", newHeading.magneticHeading))° acc=\(String(format: "%.1f", newHeading.headingAccuracy))°")
+                appLog("[Location] 🧭 #\(self.headingUpdateCount): true=\(String(format: "%.1f", newHeading.trueHeading))° mag=\(String(format: "%.1f", newHeading.magneticHeading))° acc=\(String(format: "%.1f", newHeading.headingAccuracy))°")
             }
         }
     }
@@ -145,15 +145,15 @@ class LocationSensorManager: NSObject, ObservableObject, CLLocationManagerDelega
             self.locationAccuracy = manager.accuracyAuthorization
             self.isAuthorized = manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways
             self.authorizationDescription = self.authorizationStatusString(manager.authorizationStatus)
-            print("[Location] 🔐 Auth changed: \(self.authorizationDescription)")
-            print("[Location] 🔐 Is authorized: \(self.isAuthorized)")
+            appLog("[Location] 🔐 Auth changed: \(self.authorizationDescription)")
+            appLog("[Location] 🔐 Is authorized: \(self.isAuthorized)")
         }
     }
 
     nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("[Location] ❌ Error: \(error.localizedDescription)")
+        appLog("[Location] ❌ Error: \(error.localizedDescription)")
         if let clError = error as? CLError {
-            print("[Location] ❌ CLOError code: \(clError.code.rawValue)")
+            appLog("[Location] ❌ CLOError code: \(clError.code.rawValue)")
         }
     }
 

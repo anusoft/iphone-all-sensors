@@ -19,7 +19,7 @@ slot folders `screenshots/iphone-6.9/` and `screenshots/ipad-13/`:
 |---|---|---|
 | Look | Gradient bg + device frame + headline/sub + callout badges | Undecorated full-bleed app capture |
 | In-app surface | `ScreenshotHeroView` (mock data) | Show-Off Mode variants ([`docs/sensors-show-off.md`](sensors-show-off.md)) |
-| Entry | `app://…/screenshots/<page>` deep link **or** `--screenshot <page>` launch arg | `--showoff <sensorID> <variantIdx>` launch arg |
+| Entry | `allsensors://…/screenshots/<page>` deep link **or** `--screenshot <page>` launch arg | `--showoff <sensorID> <variantIdx>` launch arg |
 | Make it | `capture.sh` → Vision LLM → `compose.py` | launch + `simctl io … screenshot` |
 | Produced | `iphone-6.9/dashboard.png`, … | `iphone-6.9/01-dashboard.png`, `02-gps-hud.png`, … |
 | Best for | Conversion-optimized store art | Lowest-risk "app in use" |
@@ -101,7 +101,7 @@ device class so the file matches the slot dimensions.
 
 - **No `simctl screenshot` subcommand** — use `xcrun simctl io <udid> screenshot <file>`.
 - **`simctl openurl` to a custom scheme is not unattended-safe.** It raises a SpringBoard
-  "Open in …?" consent prompt (and a chooser if more than one app claims `app://`) that
+  "Open in …?" consent prompt (and a chooser if more than one app claims `allsensors://`) that
   overlays the screenshot. So `run.sh`/`capture.sh` default to `--method launch`
   (`simctl launch … --screenshot <page>`), which is prompt-free; `--method openurl` is for
   interactive deep-link verification only. (Same conclusion as the qwen3-asr pipeline.)

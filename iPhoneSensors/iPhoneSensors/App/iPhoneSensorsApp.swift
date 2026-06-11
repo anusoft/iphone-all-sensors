@@ -31,11 +31,14 @@ struct iPhoneSensorsApp: App {
                 .environmentObject(screenshotRouter)
                 .preferredColorScheme(themeManager.colorScheme)
                 .onOpenURL { url in
-                    // Deep link: app://<namespace>.<app>/screenshots/<page-name>
+                    // Deep link: allsensors://<namespace>.<app>/screenshots/<page-name>
                     // Routes into ScreenshotHeroView for App Store capture.
                     screenshotRouter.handle(url)
                 }
                 .task {
+                    // Make the live sensor manager reachable from App Intents /
+                    // the home-screen widget bridge while the app is running.
+                    AppDelegate.sensorManager = sensorManager
                     await loggingService.bootstrap()
                     // Register publishers for every sensor manager. Per-sensor logging is
                     // driven by LoggingConfiguration.default(for:) (via LoggingConfigStore
@@ -56,106 +59,16 @@ struct iPhoneSensorsApp: App {
 final class AppDelegate: NSObject, UIApplicationDelegate {
     static var loggingService: LoggingService?
 
-    func applicationWillTerminate(_ application: UIApplication) {
-        let sem = DispatchSemaphore(value: 0)
-        Task { @MainActor in
-            await Self.loggingService?.flush()
-            sem.signal()
-        }
-        _ = sem.wait(timeout: .now() + .milliseconds(200))
-    }
-}
+    /// Weak handle to the live, foreground `SensorManager`. Set while the app is
+    /// running so App Intents / the widget bridge can read real readings; `nil`
+    /// when the app isn't running (callers then report "open the app").
+    static weak var sensorManager: SensorManager?
 
-import AppIntents
-
-enum SensorType: String, AppEnum {
-    case accelerometer, gyroscope, magnetometer, gps, compass, barometer, battery
-
-    static var typeDisplayRepresentation: TypeDisplayRepresentation {
-        TypeDisplayRepresentation(name: "Sensor")
-    }
-
-    static var caseDisplayRepresentations: [SensorType: DisplayRepresentation] = [
-        .accelerometer: DisplayRepresentation(title: "Accelerometer"),
-        .gyroscope: DisplayRepresentation(title: "Gyroscope"),
-        .magnetometer: DisplayRepresentation(title: "Magnetometer"),
-        .gps: DisplayRepresentation(title: "GPS"),
-        .compass: DisplayRepresentation(title: "Compass"),
-        .barometer: DisplayRepresentation(title: "Barometer"),
-        .battery: DisplayRepresentation(title: "Battery")
-    ]
-
-    var sensorID: SensorID {
-        switch self {
-        case .accelerometer: return .accelerometer
-        case .gyroscope: return .gyroscope
-        case .magnetometer: return .magnetometer
-        case .gps: return .gps
-        case .compass: return .heading
-        case .barometer: return .altimeter
-        case .battery: return .battery
-        }
-    }
-}
-
-struct GetSensorReadingIntent: AppIntent {
-    static var title: LocalizedStringResource = "Get Sensor Reading"
-    static var description = IntentDescription("Get the current value of a specific sensor.")
-
-    @Parameter(title: "Sensor")
-    var sensor: SensorType
-
-    func perform() async throws -> some IntentResult & ReturnsValue<String> {
-        let value = await getSensorValue(sensor: sensor)
-        return .result(value: value)
-    }
-
-    private func getSensorValue(sensor: SensorType) async -> String {
-        // This would normally read from SensorManager
-        // For now, return a placeholder that will be replaced with actual data
-        switch sensor {
-        case .accelerometer: return "0.98 G"
-        case .gyroscope: return "0.05 rad/s"
-        case .magnetometer: return "45.2 µT"
-        case .gps: return "13.7563°N, 100.5018°E"
-        case .compass: return "245°"
-        case .barometer: return "101.3 kPa"
-        case .battery: return "85%"
-        }
-    }
-}
-
-struct StartRecordingIntent: AppIntent {
-    static var title: LocalizedStringResource = "Start Sensor Recording"
-    static var description = IntentDescription("Start recording data from a sensor.")
-
-    @Parameter(title: "Sensor")
-    var sensor: SensorType
-
-    @MainActor
-    func perform() async throws -> some IntentResult {
-        await AppDelegate.loggingService?.startSessionFromUI(note: "Siri", only: sensor.sensorID)
-        return .result(dialog: "Started recording \(sensor.rawValue) data.")
-    }
-}
-
-struct StopRecordingIntent: AppIntent {
-    static var title: LocalizedStringResource = "Stop Sensor Recording"
-    static var description = IntentDescription("Stop the active sensor logging session.")
-
-    @MainActor
-    func perform() async throws -> some IntentResult {
-        await AppDelegate.loggingService?.stopSessionFromUI()
-        return .result(dialog: "Stopped sensor recording.")
-    }
-}
-
-struct ExportSensorDataIntent: AppIntent {
-    static var title: LocalizedStringResource = "Export Sensor Data"
-    static var description = IntentDescription("Export current sensor data as CSV.")
-
-    func perform() async throws -> some IntentResult {
-        // Would trigger DataExportManager
-        return .result(dialog: "Sensor data exported successfully.")
-    }
+    // NOTE: We intentionally do NOT flush on `applicationWillTerminate`. The
+    // earlier implementation blocked the main thread on a DispatchSemaphore while
+    // awaiting an @MainActor flush — a guaranteed self-deadlock (the flush task
+    // can't run while the main thread is parked), so it timed out after 200 ms
+    // and never actually flushed. Persistence is handled by the
+    // `willResignActiveNotification` flush registered in `LoggingService.bootstrap()`,
+    // which reliably fires before suspension/termination.
 }

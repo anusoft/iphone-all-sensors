@@ -30,7 +30,7 @@ struct ContentView: View {
 
     // Deterministic App Store capture: launch with `--screenshot <page-name>`
     // to render ScreenshotHeroView directly. This is collision-proof (unlike the
-    // `app://` URL scheme, which LaunchServices may disambiguate when more than one
+    // `allsensors://` URL scheme, which LaunchServices may disambiguate when more than one
     // installed app claims it) and drives the exact same routing target as the
     // `.onOpenURL` deep link. Used by screenshot/capture.sh.
     private var screenshotPageArg: ScreenshotPage? {

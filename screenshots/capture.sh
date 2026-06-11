@@ -3,7 +3,7 @@
 # capture.sh — Stage 1 of the App Store screenshot pipeline.
 #
 # Boots a target simulator, builds + installs the app, then for each page:
-#   1. opens the deep link   app://1moby.allsensors/screenshots/<page>
+#   1. opens the deep link   allsensors://1moby.allsensors/screenshots/<page>
 #   2. waits for the UI to render
 #   3. captures a raw screenshot to  screenshots/raw/<family>/<page>.png
 #
@@ -25,9 +25,9 @@
 #   -m, --method <m>        Invocation method        (default: launch)
 #                             launch  → simctl launch ... --screenshot <page>
 #                                       (deterministic; immune to URL-scheme chooser)
-#                             openurl → simctl openurl app://<host>/screenshots/<page>
+#                             openurl → simctl openurl allsensors://<host>/screenshots/<page>
 #                                       (true deep link; requires this app to be the
-#                                        sole claimant of the `app://` scheme)
+#                                        sole claimant of the `allsensors://` scheme)
 #       --appearance <l|d>  Force light/dark         (default: dark)
 #       --no-build          Skip xcodebuild; reuse the already-installed app
 #       --keep-booted       Do not shut the simulator down at the end
@@ -200,7 +200,7 @@ echo
 for raw_page in "${PAGE_ARR[@]}"; do
   page="$(echo "$raw_page" | tr -d '[:space:]')"
   [[ -z "$page" ]] && continue
-  url="app://$HOST/screenshots/$page"
+  url="allsensors://$HOST/screenshots/$page"
   out="$OUT_DIR/$page.png"
 
   log "[$page] terminating any prior instance…"

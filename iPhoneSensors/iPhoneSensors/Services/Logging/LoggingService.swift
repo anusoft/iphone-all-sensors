@@ -177,21 +177,37 @@ extension LoggingService {
             try FileManager.default.removeItem(at: dst)
         }
         try FileManager.default.copyItem(at: src, to: dst)
+
+        // Derive what "location" means from the model itself, not ad-hoc string
+        // tokens, so a future location-bearing SensorID is stripped automatically.
+        let locationIDs = SensorID.allCases.filter { $0.category == .location }
+
         // Remove location-related flat files (jsonl/csv per-sensor outputs).
+        // Per-sensor files are named after the SensorID raw value (e.g.
+        // "location.gps.jsonl"), so match on the full raw value and on the
+        // category prefix ("location.") — both derived from `SensorID`.
         if let contents = try? FileManager.default.contentsOfDirectory(at: dst, includingPropertiesForKeys: nil) {
+            let needles = Set(locationIDs.map { $0.rawValue.lowercased() }
+                              + locationIDs.map { "\($0.category.rawValue.lowercased())." })
             for url in contents {
                 let name = url.lastPathComponent.lowercased()
-                if name.contains("gps") || name.contains("heading") || name.contains("location") {
+                if needles.contains(where: { name.contains($0) }) {
                     try? FileManager.default.removeItem(at: url)
                 }
             }
         }
-        // Strip location rows from log.sqlite.
+        // Strip location rows from log.sqlite, scoped to the exact location
+        // SensorIDs (parameterized — no string interpolation into SQL).
         let dbURL = dst.appendingPathComponent("log.sqlite")
-        if FileManager.default.fileExists(atPath: dbURL.path) {
+        if FileManager.default.fileExists(atPath: dbURL.path), !locationIDs.isEmpty {
+            let rawValues = locationIDs.map { $0.rawValue }
             let pool = try DatabasePool(path: dbURL.path)
             try await pool.write { db in
-                try db.execute(sql: "DELETE FROM entries WHERE sensor_id LIKE 'location.%'")
+                let placeholders = databaseQuestionMarks(count: rawValues.count)
+                try db.execute(
+                    sql: "DELETE FROM entries WHERE sensor_id IN (\(placeholders))",
+                    arguments: StatementArguments(rawValues)
+                )
                 try db.execute(sql: "VACUUM")
             }
         }

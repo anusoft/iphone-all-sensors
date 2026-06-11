@@ -1,0 +1,39 @@
+# SwiftLint configuration — intentionally minimal so it can be adopted
+# incrementally without a large up-front churn. Tighten over time.
+included:
+  - iPhoneSensors/iPhoneSensors
+  - iPhoneSensors/iPhoneSensorsWidget
+  - iPhoneSensors/iPhoneSensorsTests
+
+excluded:
+  - iPhoneSensors/iPhoneSensors/Services/LocalizationManager.swift # 5k-line string tables; migrating to .xcstrings later
+  - "**/.build"
+  - build
+
+# Start with a small, high-signal ruleset. Most opt-in rules are deliberately
+# left off until the codebase is ready for them.
+disabled_rules:
+  - trailing_whitespace
+  - todo
+  - line_length
+  - type_body_length
+  - function_body_length
+  - cyclomatic_complexity
+  - identifier_name
+  - nesting
+
+opt_in_rules:
+  - force_unwrapping
+  - empty_count
+  - redundant_optional_initialization
+
+# Guardrails against the two patterns the audit flagged.
+force_unwrapping:
+  severity: warning
+
+file_length:
+  warning: 1500
+  error: 6000   # LocalizationManager is excluded; this catches the next god file
+
+large_tuple:
+  warning: 3

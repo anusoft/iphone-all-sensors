@@ -34,21 +34,21 @@ class EnvironmentSensorManager: ObservableObject {
 
     func startUpdates() {
         guard !isStarted else {
-            print("[Environment] ⚠ Already started")
+            appLog("[Environment] ⚠ Already started")
             return
         }
         isStarted = true
-        print("[Environment] ── Starting Environment Sensors ──")
+        appLog("[Environment] ── Starting Environment Sensors ──")
 
         if CMAltimeter.isRelativeAltitudeAvailable() {
             isAltimeterAvailable = true
-            print("[Environment] ✓ Altimeter available (shared with MotionSensorManager)")
+            appLog("[Environment] ✓ Altimeter available (shared with MotionSensorManager)")
         } else {
-            print("[Environment] ⚠ Altimeter not available")
+            appLog("[Environment] ⚠ Altimeter not available")
         }
 
         screenBrightness = UIScreen.main.brightness
-        print("[Environment] Screen brightness: \(screenBrightness)")
+        appLog("[Environment] Screen brightness: \(screenBrightness)")
         samplePublisher.send(SensorSample(
             sensorID: .brightness,
             payload: .brightness(level: Double(UIScreen.main.brightness))))
@@ -56,7 +56,7 @@ class EnvironmentSensorManager: ObservableObject {
         UIDevice.current.isProximityMonitoringEnabled = true
         isProximityMonitoringEnabled = UIDevice.current.isProximityMonitoringEnabled
         proximityState = UIDevice.current.proximityState
-        print("[Environment] Proximity monitoring enabled: \(isProximityMonitoringEnabled)")
+        appLog("[Environment] Proximity monitoring enabled: \(isProximityMonitoringEnabled)")
         samplePublisher.send(SensorSample(
             sensorID: .proximity,
             payload: .proximity(near: UIDevice.current.proximityState)))
@@ -64,14 +64,14 @@ class EnvironmentSensorManager: ObservableObject {
         if let device = AVCaptureDevice.default(for: .video) {
             isTorchAvailable = device.hasTorch
             torchLevel = device.torchLevel
-            print("[Environment] Torch available: \(isTorchAvailable), level: \(torchLevel)")
+            appLog("[Environment] Torch available: \(isTorchAvailable), level: \(torchLevel)")
         } else {
-            print("[Environment] ⚠ No video capture device for torch")
+            appLog("[Environment] ⚠ No video capture device for torch")
         }
 
         updateAudioInfo()
         registerObservers()
-        print("[Environment] ✅ Environment sensors initialization complete")
+        appLog("[Environment] ✅ Environment sensors initialization complete")
     }
 
     private func registerObservers() {
@@ -90,7 +90,7 @@ class EnvironmentSensorManager: ObservableObject {
                        selector: #selector(handleAudioRouteChange),
                        name: AVAudioSession.routeChangeNotification,
                        object: nil)
-        print("[Environment] ✓ Registered proximity/brightness/audio observers")
+        appLog("[Environment] ✓ Registered proximity/brightness/audio observers")
     }
 
     @objc private nonisolated func handleProximityChange(_ note: Notification) {
@@ -147,14 +147,14 @@ class EnvironmentSensorManager: ObservableObject {
                 self?.pressure = value
             }
             .store(in: &cancellables)
-        print("[Environment] ✓ Subscribed to MotionSensorManager altitude")
+        appLog("[Environment] ✓ Subscribed to MotionSensorManager altitude")
     }
 
     func stopUpdates() {
         guard isStarted else { return }
         isStarted = false
         cancellables.removeAll()
-        print("[Environment] ■ Stopping environment sensors")
+        appLog("[Environment] ■ Stopping environment sensors")
         UIDevice.current.isProximityMonitoringEnabled = false
         if observersRegistered {
             NotificationCenter.default.removeObserver(self)
@@ -164,7 +164,7 @@ class EnvironmentSensorManager: ObservableObject {
 
     func setTorchLevel(_ level: Float) {
         guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else {
-            print("[Environment] ❌ Cannot set torch - device not available")
+            appLog("[Environment] ❌ Cannot set torch - device not available")
             return
         }
         try? device.lockForConfiguration()
@@ -175,7 +175,7 @@ class EnvironmentSensorManager: ObservableObject {
         samplePublisher.send(SensorSample(
             sensorID: .torch,
             payload: .torch(level: Double(device.torchLevel))))
-        print("[Environment] 🔦 Torch set to \(level)")
+        appLog("[Environment] 🔦 Torch set to \(level)")
     }
 
     func setScreenBrightness(_ brightness: Double) {
@@ -184,7 +184,7 @@ class EnvironmentSensorManager: ObservableObject {
         samplePublisher.send(SensorSample(
             sensorID: .brightness,
             payload: .brightness(level: brightness)))
-        print("[Environment] ☀️ Brightness set to \(brightness)")
+        appLog("[Environment] ☀️ Brightness set to \(brightness)")
     }
 
     private func updateAudioInfo() {
@@ -205,12 +205,12 @@ class EnvironmentSensorManager: ObservableObject {
                     volume: Double(session.outputVolume),
                     inputs: session.currentRoute.inputs.map { $0.portName },
                     outputs: session.currentRoute.outputs.map { $0.portName }))))
-            print("[Environment] Audio category: \(audioSessionCategory)")
-            print("[Environment] Audio volume: \(audioVolume)")
-            print("[Environment] Audio inputs: \(audioInputDevices)")
-            print("[Environment] Audio outputs: \(audioOutputDevices)")
+            appLog("[Environment] Audio category: \(audioSessionCategory)")
+            appLog("[Environment] Audio volume: \(audioVolume)")
+            appLog("[Environment] Audio inputs: \(audioInputDevices)")
+            appLog("[Environment] Audio outputs: \(audioOutputDevices)")
         } catch {
-            print("[Environment] ❌ Audio session error: \(error.localizedDescription)")
+            appLog("[Environment] ❌ Audio session error: \(error.localizedDescription)")
         }
     }
 }

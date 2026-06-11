@@ -30,36 +30,36 @@ class ConnectivitySensorManager: NSObject, ObservableObject {
 
     override init() {
         super.init()
-        print("[Connectivity] ── Connectivity Manager initialized ──")
+        appLog("[Connectivity] ── Connectivity Manager initialized ──")
     }
 
     func startUpdates() {
         guard !isStarted else {
-            print("[Connectivity] ⚠ Already started")
+            appLog("[Connectivity] ⚠ Already started")
             return
         }
         isStarted = true
-        print("[Connectivity] ── Starting Connectivity Sensors ──")
+        appLog("[Connectivity] ── Starting Connectivity Sensors ──")
         let authStatus = CBManager.authorization
         if authStatus == .denied {
             bluetoothState = .unauthorized
             bluetoothStateText = "bluetooth.unauthorized"
-            print("[Connectivity] ⏭ Bluetooth denied — skipping CBCentralManager")
+            appLog("[Connectivity] ⏭ Bluetooth denied — skipping CBCentralManager")
         } else {
             // Keep the central manager alive so CoreBluetooth can deliver the real
             // state and trigger the system permission prompt when status is not determined.
             centralManager = CBCentralManager(delegate: self, queue: nil)
-            print("[Connectivity] ✓ CBCentralManager initialized (authorization: \(authStatus.rawValue))")
+            appLog("[Connectivity] ✓ CBCentralManager initialized (authorization: \(authStatus.rawValue))")
         }
         startNetworkMonitoring()
         updateCellularInfo()
-        print("[Connectivity] ✅ Connectivity sensors started")
+        appLog("[Connectivity] ✅ Connectivity sensors started")
     }
 
     func stopUpdates() {
         guard isStarted else { return }
         isStarted = false
-        print("[Connectivity] ■ Stopping connectivity sensors")
+        appLog("[Connectivity] ■ Stopping connectivity sensors")
         centralManager?.stopScan()
         isScanning = false
         monitor?.cancel()
@@ -67,19 +67,19 @@ class ConnectivitySensorManager: NSObject, ObservableObject {
 
     func startScanning() {
         guard centralManager?.state == .poweredOn else {
-            print("[Connectivity] ❌ Cannot scan - Bluetooth not powered on (state: \(bluetoothStateText))")
+            appLog("[Connectivity] ❌ Cannot scan - Bluetooth not powered on (state: \(bluetoothStateText))")
             return
         }
         isScanning = true
         discoveredPeripherals = []
         centralManager?.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: false])
-        print("[Connectivity] 🔍 Started scanning for BLE peripherals...")
+        appLog("[Connectivity] 🔍 Started scanning for BLE peripherals...")
     }
 
     func stopScanning() {
         centralManager?.stopScan()
         isScanning = false
-        print("[Connectivity] ■ Stopped scanning (found \(discoveredPeripherals.count) devices)")
+        appLog("[Connectivity] ■ Stopped scanning (found \(discoveredPeripherals.count) devices)")
     }
 
     private func startNetworkMonitoring() {
@@ -109,11 +109,11 @@ class ConnectivitySensorManager: NSObject, ObservableObject {
                 self.samplePublisher.send(SensorSample(
                     sensorID: .network,
                     payload: .network(type: typeString, connected: connected)))
-                print("[Connectivity] 🌐 Network: \(self.networkType) (connected: \(connected))")
+                appLog("[Connectivity] 🌐 Network: \(self.networkType) (connected: \(connected))")
             }
         }
         monitor?.start(queue: .global())
-        print("[Connectivity] ✓ Network monitor started")
+        appLog("[Connectivity] ✓ Network monitor started")
     }
 
     private func updateCellularInfo() {
@@ -121,14 +121,14 @@ class ConnectivitySensorManager: NSObject, ObservableObject {
         let networkInfo = CTTelephonyNetworkInfo()
         if let carrier = networkInfo.serviceSubscriberCellularProviders?.first?.value {
             cellularCarrier = carrier.carrierName ?? "Unknown"
-            print("[Connectivity] 📶 Carrier: \(cellularCarrier)")
+            appLog("[Connectivity] 📶 Carrier: \(cellularCarrier)")
         }
         if let radioTech = networkInfo.serviceCurrentRadioAccessTechnology?.first?.value {
             cellularRadioTechnology = radioTech
-            print("[Connectivity] 📶 Radio: \(cellularRadioTechnology)")
+            appLog("[Connectivity] 📶 Radio: \(cellularRadioTechnology)")
         }
         #else
-        print("[Connectivity] 📶 Running on simulator - cellular info N/A")
+        appLog("[Connectivity] 📶 Running on simulator - cellular info N/A")
         #endif
         samplePublisher.send(SensorSample(
             sensorID: .cellular,
@@ -168,7 +168,7 @@ extension ConnectivitySensorManager: CBCentralManagerDelegate {
             samplePublisher.send(SensorSample(
                 sensorID: .bluetoothState,
                 payload: .bluetoothState(state: stateLower)))
-            print("[Connectivity] 📡 Bluetooth state: \(bluetoothStateText)")
+            appLog("[Connectivity] 📡 Bluetooth state: \(bluetoothStateText)")
         }
     }
 
@@ -179,7 +179,7 @@ extension ConnectivitySensorManager: CBCentralManagerDelegate {
         Task { @MainActor in
             if !discoveredPeripherals.contains(where: { $0.identifier == peripheral.identifier }) {
                 discoveredPeripherals.append(peripheral)
-                print("[Connectivity] 📱 Found: \(name ?? "Unknown") [\(peripheral.identifier)] RSSI:\(RSSI)")
+                appLog("[Connectivity] 📱 Found: \(name ?? "Unknown") [\(peripheral.identifier)] RSSI:\(RSSI)")
             }
             samplePublisher.send(SensorSample(
                 sensorID: .bluetoothScan,

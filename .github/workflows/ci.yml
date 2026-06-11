@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: SwiftLint
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install SwiftLint
+        run: brew install swiftlint
+      - name: Lint
+        # Non-blocking for now: surfaces warnings without failing the build while
+        # the codebase adopts the ruleset. Flip to `--strict` once clean.
+        run: swiftlint lint --reporter github-actions-logging || true
+
+  build-test:
+    name: Build & Test (iOS Simulator)
+    runs-on: macos-15
+    timeout-minutes: 40
+    env:
+      SCHEME: iPhoneSensors
+      PROJECT: iPhoneSensors/iPhoneSensors.xcodeproj
+      # Simulator-only build/test — no code signing, so no secrets are required.
+      DESTINATION: 'platform=iOS Simulator,name=iPhone 16 Pro Max'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select latest stable Xcode
+        run: sudo xcode-select -switch /Applications/Xcode.app
+
+      - name: Show toolchain
+        run: xcodebuild -version && swift --version
+
+      - name: Cache SwiftPM
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
+          key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: spm-${{ runner.os }}-
+
+      - name: Resolve a concrete simulator
+        id: sim
+        run: |
+          # Pick the first available iPhone simulator so CI doesn't break when
+          # the runner image rotates device names (e.g. iPhone 16 -> 17 Pro Max).
+          name="$(xcrun simctl list devices available | grep -oE 'iPhone [0-9][^(]*' | head -1 | sed 's/ *$//')"
+          if [ -z "$name" ]; then name="iPhone 16 Pro Max"; fi
+          echo "destination=platform=iOS Simulator,name=$name" >> "$GITHUB_OUTPUT"
+          echo "Using simulator: $name"
+
+      - name: Build & test
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project "$PROJECT" \
+            -scheme "$SCHEME" \
+            -destination "${{ steps.sim.outputs.destination }}" \
+            clean build test | xcpretty || xcodebuild \
+            -project "$PROJECT" \
+            -scheme "$SCHEME" \
+            -destination "${{ steps.sim.outputs.destination }}" \
+            test

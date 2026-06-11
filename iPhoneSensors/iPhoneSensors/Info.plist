@@ -11,7 +11,7 @@
 			<string>com.1moby.allsensors.deeplink</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>app</string>
+				<string>allsensors</string>
 			</array>
 		</dict>
 	</array>

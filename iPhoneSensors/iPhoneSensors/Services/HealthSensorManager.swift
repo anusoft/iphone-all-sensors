@@ -69,16 +69,16 @@ class HealthSensorManager: ObservableObject {
 
     func startUpdates() {
         guard !isStarted else {
-            print("[Health] ⚠ Already started")
+            appLog("[Health] ⚠ Already started")
             return
         }
         isStarted = true
-        print("[Health] ── Starting Health Sensors ──")
+        appLog("[Health] ── Starting Health Sensors ──")
         isHealthDataAvailable = HKHealthStore.isHealthDataAvailable()
-        print("[Health] HealthKit available: \(isHealthDataAvailable)")
+        appLog("[Health] HealthKit available: \(isHealthDataAvailable)")
 
         guard isHealthDataAvailable else {
-            print("[Health] ❌ HealthKit not available on this device")
+            appLog("[Health] ❌ HealthKit not available on this device")
             return
         }
 
@@ -87,18 +87,18 @@ class HealthSensorManager: ObservableObject {
         if hasRequestedAuthorization {
             fetchAllHealthData()
         } else {
-            print("[Health] ⏭ HealthKit permission has not been requested — skipping data fetch")
+            appLog("[Health] ⏭ HealthKit permission has not been requested — skipping data fetch")
         }
     }
 
     func stopUpdates() {
         guard isStarted else { return }
         isStarted = false
-        print("[Health] ■ Stopping health sensors")
+        appLog("[Health] ■ Stopping health sensors")
     }
 
     func requestAuthorization(completion: ((Bool) -> Void)? = nil) {
-        print("[Health] Requesting HealthKit authorization...")
+        appLog("[Health] Requesting HealthKit authorization...")
 
         isHealthDataAvailable = HKHealthStore.isHealthDataAvailable()
         guard isHealthDataAvailable else {
@@ -142,14 +142,14 @@ class HealthSensorManager: ObservableObject {
                 }
                 if let error = error {
                     self.authorizationError = error.localizedDescription
-                    print("[Health] ❌ Authorization error: \(error.localizedDescription)")
+                    appLog("[Health] ❌ Authorization error: \(error.localizedDescription)")
                 } else {
                     self.authorizationError = nil
                 }
                 self.hasRequestedAuthorization = success
                 UserDefaults.standard.set(success, forKey: self.authorizationRequestedKey)
                 self.refreshAuthorizationState(error: error?.localizedDescription)
-                print("[Health] Authorization request processed: \(success ? "✅ Ready to query" : "❌ Failed")")
+                appLog("[Health] Authorization request processed: \(success ? "✅ Ready to query" : "❌ Failed")")
                 if success {
                     self.fetchAllHealthData()
                 } else {
@@ -182,68 +182,68 @@ class HealthSensorManager: ObservableObject {
     }
 
     private func fetchAllHealthData() {
-        print("[Health] Fetching all health data...")
+        appLog("[Health] Fetching all health data...")
         latestFetchStatus = "Loading Health data..."
 
         fetchLatestQuantity(.heartRate) { [weak self] value, ts in
             self?.heartRate = value
             self?.publishHealth(metric: "heartRate", value: value, unit: "count/min", ts: ts)
-            print("[Health] Heart rate: \(value) bpm")
+            appLog("[Health] Heart rate: \(value) bpm")
         }
         fetchLatestQuantity(.heartRateVariabilitySDNN) { [weak self] value, ts in
             self?.heartRateVariability = value
             self?.publishHealth(metric: "heartRateVariability", value: value, unit: "ms", ts: ts)
-            print("[Health] HRV: \(value) ms")
+            appLog("[Health] HRV: \(value) ms")
         }
         fetchLatestQuantity(.oxygenSaturation) { [weak self] value, ts in
             self?.oxygenSaturation = value * 100
             self?.publishHealth(metric: "oxygenSaturation", value: value * 100, unit: "%", ts: ts)
-            print("[Health] SpO2: \(value * 100)%")
+            appLog("[Health] SpO2: \(value * 100)%")
         }
         fetchLatestQuantity(.respiratoryRate) { [weak self] value, ts in
             self?.respiratoryRate = value
             self?.publishHealth(metric: "respiratoryRate", value: value, unit: "count/min", ts: ts)
-            print("[Health] Respiratory rate: \(value) br/min")
+            appLog("[Health] Respiratory rate: \(value) br/min")
         }
         fetchLatestQuantity(.bodyTemperature) { [weak self] value, ts in
             self?.bodyTemperature = value
             self?.publishHealth(metric: "bodyTemperature", value: value, unit: "degC", ts: ts)
-            print("[Health] Body temp: \(value)°C")
+            appLog("[Health] Body temp: \(value)°C")
         }
         fetchLatestQuantity(.bloodPressureSystolic) { [weak self] value, ts in
             self?.bloodPressureSystolic = value
             self?.publishHealth(metric: "bloodPressureSystolic", value: value, unit: "mmHg", ts: ts)
-            print("[Health] BP systolic: \(value) mmHg")
+            appLog("[Health] BP systolic: \(value) mmHg")
         }
         fetchLatestQuantity(.bloodPressureDiastolic) { [weak self] value, ts in
             self?.bloodPressureDiastolic = value
             self?.publishHealth(metric: "bloodPressureDiastolic", value: value, unit: "mmHg", ts: ts)
-            print("[Health] BP diastolic: \(value) mmHg")
+            appLog("[Health] BP diastolic: \(value) mmHg")
         }
         fetchLatestQuantity(.electrodermalActivity) { [weak self] value, ts in
             self?.electrodermalActivity = value
             self?.publishHealth(metric: "electrodermalActivity", value: value, unit: "count", ts: ts)
-            print("[Health] EDA: \(value)")
+            appLog("[Health] EDA: \(value)")
         }
         fetchTodaySum(.stepCount) { [weak self] value, ts in
             self?.stepCount = value
             self?.publishHealth(metric: "stepCount", value: value, unit: "count", ts: ts)
-            print("[Health] Steps today: \(value)")
+            appLog("[Health] Steps today: \(value)")
         }
         fetchTodaySum(.distanceWalkingRunning) { [weak self] value, ts in
             self?.distanceWalkingRunning = value
             self?.publishHealth(metric: "walkingDistance", value: value, unit: "m", ts: ts)
-            print("[Health] Distance today: \(value)m")
+            appLog("[Health] Distance today: \(value)m")
         }
         fetchTodaySum(.flightsClimbed) { [weak self] value, ts in
             self?.flightsClimbed = value
             self?.publishHealth(metric: "flightsClimbed", value: value, unit: "count", ts: ts)
-            print("[Health] Flights today: \(value)")
+            appLog("[Health] Flights today: \(value)")
         }
         fetchTodaySum(.activeEnergyBurned) { [weak self] value, ts in
             self?.activeEnergyBurned = value
             self?.publishHealth(metric: "activeEnergy", value: value, unit: "kcal", ts: ts)
-            print("[Health] Active energy: \(value) kcal")
+            appLog("[Health] Active energy: \(value) kcal")
         }
         fetchTodaySum(.basalEnergyBurned) { [weak self] value, ts in
             self?.basalEnergyBurned = value
@@ -252,7 +252,7 @@ class HealthSensorManager: ObservableObject {
         fetchTodaySum(.appleExerciseTime) { [weak self] value, ts in
             self?.exerciseTime = value
             self?.publishHealth(metric: "exerciseTime", value: value, unit: "min", ts: ts)
-            print("[Health] Exercise time: \(value) min")
+            appLog("[Health] Exercise time: \(value) min")
         }
         fetchTodaySum(.appleStandTime) { [weak self] value, ts in
             self?.standTime = value
@@ -286,24 +286,24 @@ class HealthSensorManager: ObservableObject {
 
         fetchCharacteristicData()
         latestFetchStatus = "Health queries started. Missing categories will stay empty until the iPhone has samples and permission is enabled."
-        print("[Health] ✅ Health data fetch initiated")
+        appLog("[Health] ✅ Health data fetch initiated")
     }
 
     private func fetchLatestQuantity(_ identifier: HKQuantityTypeIdentifier, completion: @escaping (Double, Date) -> Void) {
         guard let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
-            print("[Health] ⚠ Unknown quantity type: \(identifier.rawValue)")
+            appLog("[Health] ⚠ Unknown quantity type: \(identifier.rawValue)")
             return
         }
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
         let query = HKSampleQuery(sampleType: quantityType, predicate: nil, limit: 1, sortDescriptors: [sortDescriptor]) { _, samples, error in
             Task { @MainActor in
                 if let error = error {
-                    print("[Health] ❌ Query error for \(identifier.rawValue): \(error.localizedDescription)")
+                    appLog("[Health] ❌ Query error for \(identifier.rawValue): \(error.localizedDescription)")
                     self.latestFetchStatus = "HealthKit query error for \(identifier.rawValue): \(error.localizedDescription)"
                     return
                 }
                 guard let sample = samples?.first as? HKQuantitySample else {
-                    print("[Health] ⚠ No data for \(identifier.rawValue)")
+                    appLog("[Health] ⚠ No data for \(identifier.rawValue)")
                     return
                 }
                 let unit = self.preferredUnit(for: identifier)
@@ -317,7 +317,7 @@ class HealthSensorManager: ObservableObject {
 
     private func fetchTodaySum(_ identifier: HKQuantityTypeIdentifier, completion: @escaping (Double, Date) -> Void) {
         guard let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
-            print("[Health] ⚠ Unknown quantity type: \(identifier.rawValue)")
+            appLog("[Health] ⚠ Unknown quantity type: \(identifier.rawValue)")
             return
         }
         let calendar = Calendar.current
@@ -326,13 +326,13 @@ class HealthSensorManager: ObservableObject {
         let query = HKStatisticsQuery(quantityType: quantityType, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, error in
             Task { @MainActor in
                 if let error = error {
-                    print("[Health] ❌ Stats query error for \(identifier.rawValue): \(error.localizedDescription)")
+                    appLog("[Health] ❌ Stats query error for \(identifier.rawValue): \(error.localizedDescription)")
                     self.latestFetchStatus = "HealthKit query error for \(identifier.rawValue): \(error.localizedDescription)"
                     return
                 }
                 let unit = self.preferredUnit(for: identifier)
                 guard let sum = result?.sumQuantity() else {
-                    print("[Health] ⚠ No data for \(identifier.rawValue) today")
+                    appLog("[Health] ⚠ No data for \(identifier.rawValue) today")
                     return
                 }
                 let value = sum.doubleValue(for: unit)
@@ -365,11 +365,11 @@ class HealthSensorManager: ObservableObject {
                 case .notSet: biologicalSex = "Not Set"
                 @unknown default: biologicalSex = "Unknown"
                 }
-                print("[Health] Biological sex: \(biologicalSex)")
+                appLog("[Health] Biological sex: \(biologicalSex)")
             }
             if let dob = try? healthStore.dateOfBirthComponents() {
                 dateOfBirth = dob.date
-                print("[Health] DOB: \(dob.date?.formatted() ?? "N/A")")
+                appLog("[Health] DOB: \(dob.date?.formatted() ?? "N/A")")
             }
             if let blood = try? healthStore.bloodType() {
                 switch blood.bloodType {
@@ -384,7 +384,7 @@ class HealthSensorManager: ObservableObject {
                 case .notSet: bloodType = "Not Set"
                 @unknown default: bloodType = "Unknown"
                 }
-                print("[Health] Blood type: \(bloodType)")
+                appLog("[Health] Blood type: \(bloodType)")
             }
         }
     }

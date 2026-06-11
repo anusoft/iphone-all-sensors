@@ -7,15 +7,15 @@
 //  no permissions, no network) so captures are pixel-reproducible across runs
 //  and machines.
 //
-//  Deep link entry point (registered scheme `app` — see Info.plist):
+//  Deep link entry point (registered scheme `allsensors` — see Info.plist):
 //
-//      app://1moby.allsensors/screenshots/<page-name>
+//      allsensors://1moby.allsensors/screenshots/<page-name>
 //
-//  e.g.  app://1moby.allsensors/screenshots/dashboard
-//        app://1moby.allsensors/screenshots/motion
-//        app://1moby.allsensors/screenshots/health
-//        app://1moby.allsensors/screenshots/environment
-//        app://1moby.allsensors/screenshots/logger
+//  e.g.  allsensors://1moby.allsensors/screenshots/dashboard
+//        allsensors://1moby.allsensors/screenshots/motion
+//        allsensors://1moby.allsensors/screenshots/health
+//        allsensors://1moby.allsensors/screenshots/environment
+//        allsensors://1moby.allsensors/screenshots/logger
 //
 //  Routing is handled by `ScreenshotRouter` (injected at the app root) and the
 //  `.onOpenURL` modifier in iPhoneSensorsApp. When a page is active, ContentView
@@ -63,11 +63,11 @@ final class ScreenshotRouter: ObservableObject {
     static let canonicalHost = "1moby.allsensors"
 
     /// Parse and route a deep link of the form
-    /// `app://<namespace>.<app>/screenshots/<page-name>`.
+    /// `allsensors://<namespace>.<app>/screenshots/<page-name>`.
     /// Silently ignores anything that does not conform.
     @discardableResult
     func handle(_ url: URL) -> Bool {
-        guard url.scheme?.lowercased() == "app" else { return false }
+        guard url.scheme?.lowercased() == "allsensors" else { return false }
 
         // pathComponents includes a leading "/" element — drop it and any empties.
         let parts = url.pathComponents.filter { $0 != "/" && !$0.isEmpty }

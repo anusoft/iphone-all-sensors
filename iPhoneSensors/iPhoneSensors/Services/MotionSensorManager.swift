@@ -98,13 +98,13 @@ class MotionSensorManager: ObservableObject {
 
     func startUpdates() {
         guard !isStarted else {
-            print("[Motion] ⚠ Already started")
+            appLog("[Motion] ⚠ Already started")
             return
         }
         isStarted = true
-        print("[Motion] ═══════════════════════════════════")
-        print("[Motion] STARTING MOTION SENSORS")
-        print("[Motion] ═══════════════════════════════════")
+        appLog("[Motion] ═══════════════════════════════════")
+        appLog("[Motion] STARTING MOTION SENSORS")
+        appLog("[Motion] ═══════════════════════════════════")
 
         // Check availability
         isAccelerometerAvailable = motionManager.isAccelerometerAvailable
@@ -112,11 +112,11 @@ class MotionSensorManager: ObservableObject {
         isMagnetometerAvailable = motionManager.isMagnetometerAvailable
         isDeviceMotionAvailable = motionManager.isDeviceMotionAvailable
 
-        print("[Motion] Device capabilities:")
-        print("[Motion]   Accelerometer: \(isAccelerometerAvailable ? "✅" : "❌")")
-        print("[Motion]   Gyroscope: \(isGyroscopeAvailable ? "✅" : "❌")")
-        print("[Motion]   Magnetometer: \(isMagnetometerAvailable ? "✅" : "❌")")
-        print("[Motion]   DeviceMotion: \(isDeviceMotionAvailable ? "✅" : "❌")")
+        appLog("[Motion] Device capabilities:")
+        appLog("[Motion]   Accelerometer: \(isAccelerometerAvailable ? "✅" : "❌")")
+        appLog("[Motion]   Gyroscope: \(isGyroscopeAvailable ? "✅" : "❌")")
+        appLog("[Motion]   Magnetometer: \(isMagnetometerAvailable ? "✅" : "❌")")
+        appLog("[Motion]   DeviceMotion: \(isDeviceMotionAvailable ? "✅" : "❌")")
 
         startAccelerometer()
         startGyroscope()
@@ -126,25 +126,25 @@ class MotionSensorManager: ObservableObject {
         startAltimeter()
         startActivity()
 
-        print("[Motion] ═══════════════════════════════════")
-        print("[Motion] ALL MOTION SENSORS INITIALIZED")
-        print("[Motion] ═══════════════════════════════════")
+        appLog("[Motion] ═══════════════════════════════════")
+        appLog("[Motion] ALL MOTION SENSORS INITIALIZED")
+        appLog("[Motion] ═══════════════════════════════════")
     }
 
     private func startAccelerometer() {
         guard isAccelerometerAvailable else {
-            print("[Motion] ❌ Accelerometer not available")
+            appLog("[Motion] ❌ Accelerometer not available")
             return
         }
         motionManager.accelerometerUpdateInterval = 0.1
         motionManager.startAccelerometerUpdates(to: .main) { [weak self] data, error in
             guard let self = self else { return }
             if let error = error {
-                print("[Motion] ❌ Accelerometer error: \(error.localizedDescription)")
+                appLog("[Motion] ❌ Accelerometer error: \(error.localizedDescription)")
                 return
             }
             guard let data = data else {
-                print("[Motion] ⚠ Accelerometer: nil data")
+                appLog("[Motion] ⚠ Accelerometer: nil data")
                 return
             }
             self.accUpdateCount += 1
@@ -156,10 +156,10 @@ class MotionSensorManager: ObservableObject {
                 payload: .acceleration(x: data.acceleration.x, y: data.acceleration.y, z: data.acceleration.z)))
             self.checkSeismometer()
             if self.accUpdateCount <= 3 || self.accUpdateCount % 100 == 0 {
-                print("[Motion] 📊 Acc[\(self.accUpdateCount)]: x=\(String(format: "%.3f", data.acceleration.x)) y=\(String(format: "%.3f", data.acceleration.y)) z=\(String(format: "%.3f", data.acceleration.z))")
+                appLog("[Motion] 📊 Acc[\(self.accUpdateCount)]: x=\(String(format: "%.3f", data.acceleration.x)) y=\(String(format: "%.3f", data.acceleration.y)) z=\(String(format: "%.3f", data.acceleration.z))")
             }
         }
-        print("[Motion] ✓ Accelerometer started (interval: 0.1s)")
+        appLog("[Motion] ✓ Accelerometer started (interval: 0.1s)")
     }
 
     private func checkSeismometer() {
@@ -186,7 +186,7 @@ class MotionSensorManager: ObservableObject {
         content.sound = .default
         let request = UNNotificationRequest(identifier: alarm.id.uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request)
-        print("[Motion] 🚨 Seismometer alarm: %.3fG on %@ axis", mag, axis)
+        appLog("[Motion] 🚨 Seismometer alarm: \(String(format: "%.3f", mag))G on \(axis) axis")
     }
 
     func startBarometerTracking() {
@@ -198,14 +198,14 @@ class MotionSensorManager: ObservableObject {
         barometerWeatherPrediction = ""
         barometerTrackingStartTime = Date()
         barometerSessionValues = [pressure]
-        print("[Motion] 📊 Barometer tracking started. Baseline: \(String(format: "%.2f", pressure)) kPa")
+        appLog("[Motion] 📊 Barometer tracking started. Baseline: \(String(format: "%.2f", pressure)) kPa")
     }
 
     func stopBarometerTracking() {
         isBarometerTracking = false
         barometerTrackingStartTime = nil
         barometerSessionValues = []
-        print("[Motion] 📊 Barometer tracking stopped")
+        appLog("[Motion] 📊 Barometer tracking stopped")
     }
 
     private func updateBarometerTracking() {
@@ -236,14 +236,14 @@ class MotionSensorManager: ObservableObject {
 
     private func startGyroscope() {
         guard isGyroscopeAvailable else {
-            print("[Motion] ❌ Gyroscope not available")
+            appLog("[Motion] ❌ Gyroscope not available")
             return
         }
         motionManager.gyroUpdateInterval = 0.1
         motionManager.startGyroUpdates(to: .main) { [weak self] data, error in
             guard let self = self else { return }
             if let error = error {
-                print("[Motion] ❌ Gyroscope error: \(error.localizedDescription)")
+                appLog("[Motion] ❌ Gyroscope error: \(error.localizedDescription)")
                 return
             }
             guard let data = data else { return }
@@ -255,21 +255,21 @@ class MotionSensorManager: ObservableObject {
                 sensorID: .gyroscope,
                 payload: .rotationRate(x: data.rotationRate.x, y: data.rotationRate.y, z: data.rotationRate.z)))
             if self.gyroUpdateCount <= 3 || self.gyroUpdateCount % 100 == 0 {
-                print("[Motion] 📊 Gyro[\(self.gyroUpdateCount)]: x=\(String(format: "%.3f", data.rotationRate.x)) y=\(String(format: "%.3f", data.rotationRate.y)) z=\(String(format: "%.3f", data.rotationRate.z))")
+                appLog("[Motion] 📊 Gyro[\(self.gyroUpdateCount)]: x=\(String(format: "%.3f", data.rotationRate.x)) y=\(String(format: "%.3f", data.rotationRate.y)) z=\(String(format: "%.3f", data.rotationRate.z))")
             }
         }
-        print("[Motion] ✓ Gyroscope started")
+        appLog("[Motion] ✓ Gyroscope started")
     }
 
     private func startMagnetometer() {
         guard isMagnetometerAvailable else {
-            print("[Motion] ❌ Magnetometer not available")
+            appLog("[Motion] ❌ Magnetometer not available")
             return
         }
         motionManager.magnetometerUpdateInterval = 0.1
         motionManager.startMagnetometerUpdates(to: .main) { [weak self] data, error in
             if let error = error {
-                print("[Motion] ❌ Magnetometer error: \(error.localizedDescription)")
+                appLog("[Motion] ❌ Magnetometer error: \(error.localizedDescription)")
                 return
             }
             guard let data = data else { return }
@@ -280,23 +280,23 @@ class MotionSensorManager: ObservableObject {
                 sensorID: .magnetometer,
                 payload: .magneticField(x: data.magneticField.x, y: data.magneticField.y, z: data.magneticField.z, accuracy: 0)))
         }
-        print("[Motion] ✓ Magnetometer started")
+        appLog("[Motion] ✓ Magnetometer started")
     }
 
     private func startDeviceMotion() {
         guard isDeviceMotionAvailable else {
-            print("[Motion] ❌ DeviceMotion not available")
+            appLog("[Motion] ❌ DeviceMotion not available")
             return
         }
         motionManager.deviceMotionUpdateInterval = 0.1
         motionManager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: .main) { [weak self] data, error in
             guard let self = self else { return }
             if let error = error {
-                print("[Motion] ❌ DeviceMotion error: \(error.localizedDescription)")
+                appLog("[Motion] ❌ DeviceMotion error: \(error.localizedDescription)")
                 return
             }
             guard let data = data else {
-                print("[Motion] ⚠ DeviceMotion: nil data")
+                appLog("[Motion] ⚠ DeviceMotion: nil data")
                 return
             }
             self.dmUpdateCount += 1
@@ -334,21 +334,21 @@ class MotionSensorManager: ObservableObject {
                     calMagX: data.magneticField.field.x, calMagY: data.magneticField.field.y, calMagZ: data.magneticField.field.z,
                     calMagAccuracy: Int(data.magneticField.accuracy.rawValue)))))
             if self.dmUpdateCount <= 3 || self.dmUpdateCount % 100 == 0 {
-                print("[Motion] 📊 DM[\(self.dmUpdateCount)]: roll=\(String(format: "%.2f", data.attitude.roll)) pitch=\(String(format: "%.2f", data.attitude.pitch)) yaw=\(String(format: "%.2f", data.attitude.yaw))")
+                appLog("[Motion] 📊 DM[\(self.dmUpdateCount)]: roll=\(String(format: "%.2f", data.attitude.roll)) pitch=\(String(format: "%.2f", data.attitude.pitch)) yaw=\(String(format: "%.2f", data.attitude.yaw))")
             }
         }
-        print("[Motion] ✓ DeviceMotion started")
+        appLog("[Motion] ✓ DeviceMotion started")
     }
 
     private func startPedometer() {
         guard CMPedometer.isStepCountingAvailable() else {
-            print("[Motion] ❌ Pedometer not available")
+            appLog("[Motion] ❌ Pedometer not available")
             return
         }
         isPedometerAvailable = true
         pedometer.startUpdates(from: Date()) { [weak self] data, error in
             if let error = error {
-                print("[Motion] ❌ Pedometer error: \(error.localizedDescription)")
+                appLog("[Motion] ❌ Pedometer error: \(error.localizedDescription)")
                 return
             }
             guard let data = data else { return }
@@ -368,21 +368,21 @@ class MotionSensorManager: ObservableObject {
                         floorsDescended: data.floorsDescended?.intValue ?? 0,
                         pace: data.currentPace?.doubleValue,
                         cadence: data.currentCadence?.doubleValue))))
-                print("[Motion] 🚶 Steps: \(data.numberOfSteps.intValue)")
+                appLog("[Motion] 🚶 Steps: \(data.numberOfSteps.intValue)")
             }
         }
-        print("[Motion] ✓ Pedometer started")
+        appLog("[Motion] ✓ Pedometer started")
     }
 
     private func startAltimeter() {
         guard CMAltimeter.isRelativeAltitudeAvailable() else {
-            print("[Motion] ❌ Altimeter not available")
+            appLog("[Motion] ❌ Altimeter not available")
             return
         }
         isAltimeterAvailable = true
         altimeter.startRelativeAltitudeUpdates(to: .main) { [weak self] data, error in
             if let error = error {
-                print("[Motion] ❌ Altimeter error: \(error.localizedDescription)")
+                appLog("[Motion] ❌ Altimeter error: \(error.localizedDescription)")
                 return
             }
             guard let data = data else { return }
@@ -393,12 +393,12 @@ class MotionSensorManager: ObservableObject {
                 payload: .altitude(relative: data.relativeAltitude.doubleValue, pressure: data.pressure.doubleValue)))
             self?.updateBarometerTracking()
         }
-        print("[Motion] ✓ Altimeter started")
+        appLog("[Motion] ✓ Altimeter started")
     }
 
     private func startActivity() {
         guard CMMotionActivityManager.isActivityAvailable() else {
-            print("[Motion] ❌ Activity not available")
+            appLog("[Motion] ❌ Activity not available")
             return
         }
         isActivityAvailable = true
@@ -421,9 +421,9 @@ class MotionSensorManager: ObservableObject {
             self?.samplePublisher.send(SensorSample(
                 sensorID: .motionActivity,
                 payload: .activity(ActivityPayload(state: stateString, confidence: Int(activity.confidence.rawValue)))))
-            print("[Motion] 🏃 Activity: \(activity.activityTypes)")
+            appLog("[Motion] 🏃 Activity: \(activity.activityTypes)")
         }
-        print("[Motion] ✓ Activity started")
+        appLog("[Motion] ✓ Activity started")
     }
 
     func setThrottle(_ throttled: Bool) {
@@ -443,7 +443,7 @@ class MotionSensorManager: ObservableObject {
             startGyroscope()
             startMagnetometer()
             startDeviceMotion()
-            print("[Motion] ⏱ Update interval changed to \(interval)s (throttled: \(throttled))")
+            appLog("[Motion] ⏱ Update interval changed to \(interval)s (throttled: \(throttled))")
         }
     }
 
@@ -457,7 +457,7 @@ class MotionSensorManager: ObservableObject {
         pedometer.stopUpdates()
         altimeter.stopRelativeAltitudeUpdates()
         activityManager.stopActivityUpdates()
-        print("[Motion] ■ All stopped")
+        appLog("[Motion] ■ All stopped")
     }
 
     private func calibrationAccuracy(_ accuracy: CMMagneticFieldCalibrationAccuracy) -> String {
