@@ -24,7 +24,7 @@ struct CameraDetailView: View {
                     DataRow(label: locManager.t("label.frontCamera"), value: cam.isFrontCameraAvailable ? locManager.t("status.available") : locManager.t("status.unavailable"), icon: "camera")
                     DataRow(label: locManager.t("label.flash"), value: cam.isFlashAvailable ? locManager.t("status.available") : locManager.t("status.unavailable"), icon: "bolt.fill")
                     DataRow(label: locManager.t("label.torch"), value: cam.isTorchAvailable ? locManager.t("status.available") : locManager.t("status.unavailable"), icon: "flashlight.on.fill")
-                    DataRow(label: locManager.t("label.maxZoom"), value: String(format: "%.1fx", cam.maxZoomFactor), icon: "plus.magnifyingglass")
+                    DataRow(label: locManager.t("label.maxZoom"), value: LocalizedDisplayValue.numberNoSpace("%.1f", cam.maxZoomFactor, unitKey: "unit.scale", localization: locManager), icon: "plus.magnifyingglass")
                     DataRow(label: locManager.t("label.cameraAccess"), value: cam.cameraAccessGranted ? locManager.t("value.granted") : locManager.t("value.notGranted"), icon: "lock.shield")
                     DataRow(label: locManager.t("label.microphoneAccess"), value: cam.microphoneAccessGranted ? locManager.t("value.granted") : locManager.t("value.notGranted"), icon: "mic.fill")
                 }
@@ -34,7 +34,7 @@ struct CameraDetailView: View {
                     Text(locManager.t("section.audioSession"))
                         .font(.headline)
                     DataRow(label: locManager.t("label.category"), value: locManager.t("audiocategory." + cam.audioSessionCategory.lowercased().replacingOccurrences(of: " ", with: "")), icon: "speaker.wave.2")
-                    DataRow(label: locManager.t("label.sampleRate"), value: String(format: "%.0f Hz", cam.audioSampleRate), icon: "waveform")
+                    DataRow(label: locManager.t("label.sampleRate"), value: LocalizedDisplayValue.number("%.0f", cam.audioSampleRate, unitKey: "unit.hz", localization: locManager), icon: "waveform")
                     DataRow(label: locManager.t("label.inputChannels"), value: "\(cam.audioInputChannels)", icon: "speaker.wave.2")
                 }
                 .glassCard()

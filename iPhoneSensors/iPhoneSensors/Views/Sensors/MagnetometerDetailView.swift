@@ -12,29 +12,29 @@ struct MagnetometerDetailView: View {
         let totalMag = sqrt(motion.magX * motion.magX + motion.magY * motion.magY + motion.magZ * motion.magZ)
                 ScrollView {
             AdaptiveCardGrid(spacing: 20) {
-                ThreeAxisView(x: motion.magX, y: motion.magY, z: motion.magZ, title: locManager.t("sensor.magnetometer"), unit: "µT", color: .purple)
+                ThreeAxisView(x: motion.magX, y: motion.magY, z: motion.magZ, title: locManager.t("sensor.magnetometer"), unit: locManager.t("unit.ut"), color: .purple)
 
-                SensorChartView(chartData: chartData, title: locManager.t("sensor.magnetometer"), unit: "µT")
+                SensorChartView(chartData: chartData, title: locManager.t("sensor.magnetometer"), unit: locManager.t("unit.ut"))
 
                 VStack(spacing: 16) {
                     Text(locManager.t("section.fieldStrength"))
                         .font(.headline)
-                    CircularGauge(value: totalMag, maxValue: 100, title: locManager.t("label.totalField"), unit: "µT", color: .purple, size: 140)
+                    CircularGauge(value: totalMag, maxValue: 100, title: locManager.t("label.totalField"), unit: locManager.t("unit.ut"), color: .purple, size: 140)
                 }
                 .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
                     Text(locManager.t("section.rawMagneticField"))
                         .font(.headline)
-                    DataRow(label: locManager.t("label.xaxis"), value: String(format: "%.2f µT", motion.magX), icon: "arrow.left.and.right")
-                    DataRow(label: locManager.t("label.yaxis"), value: String(format: "%.2f µT", motion.magY), icon: "arrow.up.and.down")
-                    DataRow(label: locManager.t("label.zaxis"), value: String(format: "%.2f µT", motion.magZ), icon: "arrow.up")
+                    DataRow(label: locManager.t("label.xaxis"), value: LocalizedDisplayValue.number("%.2f", motion.magX, unitKey: "unit.ut", localization: locManager), icon: "arrow.left.and.right")
+                    DataRow(label: locManager.t("label.yaxis"), value: LocalizedDisplayValue.number("%.2f", motion.magY, unitKey: "unit.ut", localization: locManager), icon: "arrow.up.and.down")
+                    DataRow(label: locManager.t("label.zaxis"), value: LocalizedDisplayValue.number("%.2f", motion.magZ, unitKey: "unit.ut", localization: locManager), icon: "arrow.up")
                     Divider()
                     Text(locManager.t("section.calibratedMagneticField"))
                         .font(.headline)
-                    DataRow(label: locManager.t("label.xaxis"), value: String(format: "%.2f µT", motion.calMagX), icon: "arrow.left.and.right")
-                    DataRow(label: locManager.t("label.yaxis"), value: String(format: "%.2f µT", motion.calMagY), icon: "arrow.up.and.down")
-                    DataRow(label: locManager.t("label.zaxis"), value: String(format: "%.2f µT", motion.calMagZ), icon: "arrow.up")
+                    DataRow(label: locManager.t("label.xaxis"), value: LocalizedDisplayValue.number("%.2f", motion.calMagX, unitKey: "unit.ut", localization: locManager), icon: "arrow.left.and.right")
+                    DataRow(label: locManager.t("label.yaxis"), value: LocalizedDisplayValue.number("%.2f", motion.calMagY, unitKey: "unit.ut", localization: locManager), icon: "arrow.up.and.down")
+                    DataRow(label: locManager.t("label.zaxis"), value: LocalizedDisplayValue.number("%.2f", motion.calMagZ, unitKey: "unit.ut", localization: locManager), icon: "arrow.up")
                     Divider()
                     DataRow(label: locManager.t("label.calibration"), value: locManager.t(motion.calMagAccuracy), icon: "checkmark.shield")
                 }
@@ -66,7 +66,7 @@ struct MagnetometerDetailView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                 HStack(spacing: 12) {
                     Button(action: {
-                        exportURL = DataExportManager.shared.exportRecording(dataPoints: chartData.dataPoints, sensorName: "Magnetometer", unit: "µT", format: .csv)
+                        exportURL = DataExportManager.shared.exportRecording(dataPoints: chartData.dataPoints, sensorName: "Magnetometer", unit: locManager.t("unit.ut"), format: .csv)
                         showShareSheet = true
                     }) {
                         Image(systemName: "square.and.arrow.up")

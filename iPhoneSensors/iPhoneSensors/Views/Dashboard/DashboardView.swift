@@ -15,10 +15,12 @@ struct DashboardView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                LazyVStack(spacing: 16) {
+                LazyVStack(spacing: 18) {
                     DashboardShowOffButton()
 
                     AllSensorsLogSessionBar()
+
+                    DashboardSensorSummary()
 
                     if sensorManager.isThrottled {
                         ThrottleBanner(reason: sensorManager.throttleReason)
@@ -118,6 +120,169 @@ struct DashboardView: View {
     }
 }
 
+struct DashboardSensorSummary: View {
+    @EnvironmentObject private var motion: MotionSensorManager
+    @EnvironmentObject private var loc: LocationSensorManager
+    @EnvironmentObject private var env: EnvironmentSensorManager
+    @EnvironmentObject private var sys: SystemSensorManager
+    @EnvironmentObject private var conn: ConnectivitySensorManager
+    @EnvironmentObject private var cam: CameraSensorManager
+    @EnvironmentObject private var locManager: LocalizationManager
+
+    private var readiness: DashboardReadinessSnapshot {
+        DashboardReadinessSnapshot(
+            motion: .init(
+                available: [
+                    motion.isAccelerometerAvailable,
+                    motion.isGyroscopeAvailable,
+                    motion.isMagnetometerAvailable,
+                    motion.isDeviceMotionAvailable,
+                    motion.isPedometerAvailable,
+                    motion.isAltimeterAvailable,
+                    motion.isActivityAvailable
+                ].availableCount,
+                total: 7
+            ),
+            location: .init(
+                available: loc.isAuthorized ? 2 : 0,
+                total: 2
+            ),
+            environment: .init(
+                available: [
+                    env.isAltimeterAvailable,
+                    env.isProximityMonitoringEnabled,
+                    true
+                ].availableCount,
+                total: 3
+            ),
+            system: .init(
+                available: [
+                    sys.isBatteryMonitoringEnabled,
+                    true,
+                    true,
+                    true,
+                    true
+                ].availableCount,
+                total: 5
+            ),
+            connectivity: .init(
+                available: [
+                    conn.bluetoothState == .poweredOn,
+                    true
+                ].availableCount,
+                total: 2
+            ),
+            camera: .init(
+                available: [
+                    cam.isRearCameraAvailable,
+                    cam.isTorchAvailable
+                ].availableCount,
+                total: 2
+            )
+        )
+    }
+
+    var body: some View {
+        ViewThatFits {
+            HStack(spacing: 10) { tiles }
+            VStack(spacing: 10) { tiles }
+        }
+    }
+
+    @ViewBuilder
+    private var tiles: some View {
+        DashboardSummaryTile(
+            title: locManager.t("status.available"),
+            value: readiness.readinessValue,
+            icon: "checkmark.seal.fill",
+            color: .green
+        )
+        DashboardSummaryTile(
+            title: locManager.t("dashboard.location"),
+            value: loc.isAuthorized ? locManager.t("status.active") : locManager.t("status.waiting"),
+            icon: "location.fill",
+            color: loc.isAuthorized ? .green : .orange
+        )
+        DashboardSummaryTile(
+            title: locManager.t("sensor.network"),
+            value: conn.isConnectedToNetwork ? locManager.t("status.active") : locManager.t("status.unavailable"),
+            icon: "network",
+            color: conn.isConnectedToNetwork ? .cyan : .gray
+        )
+    }
+}
+
+struct DashboardReadinessSnapshot {
+    struct Count {
+        let available: Int
+        let total: Int
+    }
+
+    let motion: Count
+    let location: Count
+    let environment: Count
+    let system: Count
+    let connectivity: Count
+    let camera: Count
+
+    var availableSensors: Int {
+        counts.reduce(0) { $0 + $1.available }
+    }
+
+    var totalSensors: Int {
+        counts.reduce(0) { $0 + $1.total }
+    }
+
+    var readinessValue: String {
+        "\(availableSensors)/\(totalSensors)"
+    }
+
+    private var counts: [Count] {
+        [motion, location, environment, system, connectivity, camera]
+    }
+}
+
+private extension Array where Element == Bool {
+    var availableCount: Int {
+        filter { $0 }.count
+    }
+}
+
+struct DashboardSummaryTile: View {
+    let title: String
+    let value: String
+    let icon: String
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.headline.weight(.semibold))
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(color)
+                .frame(width: 34, height: 34)
+                .background(color.opacity(0.14), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                Text(value)
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+            }
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, minHeight: 58)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .appMaterialSurface(cornerRadius: 16, material: .thinMaterial)
+    }
+}
+
 struct ThrottleBanner: View {
     let reason: String
     @EnvironmentObject var locManager: LocalizationManager
@@ -133,12 +298,12 @@ struct ThrottleBanner: View {
             Spacer()
         }
         .padding()
-        .background(Color.yellow.opacity(0.1))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.yellow.opacity(0.3), lineWidth: 1)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .appMaterialSurface(cornerRadius: 14, material: .thinMaterial)
+        .overlay(alignment: .leading) {
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.yellow)
+                .frame(width: 4)
+        }
     }
 }
 
@@ -147,35 +312,30 @@ struct SensorSection<Content: View>: View {
     let icon: String
     let color: Color
     @ViewBuilder let content: () -> Content
-    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(color)
-                    .frame(width: 8, height: 8)
-                Text(title.uppercased())
-                    .font(.caption.weight(.semibold))
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                Image(systemName: icon)
+                    .font(.subheadline.weight(.semibold))
+                    .symbolRenderingMode(.hierarchical)
                     .foregroundStyle(color)
+                    .frame(width: 28, height: 28)
+                    .background(color.opacity(0.14), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+
+                Text(title)
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(.primary)
+
+                Spacer()
             }
-            .padding(.leading, 4)
-            
-            VStack(spacing: 8) {
+            .padding(.horizontal, 4)
+
+            VStack(spacing: 10) {
                 content()
             }
-            .padding()
-            .background {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(.ultraThinMaterial)
-            }
-            .overlay {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(colorScheme == .dark 
-                            ? Color.white.opacity(0.08)
-                            : Color.black.opacity(0.06),
-                            lineWidth: 0.5)
-            }
+            .padding(10)
+            .appMaterialSurface(cornerRadius: 18, material: .ultraThinMaterial)
         }
     }
 }

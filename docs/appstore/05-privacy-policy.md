@@ -36,7 +36,7 @@ The following data is created and stored entirely within the app's sandbox on yo
 
 - **Logger sessions** — sensor recordings you intentionally start, stored as a SQLite database under your app's private `Documents/Logging/` folder. You can browse, share, export (CSV/JSON), or delete these from inside the app.
 - **App preferences** — small UserDefaults entries: which sensors are enabled in the logger, your selected theme, language, whether you've completed the permission onboarding flow.
-- **Cached HealthKit reads** — when you view the Health tab, the app reads from HealthKit into RAM to render charts. Nothing is persisted.
+- **HealthKit reads** — when you view the Health tab, the app reads HealthKit values into RAM to render charts. If you intentionally start a Logger session with Health enabled, those metric values can be stored locally in that session export; they are never uploaded.
 
 When you delete the app, iOS deletes everything in its sandbox. There is no copy on a server because we have no server.
 
@@ -50,8 +50,7 @@ When you delete the app, iOS deletes everything in its sandbox. There is no copy
 | **Microphone**              | Read audio input device list and live audio levels (VU meter) for the Camera → Audio variant.      | We do not record audio to disk or transmit it. |
 | **Bluetooth**               | Scan for nearby Bluetooth peripherals to display them in the Bluetooth sensor view (`CBCentralManager`). | We do not connect, pair, or transmit data. |
 | **Local Network**           | Read your Wi-Fi network type and a basic path snapshot from `NWPathMonitor` to display in the Network sensor view. | We do not scan your network or send data over it. |
-| **HealthKit (read)**        | Read steps, heart rate, active energy, distance, and sleep samples to display on the Health tab. | We do not write back unless you explicitly opt in. |
-| **HealthKit (write)**       | If you opt in, the app can write workout sessions you create via Logger. Off by default.        | We do not write anything without your explicit action. |
+| **HealthKit (read)**        | Read health metrics shown on the Health tab, including vitals, activity, body measurements, and profile values if you grant access. | We do not write to HealthKit. Health metrics are only stored locally if you intentionally record them in a Logger session. |
 | **Face ID** (capability info) | Display whether Face ID is available — does NOT authenticate.                                   | We never store biometric templates; iOS handles all biometric data. |
 
 You can change every one of these at any time in iOS Settings → Privacy & Security → [permission] → All Sensors.

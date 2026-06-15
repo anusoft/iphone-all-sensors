@@ -5,7 +5,6 @@ import CoreMotion
 import CoreBluetooth
 
 struct PermissionRequestView: View {
-    @Binding var isPresented: Bool
     var onComplete: () -> Void
     @EnvironmentObject var locManager: LocalizationManager
     @EnvironmentObject var sensorManager: SensorManager
@@ -21,7 +20,7 @@ struct PermissionRequestView: View {
         [
             PermissionStep(
                 title: locManager.t("consent.title"),
-                subtitle: "Privacy",
+                subtitle: locManager.t("permission.subtitle.privacy"),
                 icon: "hand.raised.fill",
                 color: .blue,
                 description: locManager.t("consent.description"),
@@ -29,7 +28,7 @@ struct PermissionRequestView: View {
             ),
             PermissionStep(
                 title: locManager.t("permission.welcome"),
-                subtitle: "All Sensors",
+                subtitle: locManager.t("permission.subtitle.allSensors"),
                 icon: "sensor.tag.radiowaves.forward",
                 color: .blue,
                 description: locManager.t("permission.welcome.desc"),
@@ -37,47 +36,47 @@ struct PermissionRequestView: View {
             ),
             PermissionStep(
                 title: locManager.t("permission.location"),
-                subtitle: "GPS · Compass · Altitude",
+                subtitle: locManager.t("permission.subtitle.location"),
                 icon: "location.fill",
                 color: .green,
                 description: locManager.t("permission.location.desc"),
-                buttonTitle: locManager.t("permission.allowLocation")
+                buttonTitle: locManager.t("permission.continue")
             ),
             PermissionStep(
                 title: locManager.t("permission.motion"),
-                subtitle: "Accelerometer · Gyroscope · Steps",
+                subtitle: locManager.t("permission.subtitle.motion"),
                 icon: "figure.walk",
                 color: .blue,
                 description: locManager.t("permission.motion.desc"),
-                buttonTitle: locManager.t("permission.allowMotion")
+                buttonTitle: locManager.t("permission.continue")
             ),
             PermissionStep(
                 title: locManager.t("permission.camera"),
-                subtitle: "Camera Info · Torch",
+                subtitle: locManager.t("permission.subtitle.camera"),
                 icon: "camera.fill",
                 color: .yellow,
                 description: locManager.t("permission.camera.desc"),
-                buttonTitle: locManager.t("permission.allowCamera")
+                buttonTitle: locManager.t("permission.continue")
             ),
             PermissionStep(
                 title: locManager.t("permission.microphone"),
-                subtitle: "Audio Input",
+                subtitle: locManager.t("permission.subtitle.microphone"),
                 icon: "mic.fill",
                 color: .orange,
                 description: locManager.t("permission.microphone.desc"),
-                buttonTitle: locManager.t("permission.allowMicrophone")
+                buttonTitle: locManager.t("permission.continue")
             ),
             PermissionStep(
                 title: locManager.t("permission.bluetooth"),
-                subtitle: "Nearby Devices",
+                subtitle: locManager.t("permission.subtitle.bluetooth"),
                 icon: "antenna.radiowaves.left.and.right",
                 color: .cyan,
                 description: locManager.t("permission.bluetooth.desc"),
-                buttonTitle: locManager.t("permission.allowBluetooth")
+                buttonTitle: locManager.t("permission.continue")
             ),
             PermissionStep(
                 title: locManager.t("tab.health"),
-                subtitle: "HealthKit",
+                subtitle: locManager.t("permission.subtitle.health"),
                 icon: "heart.text.square",
                 color: .red,
                 description: locManager.t("health.disclaimer.text"),
@@ -211,7 +210,6 @@ struct PermissionRequestView: View {
         case 6: requestBluetooth()
         case 7: requestHealth()
         case 8:
-            isPresented = false
             onComplete()
         default: break
         }

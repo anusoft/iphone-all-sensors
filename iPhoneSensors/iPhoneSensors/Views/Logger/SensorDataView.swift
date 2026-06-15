@@ -53,14 +53,14 @@ struct SensorDataView: View {
                 }
                 if !rows.isEmpty {
                     HStack {
-                        Button("Prev") {
+                        Button(localization.t("dataviewer.pagination.previous")) {
                             if page > 0 { page -= 1; reload() }
                         }
                         .disabled(page == 0)
                         Spacer()
-                        Text("Page \(page + 1)")
+                        Text("\(localization.t("dataviewer.pagination.page")) \(page + 1)")
                         Spacer()
-                        Button("Next") {
+                        Button(localization.t("dataviewer.pagination.next")) {
                             page += 1
                             reload()
                         }

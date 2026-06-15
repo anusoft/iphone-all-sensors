@@ -38,19 +38,36 @@ struct GetSensorReadingIntent: AppIntent {
     @Parameter(title: "Sensor")
     var sensor: SensorType
 
+    private var intentLanguage: AppLanguage {
+        UserDefaults.standard.string(forKey: "appLanguage").flatMap(AppLanguage.init(rawValue:)) ?? .english
+    }
+
+    private func localizedSensorName(_ sensor: SensorType) -> String {
+        Translations.get(sensor.sensorID.localizationKey, language: intentLanguage)
+    }
+
     @MainActor
     func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
         guard let manager = AppDelegate.sensorManager else {
-            let message = "Open All Sensors and keep it in the foreground to read live \(sensor.rawValue) data."
+            let message = String(
+                format: Translations.get("intent.getSensor.openApp", language: intentLanguage),
+                localizedSensorName(sensor)
+            )
             return .result(value: message, dialog: IntentDialog(stringLiteral: message))
         }
         // Ensure sensors are streaming so we return a live value, not a stale zero.
         manager.startAllSensors()
         guard let value = manager.currentValue(for: sensor) else {
-            let message = "\(sensor.rawValue.capitalized) is currently unavailable (sensor missing or permission not granted)."
+            let message = String(
+                format: Translations.get("intent.getSensor.unavailable", language: intentLanguage),
+                localizedSensorName(sensor)
+            )
             return .result(value: message, dialog: IntentDialog(stringLiteral: message))
         }
-        return .result(value: value, dialog: IntentDialog(stringLiteral: "\(sensor.rawValue.capitalized): \(value)"))
+        return .result(
+            value: value,
+            dialog: IntentDialog(stringLiteral: "\(localizedSensorName(sensor)): \(value)")
+        )
     }
 }
 
@@ -61,10 +78,18 @@ struct StartRecordingIntent: AppIntent {
     @Parameter(title: "Sensor")
     var sensor: SensorType
 
+    private var intentLanguage: AppLanguage {
+        UserDefaults.standard.string(forKey: "appLanguage").flatMap(AppLanguage.init(rawValue:)) ?? .english
+    }
+
     @MainActor
     func perform() async throws -> some IntentResult {
         await AppDelegate.loggingService?.startSessionFromUI(note: "Siri", only: sensor.sensorID)
-        return .result(dialog: "Started recording \(sensor.rawValue) data.")
+        let message = String(
+            format: Translations.get("intent.recording.started", language: intentLanguage),
+            Translations.get(sensor.sensorID.localizationKey, language: intentLanguage)
+        )
+        return .result(dialog: IntentDialog(stringLiteral: message))
     }
 }
 
@@ -75,7 +100,8 @@ struct StopRecordingIntent: AppIntent {
     @MainActor
     func perform() async throws -> some IntentResult {
         await AppDelegate.loggingService?.stopSessionFromUI()
-        return .result(dialog: "Stopped sensor recording.")
+        let language = UserDefaults.standard.string(forKey: "appLanguage").flatMap(AppLanguage.init(rawValue:)) ?? .english
+        return .result(dialog: IntentDialog(stringLiteral: Translations.get("intent.recording.stopped", language: language)))
     }
 }
 
@@ -101,7 +127,11 @@ struct ExportSensorDataIntent: AppIntent {
             throw AppIntentError.exportFailed
         }
         let file = IntentFile(fileURL: url, filename: url.lastPathComponent)
-        return .result(value: file, dialog: "Exported a snapshot of current sensor readings.")
+        let language = UserDefaults.standard.string(forKey: "appLanguage").flatMap(AppLanguage.init(rawValue:)) ?? .english
+        return .result(
+            value: file,
+            dialog: IntentDialog(stringLiteral: Translations.get("intent.export.done", language: language))
+        )
     }
 }
 

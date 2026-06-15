@@ -3,27 +3,28 @@ import UIKit
 
 struct LogEntryDetailView: View {
     let entry: SensorLogEntry
+    @EnvironmentObject var localization: LocalizationManager
 
     var body: some View {
         Form {
             Section {
-                Text("Sensor: \(entry.sensorID)")
-                Text("Kind: \(entry.payloadKind)")
-                Text("Time: \(Date(timeIntervalSince1970: entry.wallTime).description)")
-                Text("Mono ns: \(entry.monotonicNs)")
+                Text("\(localization.t("dataviewer.sensor")): \(entry.sensorID)")
+                Text("\(localization.t("dataviewer.entry.kind")): \(entry.payloadKind)")
+                Text("\(localization.t("dataviewer.entry.time")): \(Date(timeIntervalSince1970: entry.wallTime).description)")
+                Text("\(localization.t("dataviewer.entry.monotonicNs")): \(entry.monotonicNs)")
             }
-            Section(header: Text("Payload")) {
+            Section(header: Text(localization.t("dataviewer.entry.payload"))) {
                 Text(prettyPrintJSON(entry.payloadJSON))
                     .font(.system(.caption, design: .monospaced))
                     .textSelection(.enabled)
             }
             Section {
-                Button("Copy JSON") {
+                Button(localization.t("dataviewer.entry.copyJSON")) {
                     UIPasteboard.general.string = entry.payloadJSON
                 }
             }
         }
-        .navigationTitle("Entry")
+        .navigationTitle(localization.t("dataviewer.entry.title"))
     }
 
     private func prettyPrintJSON(_ raw: String) -> String {

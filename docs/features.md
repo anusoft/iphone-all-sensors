@@ -84,7 +84,6 @@ All critical compliance issues have been resolved. The app now provides unique u
 - Data export (CSV/JSON)
 - Sensor recording at 10Hz
 - 12-language support
-- Home screen widget
 - Siri shortcuts via App Intents
 
 ---
@@ -113,7 +112,7 @@ All critical compliance issues have been resolved. The app now provides unique u
 
 | Feature | Status | Files |
 |---------|--------|-------|
-| iOS home screen widget | ⚠️ Code ready, needs Xcode target | `iPhoneSensorsWidget/` |
+| Future widget target | ⏸ Deferred; not in current app target | `iPhoneSensorsWidget/` scaffold |
 | App Intents for Shortcuts | ✅ Done | `iPhoneSensorsApp.swift` |
 | Apple Watch companion app | ❌ Not planned | — |
 | Share extension for reports | ✅ Done | `ShareSheet` in `SensorComponents.swift` |
@@ -169,17 +168,13 @@ See `docs/app-store-metadata.md` for complete App Store listing information.
 
 ---
 
-## 9. Widget Extension Setup (Manual Steps)
+## 9. Future Widget Target
 
-The widget extension code is fully implemented in `iPhoneSensorsWidget/` but requires manual target addition in Xcode:
+The repository contains a WidgetKit scaffold in `iPhoneSensors/iPhoneSensorsWidget/`, but it is not part of the current Xcode project and should not be listed as a v1 shipping feature.
 
-1. File → New → Target → Widget Extension
-2. Name: `iPhoneSensorsWidgetExtension`
-3. Replace generated files with pre-created ones
-4. Add App Group capability: `group.com.1moby.iPhoneSensors`
-5. Build widget scheme
+Before shipping a widget, add a real extension target, align the App Group id across app and extension entitlements, add app-side value writes, build the widget scheme, and update App Store copy/screenshots.
 
-See `docs/features/08-home-screen-widget.md` for detailed instructions.
+See `docs/features/08-home-screen-widget.md` for the deferred implementation checklist.
 
 ---
 

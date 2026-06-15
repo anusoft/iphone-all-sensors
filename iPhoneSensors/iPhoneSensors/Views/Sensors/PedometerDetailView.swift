@@ -8,8 +8,8 @@ struct PedometerDetailView: View {
         ScrollView {
             AdaptiveCardGrid(spacing: 20) {
                 HStack(spacing: 24) {
-                    CircularGauge(value: Double(motion.steps), maxValue: 10000, title: locManager.t("label.steps"), unit: "steps", color: .green, size: 120)
-                    CircularGauge(value: motion.distance, maxValue: 10000, title: locManager.t("label.distance"), unit: "m", color: .blue, size: 120)
+                    CircularGauge(value: Double(motion.steps), maxValue: 10000, title: locManager.t("label.steps"), unit: locManager.t("unit.steps"), color: .green, size: 120)
+                    CircularGauge(value: motion.distance, maxValue: 10000, title: locManager.t("label.distance"), unit: locManager.t("unit.meters"), color: .blue, size: 120)
                 }
                 .glassCard()
 
@@ -22,14 +22,14 @@ struct PedometerDetailView: View {
                     Text(locManager.t("section.details"))
                         .font(.headline)
                     DataRow(label: locManager.t("label.stepCount"), value: "\(motion.steps)", icon: "figure.walk")
-                    DataRow(label: locManager.t("label.distance"), value: String(format: "%.1f m", motion.distance), icon: "ruler")
+                    DataRow(label: locManager.t("label.distance"), value: LocalizedDisplayValue.number("%.1f", motion.distance, unitKey: "unit.meters", localization: locManager), icon: "ruler")
                     DataRow(label: locManager.t("label.floorsAscended"), value: "\(motion.floorsAscended)", icon: "arrow.up.circle")
                     DataRow(label: locManager.t("label.floorsDescended"), value: "\(motion.floorsDescended)", icon: "arrow.down.circle")
                     if motion.pace > 0 {
-                        DataRow(label: locManager.t("label.currentPace"), value: String(format: "%.2f s/m", motion.pace), icon: "timer")
+                        DataRow(label: locManager.t("label.currentPace"), value: LocalizedDisplayValue.number("%.2f", motion.pace, unitKey: "unit.secondsPerMeter", localization: locManager), icon: "timer")
                     }
                     if motion.cadence > 0 {
-                        DataRow(label: locManager.t("label.cadence"), value: String(format: "%.1f steps/s", motion.cadence), icon: "metronome")
+                        DataRow(label: locManager.t("label.cadence"), value: LocalizedDisplayValue.number("%.1f", motion.cadence, unitKey: "unit.stepsPerSecond", localization: locManager), icon: "metronome")
                     }
                 }
                 .glassCard()

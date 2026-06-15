@@ -12,8 +12,8 @@ REST API. Pairs with [12-appstore-connect-and-fastlane.md](12-appstore-connect-a
 | Name / Bundle | All Sensors / `com.1moby.allsensors` |
 | App ID (ASC) | `6776145177` · SKU `ALLSENSORS-IOS-1` |
 | Team | `D62Y8JVXB9` |
-| Version / build | `1.0` / `1` (`MARKETING_VERSION` / `CURRENT_PROJECT_VERSION`) |
-| Non-exempt encryption | `ITSAppUsesNonExemptEncryption` **not** in Info.plist → declare per-build (standard HTTPS only → **exempt/NO**). Optionally add the key to Info.plist to skip it. |
+| Current submitted version / build | `1.0` / `2` (`MARKETING_VERSION` / `CURRENT_PROJECT_VERSION`) |
+| Non-exempt encryption | `ITSAppUsesNonExemptEncryption=NO` in Info.plist, so no per-build encryption declaration is normally needed. |
 
 **Versioning policy:** never bump `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` unless the
 user explicitly asks.
@@ -31,9 +31,9 @@ Helper: **`scripts/appstore/asc.py`** (ES256-JWT, only needs `pip install crypto
 
 ### 1. Build the `.ipa`
 
-**Option A — Xcode (chosen for v1.0):** Product ▸ Archive ▸ Distribute App ▸ App Store Connect ▸ Upload (uses your existing signing).
+**Option A — Xcode:** Product ▸ Archive ▸ Distribute App ▸ App Store Connect ▸ Upload (uses your existing signing).
 
-**Option B — headless (cloud signing via the ADMIN key, no Xcode UI):**
+**Option B — headless (chosen for v1.0 build 2; cloud signing via the ADMIN key, no Xcode UI):**
 ```bash
 xcodebuild -project iPhoneSensors/iPhoneSensors.xcodeproj -scheme iPhoneSensors \
   -configuration Release -destination 'generic/platform=iOS' \
@@ -65,9 +65,9 @@ python3 scripts/appstore/asc.py status
 python3 scripts/appstore/asc.py age-rating-4plus                     # -> 4+ (all NONE/false)
 python3 scripts/appstore/asc.py content-rights                       # DOES_NOT_USE_THIRD_PARTY_CONTENT
 python3 scripts/appstore/asc.py price-free                           # create a $0 (Free) price schedule, base USA
-python3 scripts/appstore/asc.py wait-build  --build-version 1        # poll until VALID
-python3 scripts/appstore/asc.py encryption  --build-version 1        # only if Info.plist key absent (we set it)
-python3 scripts/appstore/asc.py attach-build --build-version 1       # attach build to the editable version
+python3 scripts/appstore/asc.py wait-build  --build-version <BUILD>  # poll until VALID
+python3 scripts/appstore/asc.py encryption  --build-version <BUILD>  # only if Info.plist key absent
+python3 scripts/appstore/asc.py attach-build --build-version <BUILD> # attach build to the editable version
 # --> Do the manual App Privacy step in the UI here (see below), THEN:
 python3 scripts/appstore/asc.py submit                               # cancels stale rejected sub, then submits
 ```
@@ -89,6 +89,13 @@ python3 scripts/appstore/asc.py submit                               # cancels s
 - **Resubmitting after rejection**: the rejected `reviewSubmission` stays `UNRESOLVED_ISSUES` and
   locks the version (`ITEM_PART_OF_ANOTHER_SUBMISSION`). PATCH it `canceled:true`, then re-add the
   version to a fresh submission. `asc.py submit` does this automatically.
+- **Submit can still need a manual API retry after stale submission cancellation**: if
+  `asc.py submit` creates or reuses a `READY_FOR_REVIEW` submission but prints
+  `add submission item 409`, check `/v1/reviewSubmissions/<id>/items?include=appStoreVersion`.
+  If there are no items, retry `POST /v1/reviewSubmissionItems` with the
+  `reviewSubmission` and `appStoreVersion` relationships, then PATCH the review submission with
+  `{"submitted": true}`. The exact fallback command sequence is in
+  [14-build-upload-submit-for-review.md](14-build-upload-submit-for-review.md).
 - **Encryption PATCH 409 "value already set"** is benign.
 - **`xcrun altool`** is the upload path (the bare `altool` isn't on PATH; always invoke via `xcrun`).
 - **Unused `UIBackgroundModes` fails the UPLOAD** — `altool` rejected the build with
@@ -145,3 +152,8 @@ differentiation argument there; don't resubmit unchanged.
   `WAITING_FOR_REVIEW`. Headless archive/export/upload (cloud-signed, admin key) after fixing the
   `UIBackgroundModes` upload rejection; age-rating 4+, content-rights, Free pricing, review contact
   set via `asc.py`; App Privacy "Data Not Collected" published in the UI; submitted via `asc.py submit`.
+- **2026-06-08** — All Sensors **1.0 (build 2)** submitted via this flow → state
+  `WAITING_FOR_REVIEW`. This was the resubmission for Guideline 5.1.1(iv) permission pre-prompt
+  button wording. Archive/export/upload succeeded headlessly; build `2` processed as `VALID`;
+  `asc.py submit` created review submission `11897c83-839a-49e8-94c8-9009e0a69200`, then the
+  review item add was retried with the raw API fallback before PATCHing `submitted:true`.

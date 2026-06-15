@@ -14,6 +14,7 @@
 		12E17126C9FB0B0FE72FC1CB /* CoreSensorSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB23DDEEF6D953D23E77D67 /* CoreSensorSmokeTests.swift */; };
 		19ABAA90651DE7B6A91D20DF /* SessionsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8E2A83103997A9D038042D /* SessionsListView.swift */; };
 		1A5DB20582FE1B7984CF3C85 /* SensorAppIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C18AACDBC33CC4BF7AED608 /* SensorAppIntents.swift */; };
+		1B95D00132BF0CB0D148AF02 /* LocalDataDeletionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB797B1DC7A299F5ED3B940 /* LocalDataDeletionService.swift */; };
 		1F40F03A419D45E54DE4EDAB /* FormatOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BA3C0863ED650591E6FFDD /* FormatOptions.swift */; };
 		1FA9E4883C5C7AAC4A091733 /* DiagnosticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186431EB2C01872FB49C2D2B /* DiagnosticManager.swift */; };
 		2635A6E36E2C4926A87A3E2D /* SessionLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A179785AC4D9C75D245A168B /* SessionLifecycleTests.swift */; };
@@ -88,6 +89,7 @@
 		A10042 /* EnvironmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20042 /* EnvironmentView.swift */; };
 		A10043 /* HealthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20043 /* HealthView.swift */; };
 		A10044 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20044 /* Assets.xcassets */; };
+		A10045 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A20047 /* Localizable.xcstrings */; };
 		A10046 /* PermissionGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20048 /* PermissionGate.swift */; };
 		A10047 /* PermissionRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20049 /* PermissionRequestView.swift */; };
 		A10048 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20050 /* LocalizationManager.swift */; };
@@ -115,6 +117,7 @@
 		DA83F6593B015073F8C2A1F0 /* SensorDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAE21F318BC9742FB63796 /* SensorDataView.swift */; };
 		DC656192B65A38CA90CECA0B /* SensorLogSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881FC36FAD1F231118C14020 /* SensorLogSession.swift */; };
 		E28DA5368CC3698585BA9582 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 40573D4123C48D7BDA7E7BCE /* GRDB */; };
+		E6FAC97FDFB778B7CF4A0B32 /* LocalDataDeletionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B792C8E2B9B479F3A9DA0CD5 /* LocalDataDeletionServiceTests.swift */; };
 		ECC35A4E0C1EDBB33835AB3E /* DatabaseSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE05FF706F49B07AEF568AF9 /* DatabaseSchema.swift */; };
 		F64720ED9B96924C552A0AF8 /* LoggingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB05EE7AC57F8E507059D80 /* LoggingService.swift */; };
 		FED114EB00C8FE3AF1C9C1B2 /* SensorIDTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F8A2FB8054F8FD6B7B6FD7 /* SensorIDTests.swift */; };
@@ -153,6 +156,7 @@
 		66433F054CC0C3994CB0BBB7 /* LoggingCoordinatorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingCoordinatorTests.swift; sourceTree = "<group>"; };
 		68AE59DD0CC363B0DA9B9980 /* LoggingCoordinator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingCoordinator.swift; sourceTree = "<group>"; };
 		6B4804C98528F1A395AA87C5 /* LoggingConfigStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingConfigStore.swift; sourceTree = "<group>"; };
+		6FB797B1DC7A299F5ED3B940 /* LocalDataDeletionService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocalDataDeletionService.swift; sourceTree = "<group>"; };
 		703D3BE0E66CC08EB16A1037 /* AppLog.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppLog.swift; sourceTree = "<group>"; };
 		719B516DBF49963C98554453 /* LogStoragePathsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogStoragePathsTests.swift; sourceTree = "<group>"; };
 		71F8A2FB8054F8FD6B7B6FD7 /* SensorIDTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorIDTests.swift; sourceTree = "<group>"; };
@@ -210,6 +214,7 @@
 		A20044 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A20045 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20046 /* iPhoneSensors.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iPhoneSensors.entitlements; sourceTree = "<group>"; };
+		A20047 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		A20048 /* PermissionGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionGate.swift; sourceTree = "<group>"; };
 		A20049 /* PermissionRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionRequestView.swift; sourceTree = "<group>"; };
 		A20050 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
@@ -228,6 +233,7 @@
 		ACF6015BAD50EF207A536FD3 /* LogEntryDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogEntryDetailView.swift; sourceTree = "<group>"; };
 		AFC68EB14A90DE7865932DBE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B2AE95106B086DBB5871FA97 /* SQLiteLogWriterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SQLiteLogWriterTests.swift; sourceTree = "<group>"; };
+		B792C8E2B9B479F3A9DA0CD5 /* LocalDataDeletionServiceTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocalDataDeletionServiceTests.swift; sourceTree = "<group>"; };
 		B7A5AA4F8CCBB1D1D6C2326C /* CSVLogWriter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CSVLogWriter.swift; sourceTree = "<group>"; };
 		BBB23DDEEF6D953D23E77D67 /* CoreSensorSmokeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoreSensorSmokeTests.swift; sourceTree = "<group>"; };
 		BFB05EE7AC57F8E507059D80 /* LoggingService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoggingService.swift; sourceTree = "<group>"; };
@@ -304,6 +310,7 @@
 				A179785AC4D9C75D245A168B /* SessionLifecycleTests.swift */,
 				EFAF3AE39F3DE845BCD78BB4 /* LogStorageRotationTests.swift */,
 				BBB23DDEEF6D953D23E77D67 /* CoreSensorSmokeTests.swift */,
+				B792C8E2B9B479F3A9DA0CD5 /* LocalDataDeletionServiceTests.swift */,
 			);
 			path = iPhoneSensorsTests;
 			sourceTree = SOURCE_ROOT;
@@ -467,6 +474,7 @@
 				F0046CF0005AE933A4B7C6A3 /* DataExportManager.swift */,
 				38150EE4B65317D40E605523 /* SensorRecorder.swift */,
 				186431EB2C01872FB49C2D2B /* DiagnosticManager.swift */,
+				6FB797B1DC7A299F5ED3B940 /* LocalDataDeletionService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -482,6 +490,7 @@
 		A60010 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A20047 /* Localizable.xcstrings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -602,6 +611,17 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				th,
+				zh,
+				ja,
+				ko,
+				es,
+				fr,
+				de,
+				pt,
+				ar,
+				it,
+				ru,
 				Base,
 			);
 			mainGroup = A60001;
@@ -631,6 +651,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10044 /* Assets.xcassets in Resources */,
+				A10045 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -732,6 +753,7 @@
 				04952F8E5064E2FCAD0D46EE /* SensorRecorder.swift in Sources */,
 				1FA9E4883C5C7AAC4A091733 /* DiagnosticManager.swift in Sources */,
 				1A5DB20582FE1B7984CF3C85 /* SensorAppIntents.swift in Sources */,
+				1B95D00132BF0CB0D148AF02 /* LocalDataDeletionService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -755,6 +777,7 @@
 				2635A6E36E2C4926A87A3E2D /* SessionLifecycleTests.swift in Sources */,
 				3D28CA1DFF34E55AE256869E /* LogStorageRotationTests.swift in Sources */,
 				12E17126C9FB0B0FE72FC1CB /* CoreSensorSmokeTests.swift in Sources */,
+				E6FAC97FDFB778B7CF4A0B32 /* LocalDataDeletionServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -926,14 +949,12 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "We use the camera to show camera capabilities and control the torch/flashlight.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "This app uses Face ID for biometric authentication testing.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We read health data such as steps, heart rate, and activity to display in the Health tab.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We can write workout and activity data to HealthKit.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app uses the local network to display network connectivity information.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app uses your location to display GPS coordinates and compass heading.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We use your location to display GPS coordinates, altitude, speed, and compass heading.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use the microphone to show audio input device information.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We use motion sensors to display accelerometer, gyroscope, pedometer, and activity data.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -971,14 +992,12 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "We use the camera to show camera capabilities and control the torch/flashlight.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "This app uses Face ID for biometric authentication testing.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We read health data such as steps, heart rate, and activity to display in the Health tab.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We can write workout and activity data to HealthKit.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app uses the local network to display network connectivity information.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app uses your location to display GPS coordinates and compass heading.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We use your location to display GPS coordinates, altitude, speed, and compass heading.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use the microphone to show audio input device information.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We use motion sensors to display accelerometer, gyroscope, pedometer, and activity data.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

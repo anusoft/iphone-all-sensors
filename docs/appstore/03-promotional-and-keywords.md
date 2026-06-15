@@ -55,7 +55,7 @@ First public release.
 • 21 device sensors with per-sensor detail screens
 • Show-Off Mode — 74 full-bleed visualisations across all sensors. Tap the gradient banner on any sensor to enter; horizontal swipe switches sensor, vertical swipe cycles variant.
 • Logger — multi-sensor recording with per-sensor sample rate; export to CSV or JSON
-• HealthKit integration (read-only by default)
+• HealthKit integration (read-only)
 • Siri Shortcuts: "Get Sensor Reading", "Start/Stop Sensor Recording", "Export Sensor Data"
 • Built for iPhone and iPad; supports portrait and landscape
 

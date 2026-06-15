@@ -50,7 +50,7 @@ class MotionSensorManager: ObservableObject {
     @Published var cadence: Double = 0
     @Published var relativeAltitude: Double = 0
     @Published var pressure: Double = 0
-    @Published var activityState: String = "Unknown"
+    @Published var activityState: String = "activity.unknown"
     @Published var isWalking = false
     @Published var isRunning = false
     @Published var isCycling = false
@@ -181,8 +181,9 @@ class MotionSensorManager: ObservableObject {
         }
         // Send local notification
         let content = UNMutableNotificationContent()
-        content.title = "Vibration Detected"
-        content.body = String(format: "G-force threshold exceeded: %.2fG on %@ axis", mag, axis)
+        let language = UserDefaults.standard.string(forKey: "appLanguage").flatMap(AppLanguage.init(rawValue:)) ?? .english
+        content.title = Translations.get("seismometer.notificationTitle", language: language)
+        content.body = String(format: Translations.get("seismometer.notificationBody", language: language), mag, axis)
         content.sound = .default
         let request = UNNotificationRequest(identifier: alarm.id.uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request)
@@ -223,13 +224,13 @@ class MotionSensorManager: ObservableObject {
             let diff = last - first
             if diff > 0.1 {
                 barometerTrend = "rising"
-                barometerWeatherPrediction = "Conditions improving"
+                barometerWeatherPrediction = "barometer.weather.improving"
             } else if diff < -0.1 {
                 barometerTrend = "falling"
-                barometerWeatherPrediction = "Storm possible"
+                barometerWeatherPrediction = "barometer.weather.storm"
             } else {
                 barometerTrend = "stable"
-                barometerWeatherPrediction = "Conditions stable"
+                barometerWeatherPrediction = "barometer.weather.stable"
             }
         }
     }

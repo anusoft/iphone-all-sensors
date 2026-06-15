@@ -61,7 +61,6 @@ These are already in `INFOPLIST_KEY_*` in the Xcode build settings. Reviewers WI
 | `NSBluetoothPeripheralUsageDescription`        | This app uses Bluetooth to discover and display nearby devices.                            |
 | `NSLocalNetworkUsageDescription`               | This app uses the local network to display network connectivity information.               |
 | `NSHealthShareUsageDescription`                | We read health data such as steps, heart rate, and activity to display in the Health tab.  |
-| `NSHealthUpdateUsageDescription`               | We can write workout and activity data to HealthKit.                                       |
 | `NSFaceIDUsageDescription`                     | This app uses Face ID for biometric authentication testing.                                |
 
 If you change any of these in Xcode, update them here.

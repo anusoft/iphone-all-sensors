@@ -11,7 +11,7 @@ struct BatteryDetailView: View {
                     Image(systemName: batteryIcon(level: sys.batteryLevel))
                         .font(.system(size: 60))
                         .foregroundStyle(batteryColor(level: sys.batteryLevel))
-                    Text(String(format: "%.0f%%", sys.batteryLevel * 100))
+                    Text(LocalizedDisplayValue.numberNoSpace("%.0f", Double(sys.batteryLevel) * 100, unitKey: "unit.percent", localization: locManager))
                         .font(.system(size: 48, weight: .bold, design: .rounded))
                     StatusBadge(text: locManager.t(sys.batteryStateKey), color: batteryColor(level: sys.batteryLevel))
                 }
@@ -20,7 +20,7 @@ struct BatteryDetailView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(locManager.t("section.info"))
                         .font(.headline)
-                    DataRow(label: locManager.t("label.level"), value: String(format: "%.0f%%", sys.batteryLevel * 100), icon: batteryIcon(level: sys.batteryLevel))
+                    DataRow(label: locManager.t("label.level"), value: LocalizedDisplayValue.numberNoSpace("%.0f", Double(sys.batteryLevel) * 100, unitKey: "unit.percent", localization: locManager), icon: batteryIcon(level: sys.batteryLevel))
                     DataRow(label: locManager.t("label.state"), value: locManager.t(sys.batteryStateKey), icon: "bolt.fill")
                 }
                 .glassCard()

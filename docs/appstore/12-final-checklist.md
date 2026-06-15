@@ -85,8 +85,9 @@ If you record them per [11](11-build-and-screenshots.md):
 
 ### Build
 
-Upload via Xcode → Archive → Distribute → App Store Connect.
-After processing, attach the build at version 1.0 page → "Build" section.
+Upload via Xcode or the headless flow in [14-build-upload-submit-for-review.md](14-build-upload-submit-for-review.md).
+After processing, attach the build to the editable version. The headless flow does this with
+`scripts/appstore/asc.py attach-build --build-version <BUILD>`.
 
 ## App Review Information
 
@@ -120,7 +121,8 @@ If asked manually: see [09](09-export-compliance.md) for full answers.
 
 ## Submit for Review
 
-App Store Connect → Version 1.0 → "Submit for Review".
+App Store Connect → Version 1.0 → "Submit for Review", or automate with
+[14-build-upload-submit-for-review.md](14-build-upload-submit-for-review.md).
 
 Apple sends:
 

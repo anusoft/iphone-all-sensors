@@ -15,4 +15,20 @@ final class JSONLogWriterTests: XCTestCase {
             _ = try JSONSerialization.jsonObject(with: Data(line.utf8))
         }
     }
+
+    func testFlushFailurePreservesPendingDataAndReportsError() async throws {
+        let rootFile = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("\(UUID().uuidString)-not-a-directory")
+        try "file".write(to: rootFile, atomically: true, encoding: .utf8)
+        let unwritableURL = rootFile.appendingPathComponent("sample.jsonl")
+        let writer = JSONLogWriter(url: unwritableURL)
+
+        await writer.write(SensorSample(sensorID: .accelerometer, payload: .acceleration(x: 1, y: 2, z: 3)))
+        await writer.flush()
+
+        let pendingBytes = await writer.pendingBytes
+        let error = await writer.lastErrorMessage
+        XCTAssertGreaterThan(pendingBytes, 0)
+        XCTAssertNotNil(error)
+    }
 }

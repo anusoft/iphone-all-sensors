@@ -31,14 +31,86 @@ enum SO {
     static let mono    = Font.system(.body, design: .monospaced).weight(.semibold)
 }
 
+enum SOText {
+    static func localized(_ text: String, language: AppLanguage) -> String {
+        let key = Translations.showOffVariantKey(for: text)
+        let localized = Translations.get(key, language: language)
+        return localized == key ? text : localized
+    }
+
+    static func localizedFormat(_ format: String, language: AppLanguage, _ values: CVarArg...) -> String {
+        localizedFormat(format, language: language, arguments: values)
+    }
+
+    static func localizedFormat(_ format: String, language: AppLanguage, arguments: [CVarArg]) -> String {
+        let localized = localized(format, language: language)
+        return String(format: localized, locale: Locale(identifier: language.rawValue), arguments: arguments)
+    }
+}
+
+struct SOTextLabel: View {
+    let text: String
+    @EnvironmentObject private var locManager: LocalizationManager
+
+    init(_ text: String) {
+        self.text = text
+    }
+
+    var body: some View {
+        Text(SOText.localized(text, language: locManager.currentLanguage))
+    }
+}
+
+struct SOFormattedTextLabel: View {
+    let format: String
+    let value: CVarArg
+    @EnvironmentObject private var locManager: LocalizationManager
+
+    var body: some View {
+        Text(SOText.localizedFormat(format, language: locManager.currentLanguage, arguments: [value]))
+    }
+}
+
+struct SOFormattedText: View {
+    let format: String
+    let arguments: [CVarArg]
+    @EnvironmentObject private var locManager: LocalizationManager
+
+    init(_ format: String, _ arguments: CVarArg...) {
+        self.format = format
+        self.arguments = arguments
+    }
+
+    var body: some View {
+        Text(SOText.localizedFormat(format, language: locManager.currentLanguage, arguments: arguments))
+    }
+}
+
 // MARK: - Hero label (uppercase compact tracking)
 
 struct SOLabel: View {
     let text: String
     var size: CGFloat = 10
     var opacity: Double = 0.55
+    @EnvironmentObject private var locManager: LocalizationManager
+
     var body: some View {
-        Text(text.uppercased())
+        Text(SOText.localized(text, language: locManager.currentLanguage).uppercased())
+            .font(.system(size: size, weight: .semibold).width(.condensed))
+            .tracking(size * 0.18)
+            .foregroundStyle(.white.opacity(opacity))
+    }
+}
+
+struct SOFormattedLabel: View {
+    let format: String
+    let value: CVarArg
+    var size: CGFloat = 10
+    var opacity: Double = 0.55
+    @EnvironmentObject private var locManager: LocalizationManager
+
+    var body: some View {
+        Text(SOText.localizedFormat(format, language: locManager.currentLanguage, arguments: [value]).uppercased())
             .font(.system(size: size, weight: .semibold).width(.condensed))
             .tracking(size * 0.18)
             .foregroundStyle(.white.opacity(opacity))
@@ -239,6 +311,8 @@ struct SOTickerBar: View {
     struct Item { let label: String; let value: String; var accent: Bool = false }
     let accent: Color
     let items: [Item]
+    @EnvironmentObject private var locManager: LocalizationManager
+
     var body: some View {
         HStack(spacing: 1) {
             ForEach(Array(items.enumerated()), id: \.offset) { _, item in
@@ -357,6 +431,7 @@ struct SORadialGauge: View {
     let accent: Color
     var ticks: Int = 12
     var size: CGFloat = 180
+    @EnvironmentObject private var locManager: LocalizationManager
 
     var body: some View {
         ZStack {
@@ -510,8 +585,10 @@ struct SOTick<Content: View>: View {
 
 struct SOAnno: View {
     let text: String
+    @EnvironmentObject private var locManager: LocalizationManager
+
     var body: some View {
-        Text(text)
+        Text(SOText.localized(text, language: locManager.currentLanguage))
             .font(.system(size: 9, weight: .medium, design: .monospaced))
             .padding(.horizontal, 6).padding(.vertical, 3)
             .background(Color(red: 1, green: 0.96, blue: 0.41))

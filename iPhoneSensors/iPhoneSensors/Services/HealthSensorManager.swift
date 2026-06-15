@@ -39,11 +39,11 @@ class HealthSensorManager: ObservableObject {
     @Published var bloodType: String = "Not Set"
 
     @Published var isHealthDataAvailable = false
-    @Published var authorizationStatus: String = "Needs Permission"
+    @Published var authorizationStatus: String = "health.status.needsPermission"
     @Published var isAuthorized = false
     @Published var authorizationError: String?
     @Published var hasRequestedAuthorization: Bool
-    @Published var latestFetchStatus: String = "Health data has not been loaded yet."
+    @Published var latestFetchStatus: String = "health.fetch.initial"
     private var isStarted = false
 
     init() {
@@ -62,9 +62,9 @@ class HealthSensorManager: ObservableObject {
         authorizationRequested: Bool,
         authorizationError: String?
     ) -> String {
-        if authorizationError != nil { return "Error" }
-        guard isHealthDataAvailable else { return "Unavailable" }
-        return authorizationRequested ? "Ready" : "Needs Permission"
+        if authorizationError != nil { return "status.error" }
+        guard isHealthDataAvailable else { return "status.unavailable" }
+        return authorizationRequested ? "health.status.accessRequested" : "health.status.needsPermission"
     }
 
     func startUpdates() {
@@ -107,32 +107,14 @@ class HealthSensorManager: ObservableObject {
             return
         }
 
-        let readTypes: Set<HKObjectType> = [
-            HKQuantityType.quantityType(forIdentifier: .heartRate)!,
-            HKQuantityType.quantityType(forIdentifier: .heartRateVariabilitySDNN)!,
-            HKQuantityType.quantityType(forIdentifier: .oxygenSaturation)!,
-            HKQuantityType.quantityType(forIdentifier: .respiratoryRate)!,
-            HKQuantityType.quantityType(forIdentifier: .bodyTemperature)!,
-            HKQuantityType.quantityType(forIdentifier: .bloodPressureSystolic)!,
-            HKQuantityType.quantityType(forIdentifier: .bloodPressureDiastolic)!,
-            HKQuantityType.quantityType(forIdentifier: .electrodermalActivity)!,
-            HKQuantityType.quantityType(forIdentifier: .stepCount)!,
-            HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!,
-            HKQuantityType.quantityType(forIdentifier: .flightsClimbed)!,
-            HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!,
-            HKQuantityType.quantityType(forIdentifier: .basalEnergyBurned)!,
-            HKQuantityType.quantityType(forIdentifier: .appleExerciseTime)!,
-            HKQuantityType.quantityType(forIdentifier: .appleStandTime)!,
-            HKQuantityType.quantityType(forIdentifier: .height)!,
-            HKQuantityType.quantityType(forIdentifier: .bodyMass)!,
-            HKQuantityType.quantityType(forIdentifier: .bodyMassIndex)!,
-            HKQuantityType.quantityType(forIdentifier: .bodyFatPercentage)!,
-            HKQuantityType.quantityType(forIdentifier: .leanBodyMass)!,
-            HKQuantityType.quantityType(forIdentifier: .waistCircumference)!,
-            HKCharacteristicType.characteristicType(forIdentifier: .biologicalSex)!,
-            HKCharacteristicType.characteristicType(forIdentifier: .dateOfBirth)!,
-            HKCharacteristicType.characteristicType(forIdentifier: .bloodType)!
-        ]
+        guard let readTypes = Self.healthReadTypes() else {
+            let message = "health.error.typeUnavailable"
+            authorizationError = message
+            refreshAuthorizationState(error: message)
+            appLog("[Health] ❌ A requested HealthKit data type is unavailable on this OS.")
+            completion?(false)
+            return
+        }
 
         healthStore.requestAuthorization(toShare: nil, read: readTypes) { [weak self] success, error in
             Task { @MainActor in
@@ -149,11 +131,11 @@ class HealthSensorManager: ObservableObject {
                 self.hasRequestedAuthorization = success
                 UserDefaults.standard.set(success, forKey: self.authorizationRequestedKey)
                 self.refreshAuthorizationState(error: error?.localizedDescription)
-                appLog("[Health] Authorization request processed: \(success ? "✅ Ready to query" : "❌ Failed")")
+                appLog("[Health] Authorization request processed: \(success ? "request delivered" : "failed")")
                 if success {
                     self.fetchAllHealthData()
                 } else {
-                    self.latestFetchStatus = "Health permission request failed."
+                    self.latestFetchStatus = "health.fetch.permissionFailed"
                 }
                 completion?(success)
             }
@@ -181,9 +163,47 @@ class HealthSensorManager: ObservableObject {
         )
     }
 
+    nonisolated static func healthReadTypes() -> Set<HKObjectType>? {
+        let quantityTypes: [HKQuantityTypeIdentifier] = [
+            .heartRate,
+            .heartRateVariabilitySDNN,
+            .oxygenSaturation,
+            .respiratoryRate,
+            .bodyTemperature,
+            .bloodPressureSystolic,
+            .bloodPressureDiastolic,
+            .electrodermalActivity,
+            .stepCount,
+            .distanceWalkingRunning,
+            .flightsClimbed,
+            .activeEnergyBurned,
+            .basalEnergyBurned,
+            .appleExerciseTime,
+            .appleStandTime,
+            .height,
+            .bodyMass,
+            .bodyMassIndex,
+            .bodyFatPercentage,
+            .leanBodyMass,
+            .waistCircumference
+        ]
+        let characteristicTypes: [HKCharacteristicTypeIdentifier] = [
+            .biologicalSex,
+            .dateOfBirth,
+            .bloodType
+        ]
+
+        let quantities = quantityTypes.compactMap(HKQuantityType.quantityType(forIdentifier:))
+        let characteristics = characteristicTypes.compactMap(HKCharacteristicType.characteristicType(forIdentifier:))
+        guard quantities.count == quantityTypes.count,
+              characteristics.count == characteristicTypes.count else { return nil }
+
+        return Set(quantities + characteristics)
+    }
+
     private func fetchAllHealthData() {
         appLog("[Health] Fetching all health data...")
-        latestFetchStatus = "Loading Health data..."
+        latestFetchStatus = "health.fetch.loading"
 
         fetchLatestQuantity(.heartRate) { [weak self] value, ts in
             self?.heartRate = value
@@ -285,7 +305,7 @@ class HealthSensorManager: ObservableObject {
         }
 
         fetchCharacteristicData()
-        latestFetchStatus = "Health queries started. Missing categories will stay empty until the iPhone has samples and permission is enabled."
+        latestFetchStatus = "health.fetch.queryStarted"
         appLog("[Health] ✅ Health data fetch initiated")
     }
 
@@ -299,7 +319,7 @@ class HealthSensorManager: ObservableObject {
             Task { @MainActor in
                 if let error = error {
                     appLog("[Health] ❌ Query error for \(identifier.rawValue): \(error.localizedDescription)")
-                    self.latestFetchStatus = "HealthKit query error for \(identifier.rawValue): \(error.localizedDescription)"
+                    self.latestFetchStatus = "health.fetch.queryError"
                     return
                 }
                 guard let sample = samples?.first as? HKQuantitySample else {
@@ -309,7 +329,7 @@ class HealthSensorManager: ObservableObject {
                 let unit = self.preferredUnit(for: identifier)
                 let value = sample.quantity.doubleValue(for: unit)
                 completion(value, sample.endDate)
-                self.latestFetchStatus = "Health data loaded. Some categories can still be empty if there are no samples."
+                self.latestFetchStatus = "health.fetch.loaded"
             }
         }
         healthStore.execute(query)
@@ -327,7 +347,7 @@ class HealthSensorManager: ObservableObject {
             Task { @MainActor in
                 if let error = error {
                     appLog("[Health] ❌ Stats query error for \(identifier.rawValue): \(error.localizedDescription)")
-                    self.latestFetchStatus = "HealthKit query error for \(identifier.rawValue): \(error.localizedDescription)"
+                    self.latestFetchStatus = "health.fetch.queryError"
                     return
                 }
                 let unit = self.preferredUnit(for: identifier)
@@ -337,7 +357,7 @@ class HealthSensorManager: ObservableObject {
                 }
                 let value = sum.doubleValue(for: unit)
                 completion(value, Date())
-                self.latestFetchStatus = "Health data loaded. Some categories can still be empty if there are no samples."
+                self.latestFetchStatus = "health.fetch.loaded"
             }
         }
         healthStore.execute(query)

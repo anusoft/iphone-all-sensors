@@ -7,7 +7,7 @@ final class SessionLifecycleTests: XCTestCase {
     func testLoggingServiceStartStopSessionUpdatesPublishedState() async throws {
         let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
         let storage = LogStorageManager(rootURL: tmp)
-        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: UUID().uuidString))
         defaults.set(true, forKey: "logger.masterEnabled")  // logging is opt-in
         let service = LoggingService(storage: storage, configStore: LoggingConfigStore(defaults: defaults))
 
@@ -27,7 +27,7 @@ final class SessionLifecycleTests: XCTestCase {
     func testScopedSessionTemporarilyRecordsOnlySelectedSensor() async throws {
         let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
         let storage = LogStorageManager(rootURL: tmp)
-        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: UUID().uuidString))
         defaults.set(true, forKey: "logger.masterEnabled")  // logging is opt-in
         let service = LoggingService(storage: storage, configStore: LoggingConfigStore(defaults: defaults))
 
@@ -48,11 +48,11 @@ final class SessionLifecycleTests: XCTestCase {
     }
 
     @MainActor
-    func testSessionDoesNotStartWhenLoggingDisabled() async {
-        // Master switch off (the default) → no session may start.
+    func testSessionDoesNotStartWhenLoggingDisabled() async throws {
+        // Master switch off (the default) means no session may start.
         let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
         let storage = LogStorageManager(rootURL: tmp)
-        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: UUID().uuidString))
         let service = LoggingService(storage: storage, configStore: LoggingConfigStore(defaults: defaults))
 
         await service.bootstrap()
@@ -60,6 +60,23 @@ final class SessionLifecycleTests: XCTestCase {
 
         XCTAssertNil(service.activeSessionDisplayID)
         XCTAssertNil(service.sessionStartedAt)
+    }
+
+    @MainActor
+    func testStartSessionFailurePublishesLoggingError() async throws {
+        let rootFile = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("\(UUID().uuidString)-not-a-directory")
+        try? "file".write(to: rootFile, atomically: true, encoding: .utf8)
+        let storage = LogStorageManager(rootURL: rootFile)
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: UUID().uuidString))
+        defaults.set(true, forKey: "logger.masterEnabled")
+        let service = LoggingService(storage: storage, configStore: LoggingConfigStore(defaults: defaults))
+
+        await service.bootstrap()
+        await service.startSessionFromUI(note: "unwritable")
+
+        XCTAssertNil(service.activeSessionDisplayID)
+        XCTAssertNotNil(service.lastLoggingError)
     }
 
     func testStartAndStop() async throws {
@@ -73,12 +90,13 @@ final class SessionLifecycleTests: XCTestCase {
         let after = await mgr.activeSessionID
         XCTAssertNil(after)
 
-        // Verify ended_at written
+        // Verify ended_at written.
         let url = try storage.sessionSQLiteURL(session.id)
         let pool = try DatabasePool(path: url.path)
         let s = try await pool.read { try SensorLogSession.fetchOne($0) }
         XCTAssertNotNil(s?.endedAt)
     }
+
     func testResumeDetectsUnfinished() async throws {
         let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
         let storage = LogStorageManager(rootURL: tmp)

@@ -34,7 +34,7 @@ struct SOVariantRouter: View {
         case "19": SOLight(variant: variant)
         case "20": SOProx(variant: variant)
         case "21": SOTorch(variant: variant)
-        default:   SOPlaceholder(text: "Unknown sensor")
+        default:   SOPlaceholder(localizationKey: "showoff.unknownSensor")
         }
     }
 }
@@ -42,11 +42,13 @@ struct SOVariantRouter: View {
 // MARK: - Placeholder used while variants are being filled in
 
 struct SOPlaceholder: View {
-    let text: String
+    let localizationKey: String
+    @EnvironmentObject private var locManager: LocalizationManager
+
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            Text(text)
+            Text(locManager.t(localizationKey))
                 .font(.system(size: 14, weight: .semibold, design: .monospaced))
                 .foregroundStyle(.white.opacity(0.4))
         }

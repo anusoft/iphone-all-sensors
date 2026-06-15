@@ -114,11 +114,11 @@ A 1-minute recording of all 21 sensors at maximum rate is ~2 MB. A 1-hour record
 
 ### Why does the Health tab show "No data"?
 
-Either you haven't granted Health permission yet, or your HealthKit store has no data for the requested types. Try moving around with your phone (steps), or check that your Apple Watch is syncing if that's your data source.
+HealthKit returns the same empty result when access is off and when the Health store has no matching samples. Open iOS Settings -> Privacy & Security -> Health -> All Sensors to confirm read access, then try moving around with your phone or check that your Apple Watch is syncing if that is your data source.
 
 ### Does the app write to HealthKit?
 
-By default, **no**. The app's HealthKit permission is read-only. Logger has an opt-in toggle to write workout sessions; that's the only write path.
+No. The app requests HealthKit read access only. It does not write workouts, samples, or any other data back to HealthKit.
 
 ---
 

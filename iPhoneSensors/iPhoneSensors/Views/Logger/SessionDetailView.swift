@@ -18,17 +18,17 @@ struct SessionDetailView: View {
         Form {
             if let s = item.session {
                 Section(header: Text(localization.t("dataviewer.session.metadata"))) {
-                    Text("ID: \(s.id.uuidString)")
+                    Text("\(localization.t("dataviewer.session.id")): \(s.id.uuidString)")
                         .font(.caption)
                         .textSelection(.enabled)
-                    Text("Started: \(Date(timeIntervalSince1970: s.startedAt).description)")
+                    Text("\(localization.t("dataviewer.session.started")): \(Date(timeIntervalSince1970: s.startedAt).description)")
                     if let e = s.endedAt {
-                        Text("Ended: \(Date(timeIntervalSince1970: e).description)")
+                        Text("\(localization.t("dataviewer.session.ended")): \(Date(timeIntervalSince1970: e).description)")
                     }
-                    Text("Device: \(s.deviceModel) iOS \(s.osVersion)")
-                    Text("App: \(s.appVersion)")
+                    Text("\(localization.t("dataviewer.session.device")): \(s.deviceModel) iOS \(s.osVersion)")
+                    Text("\(localization.t("dataviewer.session.app")): \(s.appVersion)")
                     if let note = s.note, !note.isEmpty {
-                        Text("Note: \(note)")
+                        Text("\(localization.t("dataviewer.session.note")): \(note)")
                     }
                 }
             }

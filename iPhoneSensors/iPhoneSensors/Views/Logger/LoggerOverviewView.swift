@@ -167,7 +167,7 @@ struct LoggerBulkActionMenu: View {
 
             Menu {
                 ForEach(bulkIntervals, id: \.self) { ms in
-                    Button(ms == 0 ? localization.t("logger.interval.everySample") : "\(ms) ms") {
+                    Button(intervalLabel(ms)) {
                         loggingService.setSessionInterval(ms, for: ids)
                     }
                 }
@@ -187,6 +187,10 @@ struct LoggerBulkActionMenu: View {
                 .imageScale(.large)
         }
         .accessibilityLabel(localization.t("logger.bulk.section"))
+    }
+
+    private func intervalLabel(_ ms: Int) -> String {
+        ms == 0 ? localization.t("logger.interval.everySample") : LocalizedDisplayValue.number("%.0f", Double(ms), unitKey: "unit.ms", localization: localization)
     }
 }
 
@@ -219,12 +223,16 @@ struct SensorRowConfigPreview: View {
                 .background(Color.secondary.opacity(0.15))
                 .clipShape(Capsule())
         case let .on(format, ms, _):
-            Text("\(format.rawValue) @ \(ms == 0 ? localization.t("logger.interval.everySample") : "\(ms)ms")")
+            Text("\(format.rawValue) @ \(intervalLabel(ms))")
                 .padding(.horizontal, 6)
                 .padding(.vertical, 2)
                 .background(Color.blue.opacity(0.15))
                 .clipShape(Capsule())
         }
+    }
+
+    private func intervalLabel(_ ms: Int) -> String {
+        ms == 0 ? localization.t("logger.interval.everySample") : LocalizedDisplayValue.number("%.0f", Double(ms), unitKey: "unit.ms", localization: localization)
     }
 
     private func iconName(for id: SensorID) -> String {

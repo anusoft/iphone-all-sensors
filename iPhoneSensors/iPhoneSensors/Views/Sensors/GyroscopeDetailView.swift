@@ -11,27 +11,27 @@ struct GyroscopeDetailView: View {
         let mag = sqrt(motion.gyroX * motion.gyroX + motion.gyroY * motion.gyroY + motion.gyroZ * motion.gyroZ)
                 ScrollView {
             AdaptiveCardGrid(spacing: 20) {
-                ThreeAxisView(x: motion.gyroX, y: motion.gyroY, z: motion.gyroZ, title: locManager.t("sensor.gyroscope"), unit: "rad/s", color: .indigo)
+                ThreeAxisView(x: motion.gyroX, y: motion.gyroY, z: motion.gyroZ, title: locManager.t("sensor.gyroscope"), unit: locManager.t("unit.rads"), color: .indigo)
 
-                SensorChartView(chartData: chartData, title: locManager.t("sensor.gyroscope"), unit: "rad/s")
+                SensorChartView(chartData: chartData, title: locManager.t("sensor.gyroscope"), unit: locManager.t("unit.rads"))
 
                 VStack(spacing: 16) {
                     Text(locManager.t("section.rotationRate"))
                         .font(.headline)
-                    CircularGauge(value: mag, maxValue: 10, title: locManager.t("label.total"), unit: "rad/s", color: .indigo, size: 140)
+                    CircularGauge(value: mag, maxValue: 10, title: locManager.t("label.total"), unit: locManager.t("unit.rads"), color: .indigo, size: 140)
                 }
                 .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
                     Text(locManager.t("section.details"))
                         .font(.headline)
-                    DataRow(label: locManager.t("label.xroll"), value: String(format: "%.4f rad/s", motion.gyroX), icon: "arrow.left.and.right")
-                    DataRow(label: locManager.t("label.ypitch"), value: String(format: "%.4f rad/s", motion.gyroY), icon: "arrow.up.and.down")
-                    DataRow(label: locManager.t("label.zyaw"), value: String(format: "%.4f rad/s", motion.gyroZ), icon: "arrow.clockwise")
+                    DataRow(label: locManager.t("label.xroll"), value: LocalizedDisplayValue.number("%.4f", motion.gyroX, unitKey: "unit.rads", localization: locManager), icon: "arrow.left.and.right")
+                    DataRow(label: locManager.t("label.ypitch"), value: LocalizedDisplayValue.number("%.4f", motion.gyroY, unitKey: "unit.rads", localization: locManager), icon: "arrow.up.and.down")
+                    DataRow(label: locManager.t("label.zyaw"), value: LocalizedDisplayValue.number("%.4f", motion.gyroZ, unitKey: "unit.rads", localization: locManager), icon: "arrow.clockwise")
                     Divider()
-                    DataRow(label: locManager.t("label.degreesPerSecondX"), value: String(format: "%.2f°/s", motion.gyroX * 180 / .pi), icon: "degreesign")
-                    DataRow(label: locManager.t("label.degreesPerSecondY"), value: String(format: "%.2f°/s", motion.gyroY * 180 / .pi), icon: "degreesign")
-                    DataRow(label: locManager.t("label.degreesPerSecondZ"), value: String(format: "%.2f°/s", motion.gyroZ * 180 / .pi), icon: "degreesign")
+                    DataRow(label: locManager.t("label.degreesPerSecondX"), value: LocalizedDisplayValue.numberNoSpace("%.2f", motion.gyroX * 180 / .pi, unitKey: "unit.degreesPerSecond", localization: locManager), icon: "degreesign")
+                    DataRow(label: locManager.t("label.degreesPerSecondY"), value: LocalizedDisplayValue.numberNoSpace("%.2f", motion.gyroY * 180 / .pi, unitKey: "unit.degreesPerSecond", localization: locManager), icon: "degreesign")
+                    DataRow(label: locManager.t("label.degreesPerSecondZ"), value: LocalizedDisplayValue.numberNoSpace("%.2f", motion.gyroZ * 180 / .pi, unitKey: "unit.degreesPerSecond", localization: locManager), icon: "degreesign")
                 }
                 .glassCard()
 
@@ -61,7 +61,7 @@ struct GyroscopeDetailView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                 HStack(spacing: 12) {
                     Button(action: {
-                        exportURL = DataExportManager.shared.exportRecording(dataPoints: chartData.dataPoints, sensorName: "Gyroscope", unit: "rad/s", format: .csv)
+                        exportURL = DataExportManager.shared.exportRecording(dataPoints: chartData.dataPoints, sensorName: "Gyroscope", unit: locManager.t("unit.rads"), format: .csv)
                         showShareSheet = true
                     }) {
                         Image(systemName: "square.and.arrow.up")

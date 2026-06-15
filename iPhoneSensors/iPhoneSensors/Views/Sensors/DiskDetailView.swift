@@ -5,15 +5,15 @@ struct DiskDetailView: View {
     @EnvironmentObject var sys: SystemSensorManager
 
     var body: some View {
-        let totalGB = Double(sys.totalDiskSpace) / 1_073_741_824
-        let freeGB = Double(sys.freeDiskSpace) / 1_073_741_824
-        let usedGB = Double(sys.usedDiskSpace) / 1_073_741_824
-        let usagePercent = totalGB > 0 ? usedGB / totalGB : 0
+        let totalSpace = sys.totalDiskSpace
+        let freeSpace = sys.freeDiskSpace
+        let usedSpace = sys.usedDiskSpace
+        let usagePercent = totalSpace > 0 ? Double(usedSpace) / Double(totalSpace) : 0
 
         ScrollView {
             AdaptiveCardGrid(spacing: 20) {
                 VStack(spacing: 16) {
-                    Text(String(format: "%.1f GB", freeGB))
+                    Text(ByteCountFormatter.string(fromByteCount: freeSpace, countStyle: .file))
                         .font(.system(size: 48, weight: .bold, design: .rounded))
                         .foregroundStyle(.green)
                     Text(locManager.t("section.freeSpace"))
@@ -33,9 +33,9 @@ struct DiskDetailView: View {
                     }
                     .frame(height: 24)
                     HStack {
-                        Text("\(locManager.t("disk.used")): \(String(format: "%.1f GB", usedGB))")
+                        Text("\(locManager.t("disk.used")): \(ByteCountFormatter.string(fromByteCount: usedSpace, countStyle: .file))")
                         Spacer()
-                        Text("\(locManager.t("disk.total")): \(String(format: "%.1f GB", totalGB))")
+                        Text("\(locManager.t("disk.total")): \(ByteCountFormatter.string(fromByteCount: totalSpace, countStyle: .file))")
                     }
                     .font(.caption)
                     .foregroundStyle(.secondary)

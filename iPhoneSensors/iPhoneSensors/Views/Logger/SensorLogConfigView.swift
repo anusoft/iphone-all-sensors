@@ -54,7 +54,7 @@ struct SensorLogConfigView: View {
                         get: { ms },
                         set: { binding.wrappedValue = .on(format: format, intervalMs: $0, options: options) })) {
                     ForEach(intervalPresets, id: \.self) {
-                        Text($0 == 0 ? localization.t("logger.interval.everySample") : "\($0) ms").tag($0)
+                        Text(intervalLabel($0)).tag($0)
                     }
                 }
             }
@@ -66,6 +66,10 @@ struct SensorLogConfigView: View {
         // Defaults are all `.on`, but fall back defensively to a sane stream.
         if case .on = session { return session }
         return .on(format: .jsonl, intervalMs: sensorID.minIntervalMs, options: .default)
+    }
+
+    private func intervalLabel(_ ms: Int) -> String {
+        ms == 0 ? localization.t("logger.interval.everySample") : LocalizedDisplayValue.number("%.0f", Double(ms), unitKey: "unit.ms", localization: localization)
     }
 
     private var intervalPresets: [Int] {
@@ -81,6 +85,6 @@ struct SensorLogConfigView: View {
         var perMin: Double = 0
         if case let .on(_, ms, _) = cfg.session { perMin += ms == 0 ? 60.0 : 60_000.0 / Double(ms) }
         let kbPerMin = (perMin * perSample) / 1024.0
-        return String(format: "≈ %.1f KB/min · %.1f MB/day", kbPerMin, kbPerMin * 60 * 24 / 1024)
+        return "≈ \(LocalizedDisplayValue.number("%.1f", kbPerMin, unitKey: "unit.kbPerMin", localization: localization)) · \(LocalizedDisplayValue.number("%.1f", kbPerMin * 60 * 24 / 1024, unitKey: "unit.mbPerDay", localization: localization))"
     }
 }

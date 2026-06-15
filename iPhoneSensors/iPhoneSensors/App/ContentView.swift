@@ -1,5 +1,22 @@
 import SwiftUI
 
+struct RootExperiencePresentation {
+    enum Surface: Equatable {
+        case permissionFlow
+        case mainTabs
+    }
+
+    let hasCompletedPermissionFlow: Bool
+
+    var surface: Surface {
+        hasCompletedPermissionFlow ? .mainTabs : .permissionFlow
+    }
+
+    var showsMainTabs: Bool {
+        surface == .mainTabs
+    }
+}
+
 struct ContentView: View {
     @EnvironmentObject var sensorManager: SensorManager
     @EnvironmentObject var locManager: LocalizationManager
@@ -10,7 +27,6 @@ struct ContentView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var selectedTab = 0
     @AppStorage("hasCompletedPermissionFlow") private var hasCompletedPermissionFlow = false
-    @State private var showPermissionFlow = false
 
     /// Regular-width iPad surfaces get the tuned accessibility-size bump, while
     /// compact-width iPhone rendering preserves the user's current Dynamic Type size.
@@ -53,72 +69,69 @@ struct ContentView: View {
         }
     }
 
+    @ViewBuilder
     private var mainBody: some View {
-        ZStack {
-            TabView(selection: $selectedTab) {
-                DashboardView()
-                    .tabItem {
-                        Label(locManager.t("tab.sensors"), systemImage: "sensor.tag.radiowaves.forward")
-                    }
-                    .tag(0)
-
-                SystemInfoView()
-                    .tabItem {
-                        Label(locManager.t("tab.system"), systemImage: "iphone.gen3")
-                    }
-                    .tag(1)
-
-                EnvironmentView()
-                    .tabItem {
-                        Label(locManager.t("tab.environment"), systemImage: "leaf")
-                    }
-                    .tag(2)
-
-                DiagnosticView()
-                    .tabItem {
-                        Label(locManager.t("diagnostic.title"), systemImage: "stethoscope")
-                    }
-                    .tag(3)
-
-                HealthView()
-                    .tabItem {
-                        Label(locManager.t("tab.health"), systemImage: "heart.text.square")
-                    }
-                    .tag(4)
-
-                LoggerOverviewView()
-                    .tabItem {
-                        Label(locManager.t("tab.logger"), systemImage: "record.circle")
-                    }
-                    .tag(5)
-            }
-            .tint(.blue)
-            // iPad scale-up: enlarge all (semantic-font) text on regular width so the
-            // app uses the larger screen. max(...) respects users on even bigger
-            // accessibility sizes; iPhone (compact) is left untouched.
-            .environment(\.dynamicTypeSize, adaptiveDynamicTypeSize)
-            .toolbarBackground(.visible, for: .tabBar)
-            .toolbarBackground(colorScheme == .dark 
-                               ? Color.black.opacity(0.3)
-                               : Color.white.opacity(0.3),
-                               for: .tabBar)
-            .onAppear {
-                if hasCompletedPermissionFlow {
-                    sensorManager.startAllSensors()
-                } else {
-                    showPermissionFlow = true
-                }
-            }
-
-            if showPermissionFlow {
-                PermissionRequestView(isPresented: $showPermissionFlow, onComplete: {
-                    hasCompletedPermissionFlow = true
-                    sensorManager.startAllSensors()
-                })
-                .environmentObject(locManager)
-                .transition(.opacity)
-                .zIndex(1)
-            }
+        switch RootExperiencePresentation(hasCompletedPermissionFlow: hasCompletedPermissionFlow).surface {
+        case .permissionFlow:
+            PermissionRequestView(onComplete: {
+                hasCompletedPermissionFlow = true
+                sensorManager.startAllSensors()
+            })
+            .environmentObject(locManager)
+            .transition(.opacity)
+        case .mainTabs:
+            mainTabs
+                .onAppear { sensorManager.startAllSensors() }
         }
+    }
+
+    private var mainTabs: some View {
+        TabView(selection: $selectedTab) {
+            DashboardView()
+                .tabItem {
+                    Label(locManager.t("tab.sensors"), systemImage: "sensor.tag.radiowaves.forward")
+                }
+                .tag(0)
+
+            SystemInfoView()
+                .tabItem {
+                    Label(locManager.t("tab.system"), systemImage: "iphone.gen3")
+                }
+                .tag(1)
+
+            EnvironmentView()
+                .tabItem {
+                    Label(locManager.t("tab.environment"), systemImage: "leaf")
+                }
+                .tag(2)
+
+            DiagnosticView()
+                .tabItem {
+                    Label(locManager.t("diagnostic.title"), systemImage: "stethoscope")
+                }
+                .tag(3)
+
+            HealthView()
+                .tabItem {
+                    Label(locManager.t("tab.health"), systemImage: "heart.text.square")
+                }
+                .tag(4)
+
+            LoggerOverviewView()
+                .tabItem {
+                    Label(locManager.t("tab.logger"), systemImage: "record.circle")
+                }
+                .tag(5)
+        }
+        .tint(.blue)
+        // iPad scale-up: enlarge all (semantic-font) text on regular width so the
+        // app uses the larger screen. max(...) respects users on even bigger
+        // accessibility sizes; iPhone (compact) is left untouched.
+        .environment(\.dynamicTypeSize, adaptiveDynamicTypeSize)
+        .toolbarBackground(.visible, for: .tabBar)
+        .toolbarBackground(colorScheme == .dark
+                           ? Color.black.opacity(0.3)
+                           : Color.white.opacity(0.3),
+                           for: .tabBar)
     }
 }

@@ -11,28 +11,28 @@ struct BarometerDetailView: View {
                 ScrollView {
             AdaptiveCardGrid(spacing: 20) {
                 HStack(spacing: 24) {
-                    CircularGauge(value: motion.pressure, maxValue: 120, title: locManager.t("label.pressure"), unit: "kPa", color: .orange, size: 130)
-                    CircularGauge(value: motion.relativeAltitude, maxValue: 500, title: locManager.t("label.altitude"), unit: "m", color: .cyan, size: 130)
+                    CircularGauge(value: motion.pressure, maxValue: 120, title: locManager.t("label.pressure"), unit: locManager.t("unit.kpa"), color: .orange, size: 130)
+                    CircularGauge(value: motion.relativeAltitude, maxValue: 500, title: locManager.t("label.altitude"), unit: locManager.t("unit.meters"), color: .cyan, size: 130)
                 }
                 .glassCard()
 
-                SingleValueChartView(chartData: chartData, title: locManager.t("sensor.barometer"), unit: "kPa", color: .orange)
+                SingleValueChartView(chartData: chartData, title: locManager.t("sensor.barometer"), unit: locManager.t("unit.kpa"), color: .orange)
 
                 VStack(alignment: .leading, spacing: 12) {
                     Text(locManager.t("section.barometricPressure"))
                         .font(.headline)
-                    DataRow(label: locManager.t("label.pressure"), value: String(format: "%.2f kPa", motion.pressure), icon: "barometer")
-                    DataRow(label: locManager.t("label.hectopascals"), value: String(format: "%.1f hPa", motion.pressure * 10), icon: "barometer")
-                    DataRow(label: locManager.t("label.inchesHg"), value: String(format: "%.2f inHg", motion.pressure * 0.2953), icon: "barometer")
-                    DataRow(label: locManager.t("label.millibars"), value: String(format: "%.1f mbar", motion.pressure * 10), icon: "barometer")
+                    DataRow(label: locManager.t("label.pressure"), value: LocalizedDisplayValue.number("%.2f", motion.pressure, unitKey: "unit.kpa", localization: locManager), icon: "barometer")
+                    DataRow(label: locManager.t("label.hectopascals"), value: LocalizedDisplayValue.number("%.1f", motion.pressure * 10, unitKey: "unit.hpa", localization: locManager), icon: "barometer")
+                    DataRow(label: locManager.t("label.inchesHg"), value: LocalizedDisplayValue.number("%.2f", motion.pressure * 0.2953, unitKey: "unit.inhg", localization: locManager), icon: "barometer")
+                    DataRow(label: locManager.t("label.millibars"), value: LocalizedDisplayValue.number("%.1f", motion.pressure * 10, unitKey: "unit.mbar", localization: locManager), icon: "barometer")
                 }
                 .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
                     Text(locManager.t("section.altitude"))
                         .font(.headline)
-                    DataRow(label: "Relative Altitude", value: String(format: "%.2f m", motion.relativeAltitude), icon: "altimeter")
-                    DataRow(label: locManager.t("label.feet"), value: String(format: "%.1f ft", motion.relativeAltitude * 3.28084), icon: "ruler")
+                    DataRow(label: locManager.t("label.relativeAltitude"), value: LocalizedDisplayValue.number("%.2f", motion.relativeAltitude, unitKey: "unit.meters", localization: locManager), icon: "altimeter")
+                    DataRow(label: locManager.t("label.feet"), value: LocalizedDisplayValue.number("%.1f", motion.relativeAltitude * 3.28084, unitKey: "unit.feet", localization: locManager), icon: "ruler")
                 }
                 .glassCard()
 
@@ -59,12 +59,12 @@ struct BarometerDetailView: View {
                         }
                     }
                     if motion.isBarometerTracking {
-                        DataRow(label: locManager.t("barometer.baseline"), value: String(format: "%.2f kPa", motion.barometerBaseline), icon: "barometer")
-                        DataRow(label: locManager.t("barometer.delta"), value: String(format: "%.3f kPa", motion.pressure - motion.barometerBaseline), icon: "arrow.up.arrow.down")
-                        DataRow(label: locManager.t("barometer.elevationChange"), value: String(format: "%.1f m", motion.barometerElevationChange), icon: "altimeter")
+                        DataRow(label: locManager.t("barometer.baseline"), value: LocalizedDisplayValue.number("%.2f", motion.barometerBaseline, unitKey: "unit.kpa", localization: locManager), icon: "barometer")
+                        DataRow(label: locManager.t("barometer.delta"), value: LocalizedDisplayValue.number("%.3f", motion.pressure - motion.barometerBaseline, unitKey: "unit.kpa", localization: locManager), icon: "arrow.up.arrow.down")
+                        DataRow(label: locManager.t("barometer.elevationChange"), value: LocalizedDisplayValue.number("%.1f", motion.barometerElevationChange, unitKey: "unit.meters", localization: locManager), icon: "altimeter")
                         DataRow(label: locManager.t("label.status"), value: locManager.t("barometer.trend.\(motion.barometerTrend)"), icon: "arrow.trending.up")
                         if !motion.barometerWeatherPrediction.isEmpty {
-                            DataRow(label: "Weather", value: motion.barometerWeatherPrediction, icon: "cloud")
+                            DataRow(label: locManager.t("label.weather"), value: locManager.t(motion.barometerWeatherPrediction), icon: "cloud")
                         }
                     }
                 }
@@ -90,7 +90,7 @@ struct BarometerDetailView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                 HStack(spacing: 12) {
                     Button(action: {
-                        exportURL = DataExportManager.shared.exportRecording(dataPoints: chartData.dataPoints, sensorName: "Barometer", unit: "kPa", format: .csv)
+                        exportURL = DataExportManager.shared.exportRecording(dataPoints: chartData.dataPoints, sensorName: "Barometer", unit: locManager.t("unit.kpa"), format: .csv)
                         showShareSheet = true
                     }) {
                         Image(systemName: "square.and.arrow.up")

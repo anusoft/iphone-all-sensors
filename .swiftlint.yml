@@ -29,7 +29,7 @@ opt_in_rules:
 
 # Guardrails against the two patterns the audit flagged.
 force_unwrapping:
-  severity: warning
+  severity: error
 
 file_length:
   warning: 1500

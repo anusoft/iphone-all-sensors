@@ -91,6 +91,7 @@ struct PermissionDeniedView: View {
     let permission: PermissionType
     let onRetry: () -> Void
     let onOpenSettings: () -> Void
+    @EnvironmentObject var locManager: LocalizationManager
 
     var body: some View {
         VStack(spacing: 24) {
@@ -110,7 +111,7 @@ struct PermissionDeniedView: View {
 
             VStack(spacing: 12) {
                 Button(action: onOpenSettings) {
-                    Label("Open Settings", systemImage: "gear")
+                    Label(locManager.t("permission.denied.openSettings"), systemImage: "gear")
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(.blue)
@@ -119,7 +120,7 @@ struct PermissionDeniedView: View {
                 }
 
                 Button(action: onRetry) {
-                    Label("Check Again", systemImage: "arrow.clockwise")
+                    Label(locManager.t("permission.denied.checkAgain"), systemImage: "arrow.clockwise")
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(.ultraThinMaterial)
@@ -144,29 +145,29 @@ struct PermissionDeniedView: View {
 
     private var title: String {
         switch permission {
-        case .location: return "Location Access Required"
-        case .health: return "Health Access Required"
-        case .camera: return "Camera Access Required"
-        case .microphone: return "Microphone Access Required"
-        case .motion: return "Motion Access Required"
-        case .bluetooth: return "Bluetooth Access Required"
+        case .location: return locManager.t("permission.denied.location.title")
+        case .health: return locManager.t("permission.denied.health.title")
+        case .camera: return locManager.t("permission.denied.camera.title")
+        case .microphone: return locManager.t("permission.denied.microphone.title")
+        case .motion: return locManager.t("permission.denied.motion.title")
+        case .bluetooth: return locManager.t("permission.denied.bluetooth.title")
         }
     }
 
     private var message: String {
         switch permission {
         case .location:
-            return "This app needs location access to display GPS coordinates, altitude, and compass heading. Please enable Location access in Settings."
+            return locManager.t("permission.denied.location.message")
         case .health:
-            return "This app needs Health access to display heart rate, steps, and other health metrics. Please enable Health access in Settings."
+            return locManager.t("permission.denied.health.message")
         case .camera:
-            return "This app needs camera access to display camera capabilities. Please enable Camera access in Settings."
+            return locManager.t("permission.denied.camera.message")
         case .microphone:
-            return "This app needs microphone access to display audio information. Please enable Microphone access in Settings."
+            return locManager.t("permission.denied.microphone.message")
         case .motion:
-            return "This app needs motion access to display accelerometer and gyroscope data."
+            return locManager.t("permission.denied.motion.message")
         case .bluetooth:
-            return "This app needs Bluetooth access to discover nearby devices."
+            return locManager.t("permission.denied.bluetooth.message")
         }
     }
 

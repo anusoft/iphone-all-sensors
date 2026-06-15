@@ -12,6 +12,30 @@ struct SOSensorEntry: Identifiable, Hashable {
 
     static func == (lhs: SOSensorEntry, rhs: SOSensorEntry) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
+
+    var titleLocalizationKey: String { "showoff.sensor.\(id).title" }
+    var shortLocalizationKey: String { "showoff.sensor.\(id).short" }
+
+    func variantLocalizationKey(at index: Int) -> String {
+        "showoff.sensor.\(id).variant.\(index)"
+    }
+
+    func localizedTitle(language: AppLanguage) -> String {
+        Translations.get(titleLocalizationKey, language: language)
+    }
+
+    func localizedShort(language: AppLanguage) -> String {
+        Translations.get(shortLocalizationKey, language: language)
+    }
+
+    func localizedVariantName(at index: Int, language: AppLanguage) -> String {
+        guard variants.indices.contains(index) else { return "" }
+        return Translations.get(variantLocalizationKey(at: index), language: language)
+    }
+
+    func localizedVariants(language: AppLanguage) -> [String] {
+        variants.indices.map { localizedVariantName(at: $0, language: language) }
+    }
 }
 
 enum SOSensors {
@@ -85,6 +109,7 @@ struct ShowOffMode: View {
     var body: some View {
         let sensor = SOSensors.all[sensorIdx]
         let activeVariant = variantIdx[sensor.id] ?? 0
+        let language = locManager.currentLanguage
 
         ZStack {
             Color.black.ignoresSafeArea()
@@ -92,7 +117,7 @@ struct ShowOffMode: View {
             // Paged show-off screen swipe (horizontal) over the current sensor's variants.
             // Vertical drag switches sensors — swipe up = next sensor, down = previous.
             TabView(selection: variantBinding(for: sensor)) {
-                ForEach(Array(sensor.variants.enumerated()), id: \.offset) { vIdx, _ in
+                ForEach(sensor.variants.indices, id: \.self) { vIdx in
                     SOPage(sensor: sensor, variant: vIdx)
                         .tag(vIdx)
                         .simultaneousGesture(
@@ -113,7 +138,7 @@ struct ShowOffMode: View {
                     Button { dismiss() } label: {
                         chip(icon: "xmark")
                     }
-                    .accessibilityLabel("Close Show-Off Mode")
+                    .accessibilityLabel(locManager.t("showoff.accessibility.close"))
 
                     Spacer()
 
@@ -122,20 +147,20 @@ struct ShowOffMode: View {
                         Image(systemName: "chevron.up.chevron.down")
                             .font(.system(size: 9, weight: .heavy))
                             .foregroundStyle(.white.opacity(0.5))
-                        Text(sensor.title)
+                        Text(sensor.localizedTitle(language: language).uppercased())
                             .font(.system(size: 11, weight: .semibold).width(.condensed))
                             .tracking(2.2)
                             .foregroundStyle(.white.opacity(0.85))
                     }
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel("\(sensor.title). Swipe up or down to change sensor.")
+                    .accessibilityLabel(String(format: locManager.t("showoff.accessibility.sensorSwipe"), sensor.localizedTitle(language: language)))
 
                     Spacer()
 
                     Button { showIndex = true } label: {
                         chip(icon: "square.grid.3x3.fill")
                     }
-                    .accessibilityLabel("Show all sensors")
+                    .accessibilityLabel(locManager.t("showoff.accessibility.showAllSensors"))
                 }
                 .padding(.horizontal, 14)
                 .padding(.top, 12)
@@ -149,7 +174,7 @@ struct ShowOffMode: View {
                         if activeVariant > 0 {
                             HStack(spacing: 4) {
                                 Image(systemName: "chevron.left")
-                                Text(sensor.variants[activeVariant - 1].uppercased())
+                                Text(sensor.localizedVariantName(at: activeVariant - 1, language: language).uppercased())
                             }
                         } else {
                             Image(systemName: "chevron.left").opacity(0.15)
@@ -157,7 +182,7 @@ struct ShowOffMode: View {
 
                         if activeVariant < sensor.variants.count - 1 {
                             HStack(spacing: 4) {
-                                Text(sensor.variants[activeVariant + 1].uppercased())
+                                Text(sensor.localizedVariantName(at: activeVariant + 1, language: language).uppercased())
                                 Image(systemName: "chevron.right")
                             }
                         } else {
@@ -172,7 +197,7 @@ struct ShowOffMode: View {
                 }
 
                 SOPills(
-                    variants: sensor.variants,
+                    variants: sensor.localizedVariants(language: language),
                     active: activeVariant,
                     accent: sensor.accent
                 ) { newIdx in
@@ -405,7 +430,7 @@ struct SOSensorIndex: View {
                                             .foregroundStyle(s.accent)
                                     }
                                 }
-                                Text(s.short)
+                                Text(s.localizedShort(language: locManager.currentLanguage))
                                     .font(.system(size: 16, weight: .heavy).width(.condensed))
                                     .tracking(0.5)
                                 Text("\(s.variants.count) \(locManager.t("showoff.variants"))")
@@ -518,33 +543,51 @@ struct DashboardShowOffButton: View {
             present = true
         } label: {
             HStack(spacing: 14) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 22, weight: .bold))
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(locManager.t("showoff.button.title"))
-                        .font(.system(size: 17, weight: .heavy))
-                    Text(locManager.t("showoff.button.subtitle"))
-                        .font(.system(size: 12, weight: .medium))
-                        .opacity(0.85)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .fill(.white.opacity(0.18))
+                    Image(systemName: "sparkles")
+                        .font(.title3.weight(.bold))
+                        .symbolRenderingMode(.hierarchical)
                 }
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .bold))
-                    .opacity(0.7)
+                .frame(width: 46, height: 46)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(locManager.t("showoff.button.title"))
+                        .font(.headline.weight(.heavy))
+                        .lineLimit(1)
+                    Text(locManager.t("showoff.button.subtitle"))
+                        .font(.subheadline.weight(.medium))
+                        .lineLimit(2)
+                        .opacity(0.86)
+                }
+
+                Spacer(minLength: 8)
+
+                Image(systemName: "chevron.forward")
+                    .font(.headline.weight(.bold))
+                    .opacity(0.74)
             }
-            .padding(.horizontal, 18)
-            .padding(.vertical, 16)
-            .frame(maxWidth: .infinity)
+            .padding(16)
+            .frame(maxWidth: .infinity, minHeight: 82)
             .background(
                 LinearGradient(
-                    colors: [Color(red: 0.49, green: 0.23, blue: 0.93),
-                             Color(red: 0.93, green: 0.27, blue: 0.60)],
-                    startPoint: .topLeading, endPoint: .bottomTrailing)
+                    colors: [accent, Color(red: 0.93, green: 0.27, blue: 0.60)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
             )
+            .overlay(alignment: .topTrailing) {
+                Image(systemName: "waveform.path.ecg")
+                    .font(.system(size: 54, weight: .bold))
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(.white.opacity(0.16))
+                    .padding(.trailing, 16)
+                    .padding(.top, 8)
+            }
             .foregroundStyle(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-            .shadow(color: Color(red: 0.49, green: 0.23, blue: 0.93).opacity(0.35),
-                    radius: 12, x: 0, y: 6)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .shadow(color: accent.opacity(0.28), radius: 14, x: 0, y: 7)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(locManager.t("showoff.button.title"))

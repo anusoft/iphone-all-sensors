@@ -76,11 +76,11 @@ class SystemSensorManager: ObservableObject {
         systemVersion = device.systemVersion
         deviceIdentifierForVendor = device.identifierForVendor?.uuidString ?? "N/A"
 
-        appLog("[System] Device: \(deviceName)")
+        appLog("[System] Device metadata captured")
         appLog("[System] Model: \(deviceModel)")
         appLog("[System] System: \(systemName) \(systemVersion)")
         appLog("[System] Battery: \(batteryLevel * 100)% (\(batteryStateKey))")
-        appLog("[System] Identifier: \(deviceIdentifierForVendor)")
+        appLog("[System] Identifier for vendor captured")
 
         screenBounds = UIScreen.main.bounds
         screenScale = UIScreen.main.scale
@@ -188,6 +188,8 @@ class SystemSensorManager: ObservableObject {
         appLog("[System] ■ Stopping system sensors")
         timer?.invalidate()
         timer = nil
+        UIDevice.current.isBatteryMonitoringEnabled = false
+        isBatteryMonitoringEnabled = false
         for observer in observers {
             NotificationCenter.default.removeObserver(observer)
         }

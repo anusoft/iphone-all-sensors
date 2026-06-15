@@ -18,9 +18,37 @@ jobs:
       - name: Install SwiftLint
         run: brew install swiftlint
       - name: Lint
-        # Non-blocking for now: surfaces warnings without failing the build while
-        # the codebase adopts the ruleset. Flip to `--strict` once clean.
-        run: swiftlint lint --reporter github-actions-logging || true
+        run: swiftlint lint --reporter github-actions-logging
+
+      - name: Guard force unwraps
+        run: Scripts/validate_no_force_unwraps.rb
+
+      - name: Guard production stdout logging
+        run: |
+          matches="$(find iPhoneSensors/iPhoneSensors -name '*.swift' -print0 | xargs -0 grep -nE '^[[:space:]]*print\(' || true)"
+          if [ -n "$matches" ]; then
+            echo "$matches"
+            echo "::error::Use appLog instead of print in app Swift files."
+            exit 1
+          fi
+
+      - name: Guard sensitive app logs
+        run: |
+          matches="$(find iPhoneSensors/iPhoneSensors -name '*.swift' -print0 | xargs -0 grep -nE 'appLog\(.*(deviceName|identifierForVendor|deviceIdentifierForVendor|coordinate\.latitude|coordinate\.longitude|String\(format: "%\.6f", location\.coordinate)' || true)"
+          if [ -n "$matches" ]; then
+            echo "$matches"
+            echo "::error::Do not log device identifiers or precise coordinates."
+            exit 1
+          fi
+
+      - name: Validate privacy config
+        run: Scripts/validate_privacy_config.rb
+
+      - name: Validate localization coverage
+        run: Scripts/validate_localization.rb
+
+      - name: Validate widget claims
+        run: Scripts/validate_widget_claims.rb
 
   build-test:
     name: Build & Test (iOS Simulator)

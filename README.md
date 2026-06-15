@@ -38,7 +38,6 @@ Built with **SwiftUI** and powered by **Xiaomi MiMo 2.5 Pro** AI assistant.
 - **Multi-language**: 12 languages supported
 - **Dark mode** support
 - **App Intents**: Siri shortcuts for getting sensor readings, starting recordings, exporting data
-- **Home Screen Widget**: Small and medium widgets for at-a-glance sensor data (requires manual Xcode target setup)
 
 ## Requirements
 
@@ -92,7 +91,7 @@ iPhoneSensors/
 │       ├── PermissionGate.swift
 │       └── ...
 ├── Services/
-│   ├── SensorManager.swift             # Central coordinator + Export + Recorder + Diagnostic + Widget
+│   ├── SensorManager.swift             # Central coordinator + Export + Recorder + Diagnostic
 │   ├── MotionSensorManager.swift       # Accelerometer, Gyroscope, etc.
 │   ├── LocationSensorManager.swift     # GPS, Compass
 │   ├── EnvironmentSensorManager.swift  # Barometer, Proximity
@@ -106,7 +105,7 @@ iPhoneSensors/
 ├── Resources/
 │   ├── Assets.xcassets/                # App icon + accent color
 │   └── Info.plist                      # App configuration + purpose strings
-└── iPhoneSensorsWidget/                # Widget extension (manual target setup required)
+└── iPhoneSensorsWidget/                # Future WidgetKit scaffold (not part of current target)
     ├── iPhoneSensorsWidget.swift
     ├── Info.plist
     └── Assets.xcassets/
@@ -137,7 +136,6 @@ All permissions are optional — you can skip any during the onboarding flow.
 - **AVFoundation** for camera/audio
 - **Swift Charts** for real-time data visualization
 - **App Intents** for Siri shortcuts
-- **WidgetKit** for home screen widgets
 
 ## Data Export
 
@@ -185,7 +183,7 @@ This app has been prepared for App Store submission:
 - ✅ Sensor recording
 - ✅ Diagnostic mode
 - ✅ App Intents for Siri
-- ⚠️ Widget extension (code ready, needs manual Xcode target addition)
+- ⚠️ Widget source scaffold excluded from the v1 target and App Store claims
 
 See `docs/app-store-metadata.md` for App Store listing information.
 
@@ -204,7 +202,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - Built with **Xiaomi MiMo 2.5 Pro** AI assistant
-- Apple's CoreMotion, CoreLocation, CoreBluetooth, AVFoundation, and WidgetKit frameworks
+- Apple's CoreMotion, CoreLocation, CoreBluetooth, and AVFoundation frameworks
 - SwiftUI community for UI patterns and best practices
 
 ---

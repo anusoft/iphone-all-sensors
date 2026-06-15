@@ -13,7 +13,7 @@ struct MotionDashboardCards: View {
                     title: locManager.t("sensor.accelerometer"),
                     icon: "gyroscope",
                     value: formatAcc(),
-                    unit: "G",
+                    unit: locManager.t("unit.g"),
                     color: .blue,
                     isAvailable: motion.isAccelerometerAvailable
                 )
@@ -25,7 +25,7 @@ struct MotionDashboardCards: View {
                     title: locManager.t("sensor.gyroscope"),
                     icon: "gyroscope",
                     value: formatGyro(),
-                    unit: "rad/s",
+                    unit: locManager.t("unit.rads"),
                     color: .indigo,
                     isAvailable: motion.isGyroscopeAvailable
                 )
@@ -38,7 +38,7 @@ struct MotionDashboardCards: View {
                     title: locManager.t("sensor.magnetometer"),
                     icon: "sensor.tag.radiowaves.forward",
                     value: total > 0 ? String(format: "%.1f", total) : "",
-                    unit: "µT",
+                    unit: locManager.t("unit.ut"),
                     color: .purple,
                     isAvailable: motion.isMagnetometerAvailable
                 )
@@ -62,7 +62,7 @@ struct MotionDashboardCards: View {
                     title: locManager.t("sensor.pedometer"),
                     icon: "figure.walk",
                     value: motion.steps > 0 ? "\(motion.steps)" : "",
-                    unit: "steps",
+                    unit: locManager.t("unit.steps"),
                     color: .green,
                     isAvailable: motion.isPedometerAvailable
                 )
@@ -74,7 +74,7 @@ struct MotionDashboardCards: View {
                     title: locManager.t("sensor.altimeter"),
                     icon: "altimeter",
                     value: motion.relativeAltitude != 0 ? String(format: "%.1f", motion.relativeAltitude) : "",
-                    unit: "m",
+                    unit: locManager.t("unit.meters"),
                     color: .cyan,
                     isAvailable: motion.isAltimeterAvailable
                 )

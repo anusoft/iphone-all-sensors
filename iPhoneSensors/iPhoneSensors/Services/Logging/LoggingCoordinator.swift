@@ -55,14 +55,21 @@ actor LoggingCoordinator {
         }
     }
 
-    func flushAll() async {
-        for w in writers.values { await w.flush() }
+    func flushAll() async -> String? {
+        var latestError: String?
+        for w in writers.values {
+            await w.flush()
+            if let error = await w.lastErrorMessage {
+                latestError = error
+            }
+        }
         flushTick &+= 1
         if flushTick % 100 == 0 {
             let capMB = await MainActor.run { UserDefaults.standard.integer(forKey: "logger.storageCapMB") }
             let cap = capMB > 0 ? Int64(capMB) * 1024 * 1024 : storageCapBytesDefault
             _ = storage.enforceCapDeletingContinuousIfOver(targetBytes: cap)
         }
+        return latestError
     }
 
     private func shouldWrite(_ s: SensorSample, stream: LogStream, intervalMs: Int) -> Bool {
@@ -97,7 +104,7 @@ actor LoggingCoordinator {
         case .csv:   writer = CSVLogWriter(url: url, options: options)
         case .sqlite:
             if stream == .continuous {
-                let p = (try? ensureContinuousPool()) ?? (try! DatabasePool(path: ":memory:"))
+                guard let p = try? ensureContinuousPool() else { return nil }
                 writer = SQLiteLogWriter(pool: p, sensorID: id, sessionID: nil, batchSize: options.sqliteBatchSize)
             } else {
                 // Session-stream SQLite writes route to the active session pool.

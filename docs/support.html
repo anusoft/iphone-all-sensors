@@ -68,9 +68,9 @@
 
   <h2 id="healthkit">HealthKit</h2>
   <h3>Why does the Health tab show "No data"?</h3>
-  <p>Either you haven't granted Health permission yet, or your HealthKit store has no data for the requested types. Try moving around with your phone (steps), or check that your Apple Watch is syncing if that's your data source.</p>
+  <p>HealthKit returns the same empty result when access is off and when the Health store has no matching samples. Open iOS Settings &rarr; Privacy &amp; Security &rarr; Health &rarr; All Sensors to confirm read access, then try moving around with your phone or check that your Apple Watch is syncing if that is your data source.</p>
   <h3>Does the app write to HealthKit?</h3>
-  <p>By default, <strong>no</strong>. The app's HealthKit permission is read-only. Logger has an opt-in toggle to write workout sessions; that's the only write path.</p>
+  <p>No. The app requests HealthKit read access only. It does not write workouts, samples, or any other data back to HealthKit.</p>
 
   <h2 id="siri">Siri Shortcuts</h2>
   <ul>

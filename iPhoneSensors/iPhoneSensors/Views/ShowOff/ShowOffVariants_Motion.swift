@@ -60,7 +60,7 @@ private struct GPSHud: View {
 
     private var stripCompass: some View {
         VStack(spacing: 6) {
-            SOLabel(text: "Heading \(Int(loc.trueHeading.rounded()))°", size: 9)
+            SOFormattedLabel(format: "Heading %d°", value: Int(loc.trueHeading.rounded()), size: 9)
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 4)
                     .fill(Color.black.opacity(0.4))
@@ -114,7 +114,7 @@ private struct GPSMinMax: View {
                 }
                 .padding(.horizontal, 18).padding(.top, 8)
                 Spacer()
-                Text("RESET")
+                SOTextLabel("RESET")
                     .font(.system(size: 11, weight: .semibold).width(.condensed))
                     .tracking(1.5)
                     .padding(.horizontal, 14).padding(.vertical, 8)
@@ -721,7 +721,7 @@ private struct GPSMap: View {
 
                 if lookAroundUnavailable {
                     VStack {
-                        Text("LOOK AROUND UNAVAILABLE HERE")
+                        SOTextLabel("LOOK AROUND UNAVAILABLE HERE")
                             .font(.system(size: 11, weight: .heavy).width(.condensed))
                             .tracking(1)
                             .foregroundStyle(.white)
@@ -1041,7 +1041,7 @@ private struct GPSShowcaseMapView: UIViewRepresentable {
             let valid = CLLocationCoordinate2DIsValid(coordinate) &&
                         (coordinate.latitude != 0 || coordinate.longitude != 0)
 
-            if applied == nil || !applied!.displayEquals(c) {
+            if applied?.displayEquals(c) != true {
                 applyDisplay(map, c)
             }
 
@@ -1054,7 +1054,7 @@ private struct GPSShowcaseMapView: UIViewRepresentable {
                     stopFlyover()
                     map.setUserTrackingMode(c.trackingMode, animated: true)
                 }
-                if applied == nil || applied!.tracking != c.tracking {
+                if applied?.tracking != c.tracking {
                     map.setUserTrackingMode(c.trackingMode, animated: true)
                 }
                 if c.tracking == .off, valid {
@@ -1323,7 +1323,7 @@ private struct HeadingBearing: View {
             VStack(spacing: 0) {
                 Spacer().frame(height: 90)
                 SOLabel(text: "BEARING TO")
-                Text("QIBLA · MECCA")
+                SOTextLabel("QIBLA · MECCA")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(.white).padding(.top, 4)
                 Text("21.4225° N · 39.8262° E")
@@ -1838,7 +1838,7 @@ private struct GyroIntegrator: View {
                 Spacer().frame(height: 14)
                 SOHero(text: String(format: "%.1f", abs(motion.rotZ) * 12), size: 130, color: SO.gyroAccent,
                        glow: SO.gyroAccent)
-                Text("REVOLUTIONS")
+                SOTextLabel("REVOLUTIONS")
                     .font(.system(size: 12, weight: .heavy))
                     .tracking(3)
                     .foregroundStyle(.white.opacity(0.4))

@@ -11,14 +11,13 @@ final class CoreSensorSmokeTests: XCTestCase {
 
     // MARK: - Live value accessor (backs GetSensorReadingIntent)
 
-    func testCurrentValueReturnsFormattedMotionReadingsNotPlaceholders() {
+    func testCurrentValueReturnsFormattedMotionReadingsNotPlaceholders() throws {
         let manager = SensorManager()
 
         // Accelerometer / gyroscope / magnetometer always yield a formatted
         // magnitude string (derived from live @Published values, 0 at rest).
-        let acc = manager.currentValue(for: .accelerometer)
-        XCTAssertNotNil(acc)
-        XCTAssertTrue(acc!.hasSuffix(" G"), "accelerometer should be formatted in G, got \(acc!)")
+        let acc = try XCTUnwrap(manager.currentValue(for: .accelerometer))
+        XCTAssertTrue(acc.hasSuffix(" G"), "accelerometer should be formatted in G, got \(acc)")
 
         let gyro = manager.currentValue(for: .gyroscope)
         XCTAssertEqual(gyro?.hasSuffix(" rad/s"), true)
@@ -34,6 +33,18 @@ final class CoreSensorSmokeTests: XCTestCase {
         let manager = SensorManager()
         // In the test host location is not authorized → honest nil, not a fake fix.
         XCTAssertNil(manager.currentValue(for: .gps))
+    }
+
+    func testStopAllSensorsStopsSystemMonitoring() {
+        let manager = SensorManager()
+
+        manager.startAllSensors()
+        XCTAssertTrue(manager.systemManager.isBatteryMonitoringEnabled)
+
+        manager.stopAllSensors()
+
+        XCTAssertFalse(manager.isStarted)
+        XCTAssertFalse(manager.systemManager.isBatteryMonitoringEnabled)
     }
 
     // MARK: - Data export (backs ExportSensorDataIntent + in-app export)
@@ -72,8 +83,8 @@ final class CoreSensorSmokeTests: XCTestCase {
         let data = try Data(contentsOf: jsonURL)
         let obj = try JSONSerialization.jsonObject(with: data) as? [String: Any]
         let sensors = obj?["sensors"] as? [[String: Any]]
-        XCTAssertNotNil(sensors)
-        XCTAssertGreaterThan(sensors!.count, 0)
+        let unwrappedSensors = try XCTUnwrap(sensors)
+        XCTAssertGreaterThan(unwrappedSensors.count, 0)
         try? FileManager.default.removeItem(at: jsonURL)
     }
 

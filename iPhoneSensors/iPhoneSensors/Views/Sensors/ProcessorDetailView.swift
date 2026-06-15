@@ -8,8 +8,8 @@ struct ProcessorDetailView: View {
         ScrollView {
             AdaptiveCardGrid(spacing: 20) {
                 HStack(spacing: 24) {
-                    CircularGauge(value: Double(sys.activeProcessorCount), maxValue: Double(sys.processorCount), title: locManager.t("label.activeCores"), unit: "cores", color: .purple, size: 130)
-                    CircularGauge(value: Double(sys.processorCount), maxValue: 10, title: locManager.t("label.totalCores"), unit: "cores", color: .indigo, size: 130)
+                    CircularGauge(value: Double(sys.activeProcessorCount), maxValue: Double(sys.processorCount), title: locManager.t("label.activeCores"), unit: locManager.t("unit.cores"), color: .purple, size: 130)
+                    CircularGauge(value: Double(sys.processorCount), maxValue: 10, title: locManager.t("label.totalCores"), unit: locManager.t("unit.cores"), color: .indigo, size: 130)
                 }
                 .glassCard()
 

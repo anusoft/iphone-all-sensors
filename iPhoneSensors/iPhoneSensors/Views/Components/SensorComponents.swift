@@ -43,6 +43,21 @@ private enum AdaptiveLayoutMetrics {
     }
 }
 
+@MainActor
+enum LocalizedDisplayValue {
+    static func number(_ format: String, _ value: Double, unitKey: String, localization: LocalizationManager) -> String {
+        "\(String(format: format, value)) \(localization.t(unitKey))"
+    }
+
+    static func numberNoSpace(_ format: String, _ value: Double, unitKey: String, localization: LocalizationManager) -> String {
+        "\(String(format: format, value))\(localization.t(unitKey))"
+    }
+
+    static func ratio(_ format: String, _ first: Double, _ second: Double, unitKey: String, localization: LocalizationManager) -> String {
+        "\(String(format: format, first, second)) \(localization.t(unitKey))"
+    }
+}
+
 /// A grid that collapses to a single column on narrow screens (iPhone portrait / SE)
 /// and reflows into 2–4 columns as the available width grows (iPad, large-iPhone
 /// landscape). Cards are top-aligned so heterogeneous card heights don't stretch
@@ -140,75 +155,78 @@ struct SensorCard: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            // Rounded square icon container
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(color.opacity(colorScheme == .dark ? 0.18 : 0.12))
-                    .frame(width: iconBoxSize, height: iconBoxSize)
+            sensorIcon
 
-                Image(systemName: icon)
-                    .font(.system(size: iconBoxSize * 0.45, weight: .semibold))
-                    .foregroundStyle(color)
-            }
-            
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 5) {
                 Text(title)
                     .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundStyle(colorScheme == .dark ? .white : .primary)
-                
-                HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    if isLoading {
-                        ProgressView()
-                            .scaleEffect(0.7)
-                        Text(locManager.t("status.loading"))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    } else if value.isEmpty || value == "0" || value == "0.00" {
-                        Text(locManager.t("status.waiting"))
-                            .font(.caption)
-                            .foregroundStyle(.tertiary)
-                            .italic()
-                    } else {
-                        Text(value)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                        if !unit.isEmpty {
-                            Text(unit)
-                                .font(.caption2)
-                                .foregroundStyle(.tertiary)
-                        }
-                    }
-                }
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.primary)
+                    .lineLimit(2)
+
+                valueLine
             }
-            
+
             Spacer()
-            
+
             if !isAvailable {
-                Text(locManager.t("status.unavailable"))
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
+                StatusBadge(text: locManager.t("status.unavailable"), color: .gray)
             } else {
                 Image(systemName: "chevron.right")
-                    .font(.caption2)
+                    .font(.caption.weight(.bold))
                     .foregroundStyle(.tertiary)
             }
         }
-        .padding(.vertical, 10)
+        .frame(minHeight: 68)
+        .padding(.vertical, 12)
         .padding(.horizontal, 14)
-        .background {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(colorScheme == .dark 
-                      ? Color.white.opacity(0.04)
-                      : Color.white.opacity(0.6))
+        .appMaterialSurface(cornerRadius: 14, material: .thinMaterial)
+        .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
+    private var sensorIcon: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: iconBoxSize * 0.28, style: .continuous)
+                .fill(color.opacity(colorScheme == .dark ? 0.22 : 0.14))
+
+            Image(systemName: icon)
+                .font(.system(size: iconBoxSize * 0.43, weight: .semibold))
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(color)
         }
+        .frame(width: iconBoxSize, height: iconBoxSize)
         .overlay {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(colorScheme == .dark 
-                        ? Color.white.opacity(0.06)
-                        : Color.black.opacity(0.04),
-                        lineWidth: 0.5)
+            RoundedRectangle(cornerRadius: iconBoxSize * 0.28, style: .continuous)
+                .stroke(color.opacity(colorScheme == .dark ? 0.26 : 0.18), lineWidth: 1)
+        }
+    }
+
+
+    private var valueLine: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 4) {
+            if isLoading {
+                ProgressView()
+                    .scaleEffect(0.7)
+                Text(locManager.t("status.loading"))
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            } else if value.isEmpty || value == "0" || value == "0.00" {
+                Text(locManager.t("status.waiting"))
+                    .font(.footnote)
+                    .foregroundStyle(.tertiary)
+            } else {
+                Text(value)
+                    .font(.footnote.weight(.medium))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                if !unit.isEmpty {
+                    Text(unit)
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                        .lineLimit(1)
+                }
+            }
         }
     }
 }
@@ -440,7 +458,7 @@ struct ProgressCard: View {
 
 struct AppBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
-    
+
     func body(content: Content) -> some View {
         content
             .background {
@@ -477,27 +495,11 @@ extension View {
 struct GlassCardModifier: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
     var cornerRadius: CGFloat = 16
-    
+
     func body(content: Content) -> some View {
         content
             .padding()
-            .background {
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(colorScheme == .dark 
-                          ? Color.white.opacity(0.06)
-                          : Color.white.opacity(0.7))
-                    .background {
-                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                            .fill(.ultraThinMaterial)
-                    }
-            }
-            .overlay {
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(colorScheme == .dark 
-                            ? Color.white.opacity(0.08)
-                            : Color.black.opacity(0.06),
-                            lineWidth: 1)
-            }
+            .appMaterialSurface(cornerRadius: cornerRadius, material: .ultraThinMaterial)
     }
 }
 
@@ -511,22 +513,22 @@ struct GlowIcon: View {
     let icon: String
     let color: Color
     let size: CGFloat
-    
+
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: size * 0.35, style: .continuous)
                 .fill(color.opacity(0.25))
                 .frame(width: size, height: size)
                 .blur(radius: size * 0.25)
-            
+
             RoundedRectangle(cornerRadius: size * 0.35, style: .continuous)
                 .fill(color.opacity(0.15))
                 .frame(width: size, height: size)
-            
+
             RoundedRectangle(cornerRadius: size * 0.35, style: .continuous)
                 .stroke(color.opacity(0.4), lineWidth: 1)
                 .frame(width: size, height: size)
-            
+
             Image(systemName: icon)
                 .font(.system(size: size * 0.4, weight: .semibold))
                 .foregroundStyle(color)
@@ -536,7 +538,7 @@ struct GlowIcon: View {
 
 struct AppPrimaryButtonStyle: ButtonStyle {
     let color: Color
-    
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.headline.weight(.semibold))
@@ -553,30 +555,48 @@ struct AppPrimaryButtonStyle: ButtonStyle {
 
 struct DashboardRowBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
-    
+
     func body(content: Content) -> some View {
         content
             .padding(.vertical, 10)
             .padding(.horizontal, 14)
-            .background {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(colorScheme == .dark 
-                          ? Color.white.opacity(0.04)
-                          : Color.white.opacity(0.6))
-            }
-            .overlay {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(colorScheme == .dark 
-                            ? Color.white.opacity(0.06)
-                            : Color.black.opacity(0.04),
-                            lineWidth: 0.5)
-            }
+            .appMaterialSurface(cornerRadius: 12, material: .thinMaterial)
     }
 }
 
 extension View {
     func dashboardRow() -> some View {
         modifier(DashboardRowBackground())
+    }
+
+    func appMaterialSurface(cornerRadius: CGFloat = 16, material: Material = .ultraThinMaterial) -> some View {
+        modifier(AppMaterialSurfaceModifier(cornerRadius: cornerRadius, material: material))
+    }
+}
+
+struct AppMaterialSurfaceModifier: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+    let cornerRadius: CGFloat
+    let material: Material
+
+    func body(content: Content) -> some View {
+        content
+            .background {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(material)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                            .fill(colorScheme == .dark ? Color.white.opacity(0.035) : Color.white.opacity(0.32))
+                    }
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .strokeBorder(
+                        colorScheme == .dark ? Color.white.opacity(0.10) : Color.black.opacity(0.07),
+                        lineWidth: 0.75
+                    )
+            }
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
     }
 }
 
@@ -651,7 +671,7 @@ struct SettingsSheet: View {
                         }
                     }
                 }
-                
+
                 Section(header: Text(locManager.t("privacy.dataPrivacy"))) {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack(spacing: 8) {
@@ -723,7 +743,7 @@ struct SettingsSheet: View {
                 }
 
                 Section(header: Text(locManager.t("settings.privacy"))) {
-                    Link(destination: URL(string: "https://1moby.com/privacy")!) {
+                    Link(destination: URL(string: "https://1moby.com/privacy", encodingInvalidCharacters: false) ?? URL(fileURLWithPath: "/")) {
                         HStack {
                             Image(systemName: "hand.raised.fill")
                                 .foregroundStyle(.blue)
@@ -752,22 +772,14 @@ struct SettingsSheet: View {
     private func deleteAllData() {
         showDeleteConfirm = true
     }
-
     private func confirmDeleteAllData() {
-        // Delete all recordings
         SensorRecorder.shared.deleteAllRecordings()
-        // Delete exported files
-        if let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            if let files = try? FileManager.default.contentsOfDirectory(at: documentsDir, includingPropertiesForKeys: nil) {
-                for file in files {
-                    try? FileManager.default.removeItem(at: file)
-                }
-            }
+        let result = LocalDataDeletionService().deleteLocalData()
+        if result.didSucceed {
+            appLog("[Privacy] Local generated data deleted")
+        } else {
+            appLog("[Privacy] Local data deletion completed with \(result.errors.count) errors")
         }
-        // Clear alarm history if stored in UserDefaults
-        UserDefaults.standard.removeObject(forKey: "seismometerAlarmHistory")
-        // Note: consent timestamp is preserved for audit trail
-        print("[Privacy] All user data deleted")
     }
 }
 import Foundation
@@ -787,7 +799,7 @@ class SensorChartData: ObservableObject {
     @Published var dataPoints: [ChartDataPoint] = []
     @Published var isPaused = false
     private let maxPoints = 200
-    
+
     func addPoint(x: Double, y: Double, z: Double) {
         guard !isPaused else { return }
         let point = ChartDataPoint(timestamp: Date(), x: x, y: y, z: z)
@@ -796,7 +808,7 @@ class SensorChartData: ObservableObject {
             dataPoints.removeFirst(dataPoints.count - maxPoints)
         }
     }
-    
+
     func clear() {
         dataPoints.removeAll()
     }
@@ -827,7 +839,7 @@ struct SensorChartView: View {
                         .foregroundStyle(.blue)
                 }
             }
-            
+
             if chartData.dataPoints.isEmpty {
                 Text(locManager.t("status.waiting"))
                     .font(.caption)
@@ -843,14 +855,14 @@ struct SensorChartView: View {
                         )
                         .foregroundStyle(.red)
                         .interpolationMethod(.catmullRom)
-                        
+
                         LineMark(
                             x: .value("Time", point.timestamp),
                             y: .value("Y", point.y)
                         )
                         .foregroundStyle(.green)
                         .interpolationMethod(.catmullRom)
-                        
+
                         LineMark(
                             x: .value("Time", point.timestamp),
                             y: .value("Z", point.z)
@@ -874,7 +886,7 @@ struct SensorChartView: View {
                 }
                 .frame(height: chartHeight)
             }
-            
+
             HStack(spacing: 20) {
                 LegendItem(color: .red, label: "X")
                 LegendItem(color: .green, label: "Y")
@@ -893,7 +905,7 @@ struct SensorChartView: View {
 struct LegendItem: View {
     let color: Color
     let label: String
-    
+
     var body: some View {
         HStack(spacing: 4) {
             Circle()
@@ -925,7 +937,7 @@ struct SingleValueChartView: View {
             Text(title)
                 .font(.headline)
                 .foregroundStyle(colorScheme == .dark ? .white : .primary)
-            
+
             if chartData.dataPoints.isEmpty {
                 Text(locManager.t("status.waiting"))
                     .font(.caption)
@@ -941,7 +953,7 @@ struct SingleValueChartView: View {
                         )
                         .foregroundStyle(color)
                         .interpolationMethod(.catmullRom)
-                        
+
                         AreaMark(
                             x: .value("Time", point.timestamp),
                             y: .value("Value", point.x)
@@ -955,7 +967,7 @@ struct SingleValueChartView: View {
                 }
                 .frame(height: chartHeight)
             }
-            
+
             HStack {
                 Spacer()
                 Text(unit)

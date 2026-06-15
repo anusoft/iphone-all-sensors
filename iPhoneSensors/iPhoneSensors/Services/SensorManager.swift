@@ -70,7 +70,10 @@ class SensorManager: ObservableObject {
         motionManager.stopUpdates()
         locationManager.stopUpdates()
         environmentManager.stopUpdates()
+        systemManager.stopUpdates()
+        healthManager.stopUpdates()
         connectivityManager.stopUpdates()
+        cameraManager.stopUpdates()
         appLog("[SensorManager] ✅ All sensors stopped")
     }
 

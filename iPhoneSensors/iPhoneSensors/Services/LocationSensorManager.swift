@@ -27,7 +27,7 @@ class LocationSensorManager: NSObject, ObservableObject, CLLocationManagerDelega
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
     @Published var locationAccuracy: CLAccuracyAuthorization = .reducedAccuracy
     @Published var isAuthorized = false
-    @Published var authorizationDescription: String = "Not Determined"
+    @Published var authorizationDescriptionKey: String = "location.authorization.notDetermined"
 
     /// Stream of sensor samples for the logging pipeline.
     let samplePublisher = PassthroughSubject<SensorSample, Never>()
@@ -52,14 +52,14 @@ class LocationSensorManager: NSObject, ObservableObject, CLLocationManagerDelega
         }
         let status = locationManager.authorizationStatus
         guard status == .authorizedWhenInUse || status == .authorizedAlways else {
-            appLog("[Location] ⏭ Location not authorized (status: \(authorizationStatusString(status))). Skipping location updates.")
+            appLog("[Location] ⏭ Location not authorized (status: \(authorizationStatusDebugString(status))). Skipping location updates.")
             return
         }
         isStarted = true
         appLog("[Location] ═══════════════════════════════════")
         appLog("[Location] STARTING LOCATION SENSORS")
         appLog("[Location] ═══════════════════════════════════")
-        appLog("[Location] Auth status: \(authorizationStatusString(status))")
+        appLog("[Location] Auth status: \(authorizationStatusDebugString(status))")
 
         locationManager.startUpdatingLocation()
         locationManager.startUpdatingHeading()
@@ -112,7 +112,7 @@ class LocationSensorManager: NSObject, ObservableObject, CLLocationManagerDelega
                     courseAccuracy: location.courseAccuracy,
                     floor: location.floor?.level))))
             if self.locationUpdateCount <= 5 || self.locationUpdateCount % 20 == 0 {
-                appLog("[Location] 📍 #\(self.locationUpdateCount): \(String(format: "%.6f", location.coordinate.latitude)), \(String(format: "%.6f", location.coordinate.longitude)) alt:\(String(format: "%.1f", location.altitude))m hAcc:\(String(format: "%.1f", location.horizontalAccuracy))m")
+                appLog("[Location] Update #\(self.locationUpdateCount): alt:\(String(format: "%.1f", location.altitude))m hAcc:\(String(format: "%.1f", location.horizontalAccuracy))m")
             }
         }
     }
@@ -144,8 +144,8 @@ class LocationSensorManager: NSObject, ObservableObject, CLLocationManagerDelega
             self.authorizationStatus = manager.authorizationStatus
             self.locationAccuracy = manager.accuracyAuthorization
             self.isAuthorized = manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways
-            self.authorizationDescription = self.authorizationStatusString(manager.authorizationStatus)
-            appLog("[Location] 🔐 Auth changed: \(self.authorizationDescription)")
+            self.authorizationDescriptionKey = self.authorizationStatusLocalizationKey(manager.authorizationStatus)
+            appLog("[Location] 🔐 Auth changed: \(self.authorizationStatusDebugString(manager.authorizationStatus))")
             appLog("[Location] 🔐 Is authorized: \(self.isAuthorized)")
         }
     }
@@ -157,14 +157,25 @@ class LocationSensorManager: NSObject, ObservableObject, CLLocationManagerDelega
         }
     }
 
-    private func authorizationStatusString(_ status: CLAuthorizationStatus) -> String {
+    private func authorizationStatusLocalizationKey(_ status: CLAuthorizationStatus) -> String {
         switch status {
-        case .notDetermined: return "Not Determined"
-        case .restricted: return "Restricted"
-        case .denied: return "Denied"
-        case .authorizedAlways: return "Always"
-        case .authorizedWhenInUse: return "When In Use"
-        @unknown default: return "Unknown"
+        case .notDetermined: return "location.authorization.notDetermined"
+        case .restricted: return "location.authorization.restricted"
+        case .denied: return "location.authorization.denied"
+        case .authorizedAlways: return "location.authorization.always"
+        case .authorizedWhenInUse: return "location.authorization.whenInUse"
+        @unknown default: return "location.authorization.unknown"
+        }
+    }
+
+    private func authorizationStatusDebugString(_ status: CLAuthorizationStatus) -> String {
+        switch status {
+        case .notDetermined: return "notDetermined"
+        case .restricted: return "restricted"
+        case .denied: return "denied"
+        case .authorizedAlways: return "authorizedAlways"
+        case .authorizedWhenInUse: return "authorizedWhenInUse"
+        @unknown default: return "unknown"
         }
     }
 }

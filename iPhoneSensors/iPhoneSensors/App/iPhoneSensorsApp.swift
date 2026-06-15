@@ -37,7 +37,7 @@ struct iPhoneSensorsApp: App {
                 }
                 .task {
                     // Make the live sensor manager reachable from App Intents /
-                    // the home-screen widget bridge while the app is running.
+                    // foreground sensor readers while the app is running.
                     AppDelegate.sensorManager = sensorManager
                     await loggingService.bootstrap()
                     // Register publishers for every sensor manager. Per-sensor logging is
@@ -60,7 +60,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
     static var loggingService: LoggingService?
 
     /// Weak handle to the live, foreground `SensorManager`. Set while the app is
-    /// running so App Intents / the widget bridge can read real readings; `nil`
+    /// running so App Intents can read real readings; `nil`
     /// when the app isn't running (callers then report "open the app").
     static weak var sensorManager: SensorManager?
 

@@ -32,7 +32,7 @@ struct TorchDetailView: View {
                     Text(locManager.t("section.details"))
                         .font(.headline)
                     DataRow(label: locManager.t("label.available"), value: cam.isTorchAvailable ? locManager.t("value.yes") : locManager.t("value.no"), icon: "flashlight.on.fill")
-                    DataRow(label: locManager.t("label.level"), value: String(format: "%.0f%%", torchLevel * 100), icon: "slider.horizontal.3")
+                    DataRow(label: locManager.t("label.level"), value: LocalizedDisplayValue.numberNoSpace("%.0f", Double(torchLevel) * 100, unitKey: "unit.percent", localization: locManager), icon: "slider.horizontal.3")
                 }
                 .glassCard()
             }

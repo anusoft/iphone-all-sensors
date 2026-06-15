@@ -6,6 +6,8 @@ actor JSONLogWriter: LogWriter {
     private var buffer = Data()
     private(set) var bytesWritten: Int64 = 0
     private(set) var entriesWritten: Int64 = 0
+    private(set) var lastErrorMessage: String?
+    var pendingBytes: Int { buffer.count }
     private let encoder: JSONEncoder = {
         let e = JSONEncoder()
         e.outputFormatting = [.withoutEscapingSlashes]
@@ -29,7 +31,7 @@ actor JSONLogWriter: LogWriter {
             entriesWritten += 1
             if buffer.count >= 64 * 1024 { await flush() }
         } catch {
-            // Drop entry on encode failure; preserve writer.
+            lastErrorMessage = error.localizedDescription
         }
     }
 
@@ -49,8 +51,9 @@ actor JSONLogWriter: LogWriter {
             try handle?.synchronize()
             bytesWritten += Int64(buffer.count)
             buffer.removeAll(keepingCapacity: true)
+            lastErrorMessage = nil
         } catch {
-            buffer.removeAll(keepingCapacity: true)
+            lastErrorMessage = error.localizedDescription
         }
     }
 

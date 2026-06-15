@@ -9,6 +9,8 @@ actor SQLiteLogWriter: LogWriter {
     private var pending: [SensorLogEntry] = []
     private(set) var bytesWritten: Int64 = 0
     private(set) var entriesWritten: Int64 = 0
+    private(set) var lastErrorMessage: String?
+    var pendingBytes: Int { pending.reduce(0) { $0 + $1.payloadJSON.utf8.count + 80 } }
 
     init(pool: DatabasePool, sensorID: SensorID, sessionID: UUID?, batchSize: Int = 100) {
         self.pool = pool
@@ -31,19 +33,24 @@ actor SQLiteLogWriter: LogWriter {
             pending.append(entry)
             entriesWritten += 1
             if pending.count >= batchSize { await flush() }
-        } catch { /* drop */ }
+        } catch {
+            lastErrorMessage = error.localizedDescription
+        }
     }
 
     func flush() async {
         guard !pending.isEmpty else { return }
         let batch = pending
-        pending.removeAll(keepingCapacity: true)
         do {
             try await pool.write { db in
                 for e in batch { try e.insert(db) }
             }
+            pending.removeAll(keepingCapacity: true)
             bytesWritten += Int64(batch.reduce(0) { $0 + $1.payloadJSON.utf8.count + 80 })
-        } catch { /* drop */ }
+            lastErrorMessage = nil
+        } catch {
+            lastErrorMessage = error.localizedDescription
+        }
     }
 
     func close() async { await flush() }

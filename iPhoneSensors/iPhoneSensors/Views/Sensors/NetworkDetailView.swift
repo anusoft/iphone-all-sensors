@@ -20,10 +20,21 @@ struct NetworkDetailView: View {
     @State private var showSignalShareSheet = false
     @State private var signalExportURL: URL?
 
+    private func networkTypeKey(_ networkType: String) -> String {
+        "network." + networkType.lowercased().replacingOccurrences(of: "-", with: "")
+    }
+
+    private func displayNetworkValue(_ value: String) -> String {
+        if value == "N/A" || value == "Unknown" || value.isEmpty {
+            return locManager.t("compass.unknown")
+        }
+        return value
+    }
+
     private var ssidRow: some View {
         Group {
             if loc.isAuthorized {
-                DataRow(label: locManager.t("network.ssid"), value: conn.wifiSSID, icon: "wifi")
+                DataRow(label: locManager.t("network.ssid"), value: displayNetworkValue(conn.wifiSSID), icon: "wifi")
             } else {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
@@ -52,6 +63,18 @@ struct NetworkDetailView: View {
         }
     }
 
+    private func appendCurrentSignalPoint() {
+        guard loc.isAuthorized else { return }
+        let quality = conn.isConnectedToNetwork ? (conn.networkType == "Wi-Fi" ? "Excellent" : "Good") : "No Signal"
+        signalPoints.append(SignalMapPoint(
+            timestamp: Date(),
+            latitude: loc.latitude,
+            longitude: loc.longitude,
+            networkType: conn.networkType,
+            signalQuality: quality
+        ))
+    }
+
     private func toggleSignalRecording() {
         if isRecordingSignal {
             isRecordingSignal = false
@@ -61,28 +84,11 @@ struct NetworkDetailView: View {
             isRecordingSignal = true
             signalPoints = []
             signalRecordTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
-                guard loc.isAuthorized else { return }
-                let quality = conn.isConnectedToNetwork ? (conn.networkType == "Wi-Fi" ? "Excellent" : "Good") : "No Signal"
-                let point = SignalMapPoint(
-                    timestamp: Date(),
-                    latitude: loc.latitude,
-                    longitude: loc.longitude,
-                    networkType: conn.networkType,
-                    signalQuality: quality
-                )
-                signalPoints.append(point)
+                Task { @MainActor in
+                    appendCurrentSignalPoint()
+                }
             }
-            // Record first point immediately
-            if loc.isAuthorized {
-                let quality = conn.isConnectedToNetwork ? (conn.networkType == "Wi-Fi" ? "Excellent" : "Good") : "No Signal"
-                signalPoints.append(SignalMapPoint(
-                    timestamp: Date(),
-                    latitude: loc.latitude,
-                    longitude: loc.longitude,
-                    networkType: conn.networkType,
-                    signalQuality: quality
-                ))
-            }
+            appendCurrentSignalPoint()
         }
     }
 
@@ -122,7 +128,7 @@ struct NetworkDetailView: View {
             try content.write(to: url, atomically: true, encoding: .utf8)
             return url
         } catch {
-            print("[Export] Failed to save: \(error)")
+            appLog("[Export] Failed to save: \(error)")
             return nil
         }
     }
@@ -134,7 +140,7 @@ struct NetworkDetailView: View {
                     Image(systemName: conn.isConnectedToNetwork ? "network" : "network.slash")
                         .font(.system(size: 50))
                         .foregroundStyle(conn.isConnectedToNetwork ? .green : .red)
-                    Text(locManager.t("network." + conn.networkType.lowercased().replacingOccurrences(of: "-", with: "")))
+                    Text(locManager.t(networkTypeKey(conn.networkType)))
                         .font(.title)
                         .fontWeight(.bold)
                     StatusBadge(text: conn.isConnectedToNetwork ? locManager.t("status.connected") : locManager.t("status.disconnected"), color: conn.isConnectedToNetwork ? .green : .red)
@@ -144,11 +150,11 @@ struct NetworkDetailView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(locManager.t("section.info"))
                         .font(.headline)
-                    DataRow(label: locManager.t("label.connectionType"), value: locManager.t("network." + conn.networkType.lowercased().replacingOccurrences(of: "-", with: "")), icon: "network")
+                    DataRow(label: locManager.t("label.connectionType"), value: locManager.t(networkTypeKey(conn.networkType)), icon: "network")
                     DataRow(label: locManager.t("label.status"), value: conn.isConnectedToNetwork ? locManager.t("status.connected") : locManager.t("status.disconnected"), icon: "wifi")
                     ssidRow
-                    DataRow(label: locManager.t("label.carrier"), value: conn.cellularCarrier == "Unknown" ? locManager.t("compass.unknown") : conn.cellularCarrier, icon: "antenna.radiowaves.left.and.right")
-                    DataRow(label: locManager.t("label.radioTechnology"), value: conn.cellularRadioTechnology == "N/A" ? locManager.t("compass.unknown") : conn.cellularRadioTechnology, icon: "cellularbars")
+                    DataRow(label: locManager.t("label.carrier"), value: displayNetworkValue(conn.cellularCarrier), icon: "antenna.radiowaves.left.and.right")
+                    DataRow(label: locManager.t("label.radioTechnology"), value: displayNetworkValue(conn.cellularRadioTechnology), icon: "cellularbars")
                 }
                 .glassCard()
 
@@ -190,7 +196,7 @@ struct NetworkDetailView: View {
                                     Text("\(String(format: "%.4f", point.latitude)), \(String(format: "%.4f", point.longitude))")
                                         .font(.caption)
                                         .monospacedDigit()
-                                    Text(point.networkType)
+                                    Text(locManager.t(networkTypeKey(point.networkType)))
                                         .font(.caption2)
                                         .foregroundStyle(.secondary)
                                 }

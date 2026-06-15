@@ -26,7 +26,7 @@ This document supersedes `docs/current-allsensors-features.md` (dated 2026-05-06
 8. [Data viewer & file browser](#8-data-viewer--file-browser)
 9. [Diagnostics](#9-diagnostics)
 10. [App Intents & Siri](#10-app-intents--siri)
-11. [Widget extension](#11-widget-extension)
+11. [Future widget scaffold](#11-future-widget-scaffold)
 12. [Localization](#12-localization)
 13. [Theme & UI system](#13-theme--ui-system)
 14. [Permissions](#14-permissions)
@@ -321,14 +321,9 @@ Defined across `App/iPhoneSensorsApp.swift` and `Services/Logging/LoggerIntents.
 
 ---
 
-## 11. Widget extension
+## 11. Future widget scaffold
 
-`iPhoneSensorsWidget/iPhoneSensorsWidget.swift`:
-- Small + medium widget families.
-- Timeline provider refreshing every 15 minutes (WidgetKit min).
-- Shared `App Group` `group.com.1moby.iPhoneSensors` for value handoff via `UserDefaults`.
-- `containerBackground` for automatic dark/light theming.
-- Asset catalog + Info.plist included in the extension target.
+`iPhoneSensors/iPhoneSensorsWidget/` contains a WidgetKit scaffold, but `xcodebuild -list` currently exposes only the app and test targets. It is not a shipping v1 feature until a real extension target, matching App Group entitlements, and app-side `widget_sensor_*` writes are added.
 
 ---
 
@@ -381,7 +376,6 @@ UI primitives:
 - `NSMicrophoneUsageDescription`
 - `NSBluetoothAlwaysUsageDescription`
 - `NSHealthShareUsageDescription`
-- `NSHealthUpdateUsageDescription`
 
 ### Behaviors
 - Per-step "Not Now" skip.
@@ -473,7 +467,7 @@ iPhoneSensors/iPhoneSensors/
     ├── Logger/                     # 10 logger views (Overview, Settings, SensorLogConfig, DataViewer, Sessions, SessionDetail, SensorData, Files, LogEntryDetail, StatusHeader)
     └── Sensors/                    # 21 detail views
 
-iPhoneSensorsWidget/                # WidgetKit extension (small + medium)
+iPhoneSensorsWidget/                # Future WidgetKit scaffold (not in current target)
 iPhoneSensorsTests/                 # 14 test files, logger-focused
 docs/                               # Privacy, App Store metadata, feature briefs, logging spec
 screenshots/                        # iPhone (6.7"/6.5"/5.5") + iPad (12.9"/11"/9th gen)
@@ -492,4 +486,4 @@ screenshots/                        # iPhone (6.7"/6.5"/5.5") + iPad (12.9"/11"/
 - Logger-aware throttle integration (low-power / thermal pause).
 - The 14-file logger test suite under `iPhoneSensorsTests/`.
 
-Items kept because they are still accurate: sensor coverage list, dashboard cards, detail views, in-memory `SensorRecorder`, diagnostic suite, widget code, localization (still 12 languages), permission flow, and privacy posture.
+Items kept because they are still accurate: sensor coverage list, dashboard cards, detail views, in-memory `SensorRecorder`, diagnostic suite, future widget source scaffold, localization (still 12 languages), permission flow, and privacy posture.

@@ -52,7 +52,8 @@ struct SensorWidgetProvider: TimelineProvider {
         entries.append(entry)
 
         // Update every 15 minutes
-        let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 15, to: currentDate)!
+        let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 15, to: currentDate)
+            ?? currentDate.addingTimeInterval(15 * 60)
         let timeline = Timeline(entries: entries, policy: .after(nextUpdateDate))
         completion(timeline)
     }

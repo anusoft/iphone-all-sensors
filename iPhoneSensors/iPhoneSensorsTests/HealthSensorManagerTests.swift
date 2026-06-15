@@ -10,7 +10,17 @@ final class HealthSensorManagerTests: XCTestCase {
             authorizationError: nil
         )
 
-        XCTAssertEqual(status, "Unavailable")
+        XCTAssertEqual(status, "status.unavailable")
+    }
+
+    func testAuthorizationStatusTextShowsErrorKeyWhenAuthorizationFails() {
+        let status = HealthSensorManager.authorizationStatusText(
+            isHealthDataAvailable: true,
+            authorizationRequested: true,
+            authorizationError: "Denied"
+        )
+
+        XCTAssertEqual(status, "status.error")
     }
 
     func testAuthorizationStatusTextShowsRequestNeededUntilPromptProcessed() {
@@ -20,16 +30,24 @@ final class HealthSensorManagerTests: XCTestCase {
             authorizationError: nil
         )
 
-        XCTAssertEqual(status, "Needs Permission")
+        XCTAssertEqual(status, "health.status.needsPermission")
     }
 
-    func testAuthorizationStatusTextShowsReadyAfterPromptProcessed() {
+    func testAuthorizationStatusTextShowsRequestProcessedAfterPromptProcessed() {
         let status = HealthSensorManager.authorizationStatusText(
             isHealthDataAvailable: true,
             authorizationRequested: true,
             authorizationError: nil
         )
 
-        XCTAssertEqual(status, "Ready")
+        XCTAssertEqual(status, "health.status.accessRequested")
+    }
+
+    func testHealthReadTypesCanBeBuiltWithoutForceUnwraps() throws {
+        let readTypes = try XCTUnwrap(HealthSensorManager.healthReadTypes())
+
+        XCTAssertEqual(readTypes.count, 24)
+        XCTAssertTrue(readTypes.contains(HKQuantityType(.heartRate)))
+        XCTAssertTrue(readTypes.contains(HKCharacteristicType(.dateOfBirth)))
     }
 }

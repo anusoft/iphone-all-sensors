@@ -11,7 +11,7 @@ struct LightDetailView: View {
                     Image(systemName: "sun.max.fill")
                         .font(.system(size: 60))
                         .foregroundStyle(.yellow)
-                    Text(String(format: "%.0f%%", env.screenBrightness * 100))
+                    Text(LocalizedDisplayValue.numberNoSpace("%.0f", env.screenBrightness * 100, unitKey: "unit.percent", localization: locManager))
                         .font(.system(size: 48, weight: .bold, design: .rounded))
                     Text(locManager.t("section.screenBrightness"))
                         .font(.headline)

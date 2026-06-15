@@ -38,7 +38,7 @@ To see the headline feature in 30 seconds:
 Other features worth noting:
 
 • Logger tab (record icon, last tab): records sensor samples to a local SQLite, exports to CSV/JSON via the share sheet. Sessions live entirely on device under the app's sandbox.
-• Health tab: reads from HealthKit (if granted) for steps, heart rate, active energy, distance. Read-only by default.
+• Health tab: reads from HealthKit (if granted) for vitals, activity, body measurements, and profile values shown in the Health tab. Read-only; the app does not write to HealthKit.
 • Siri Shortcuts: "Get Sensor Reading", "Start Sensor Recording", "Stop Sensor Recording", "Export Sensor Data" are wired as App Intents.
 
 Permissions:

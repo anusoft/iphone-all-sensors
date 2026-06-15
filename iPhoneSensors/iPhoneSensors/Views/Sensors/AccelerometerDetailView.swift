@@ -14,25 +14,25 @@ struct AccelerometerDetailView: View {
         
         ScrollView {
             AdaptiveCardGrid(spacing: 20) {
-                ThreeAxisView(x: motion.accX, y: motion.accY, z: motion.accZ, title: locManager.t("sensor.accelerometer"), unit: "G", color: .blue)
+                ThreeAxisView(x: motion.accX, y: motion.accY, z: motion.accZ, title: locManager.t("sensor.accelerometer"), unit: locManager.t("unit.g"), color: .blue)
 
-                SensorChartView(chartData: chartData, title: locManager.t("sensor.accelerometer"), unit: "G")
+                SensorChartView(chartData: chartData, title: locManager.t("sensor.accelerometer"), unit: locManager.t("unit.g"))
 
                 VStack(spacing: 16) {
                     Text(locManager.t("label.magnitude"))
                         .font(.headline)
-                    CircularGauge(value: mag, maxValue: 4, title: locManager.t("label.totalG"), unit: "G", color: .blue, size: 140)
+                    CircularGauge(value: mag, maxValue: 4, title: locManager.t("label.totalG"), unit: locManager.t("unit.g"), color: .blue, size: 140)
                 }
                 .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
                     Text(locManager.t("section.details"))
                         .font(.headline)
-                    DataRow(label: locManager.t("label.xaxis"), value: String(format: "%.4f G", motion.accX), icon: "arrow.left.and.right")
-                    DataRow(label: locManager.t("label.yaxis"), value: String(format: "%.4f G", motion.accY), icon: "arrow.up.and.down")
-                    DataRow(label: locManager.t("label.zaxis"), value: String(format: "%.4f G", motion.accZ), icon: "arrow.up")
+                    DataRow(label: locManager.t("label.xaxis"), value: LocalizedDisplayValue.number("%.4f", motion.accX, unitKey: "unit.g", localization: locManager), icon: "arrow.left.and.right")
+                    DataRow(label: locManager.t("label.yaxis"), value: LocalizedDisplayValue.number("%.4f", motion.accY, unitKey: "unit.g", localization: locManager), icon: "arrow.up.and.down")
+                    DataRow(label: locManager.t("label.zaxis"), value: LocalizedDisplayValue.number("%.4f", motion.accZ, unitKey: "unit.g", localization: locManager), icon: "arrow.up")
                     Divider()
-                    DataRow(label: locManager.t("label.magnitude"), value: String(format: "%.4f G", mag), icon: "scope")
+                    DataRow(label: locManager.t("label.magnitude"), value: LocalizedDisplayValue.number("%.4f", mag, unitKey: "unit.g", localization: locManager), icon: "scope")
                     DataRow(label: locManager.t("label.status"), value: motion.isAccelerometerAvailable ? locManager.t("status.active") : locManager.t("status.unavailable"), icon: "checkmark.circle")
                 }
                 .glassCard()
@@ -81,7 +81,7 @@ struct SeismometerCard: View {
             }
             if motion.isSeismometerEnabled {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("\(locManager.t("seismometer.threshold")): \(String(format: "%.1f", motion.seismometerThreshold)) G")
+                    Text("\(locManager.t("seismometer.threshold")): \(LocalizedDisplayValue.number("%.1f", motion.seismometerThreshold, unitKey: "unit.g", localization: locManager))")
                         .font(.subheadline)
                     Slider(value: $motion.seismometerThreshold, in: 0.5...5.0, step: 0.1)
                     if !motion.seismometerAlarmHistory.isEmpty {
@@ -92,7 +92,7 @@ struct SeismometerCard: View {
                             HStack {
                                 Image(systemName: "exclamationmark.triangle.fill")
                                     .foregroundStyle(.red)
-                                Text("\(String(format: "%.2f", alarm.magnitude))G on \(alarm.axis)")
+                                Text(String(format: locManager.t("seismometer.alarmAxisFormat"), alarm.magnitude, alarm.axis))
                                     .font(.caption)
                                 Spacer()
                                 Text(alarm.timestamp, style: .time)

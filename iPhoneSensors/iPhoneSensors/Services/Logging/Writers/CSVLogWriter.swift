@@ -8,6 +8,8 @@ actor CSVLogWriter: LogWriter {
     private var buffer = Data()
     private(set) var bytesWritten: Int64 = 0
     private(set) var entriesWritten: Int64 = 0
+    private(set) var lastErrorMessage: String?
+    var pendingBytes: Int { buffer.count }
 
     init(url: URL, options: FormatOptions) {
         self.url = url
@@ -47,7 +49,10 @@ actor CSVLogWriter: LogWriter {
             try handle?.synchronize()
             bytesWritten += Int64(buffer.count)
             buffer.removeAll(keepingCapacity: true)
-        } catch { buffer.removeAll(keepingCapacity: true) }
+            lastErrorMessage = nil
+        } catch {
+            lastErrorMessage = error.localizedDescription
+        }
     }
 
     func close() async {

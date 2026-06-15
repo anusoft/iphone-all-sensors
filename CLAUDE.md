@@ -39,7 +39,7 @@ both writing into the per-device slot folders `screenshots/iphone-6.9/` and `scr
 - **A · Marketing / Hero** (styled): `screenshots/capture.sh` → Vision LLM copy →
   `screenshots/compose.py` (gradient + device frame + headline). Hero pages:
   `iPhoneSensors/Views/Screenshots/ScreenshotHeroView.swift`, deep-linked via
-  `app://1moby.allsensors/screenshots/<page>` or the `--screenshot <page>` launch arg.
+  `allsensors://1moby.allsensors/screenshots/<page>` or the `--screenshot <page>` launch arg.
 - **B · Clean / Show-Off** (undecorated): in-app `--showoff <sensorID> <variant>` captured raw.
 
 👉 **Read [`docs/screenshots.md`](docs/screenshots.md) for the how-to**, with
@@ -49,7 +49,7 @@ both writing into the per-device slot folders `screenshots/iphone-6.9/` and `scr
 (submission checklist).
 
 Gotchas: use `xcrun simctl io <udid> screenshot <file>` (no `simctl screenshot` on Xcode 26+);
-the `app://` scheme can be contested by another app, so `capture.sh` defaults to the
+the `allsensors://` scheme can be contested by another app, so `capture.sh` defaults to the
 deterministic `--method launch`; required 6.9″ = 1320×2868, iPad 13″ = 2064×2752, all
 images in a slot share dimensions.
 
@@ -66,11 +66,14 @@ in `docs/appstore/metadata/`** (read directly by `deliver`); lanes: `fastlane me
 👉 **Read [`docs/appstore/12-appstore-connect-and-fastlane.md`](docs/appstore/12-appstore-connect-and-fastlane.md)** for the fastlane metadata/screenshot workflow.
 
 For **build → upload → age-rating → submit-for-review via the App Store Connect REST API**, use
-[`docs/appstore/13-api-publish-runbook.md`](docs/appstore/13-api-publish-runbook.md) with the
-helper **`scripts/appstore/asc.py`** (`status` / `age-rating-4plus` / `content-rights` /
-`price-free` / `wait-build` / `encryption` / `attach-build` / `submit`). App id `6776145177`,
-team `D62Y8JVXB9`. App Privacy is the one UI-only step that gates `submit` (publish "Data Not
-Collected"). 1.0 build 1 submitted 2026-06-03. ⚠️ The runbook flags the
+[`docs/appstore/14-build-upload-submit-for-review.md`](docs/appstore/14-build-upload-submit-for-review.md)
+as the operator checklist and
+[`docs/appstore/13-api-publish-runbook.md`](docs/appstore/13-api-publish-runbook.md) for API
+gotchas. The helper is **`scripts/appstore/asc.py`** (`status` / `age-rating-4plus` /
+`content-rights` / `price-free` / `wait-build` / `encryption` / `attach-build` / `submit` /
+`raw`). App id `6776145177`, team `D62Y8JVXB9`. App Privacy is the one UI-only step that gates
+`submit` (publish "Data Not Collected"). 1.0 build 1 submitted 2026-06-03; 1.0 build 2
+resubmitted 2026-06-08 after the permission-button wording rejection fix. ⚠️ The runbook flags the
 **Guideline 4.3(a) "Design–Spam"** risk for this multi-app account — lead with Show-Off Mode (74
 visualizations) + fully-on-device differentiation; Resolution Center replies are manual.
 

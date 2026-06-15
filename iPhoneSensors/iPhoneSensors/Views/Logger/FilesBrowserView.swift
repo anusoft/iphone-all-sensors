@@ -3,6 +3,7 @@ import UIKit
 
 struct FilesBrowserView: View {
     @EnvironmentObject var loggingService: LoggingService
+    @EnvironmentObject var localization: LocalizationManager
     @State private var files: [FileItem] = []
 
     struct FileItem: Identifiable {
@@ -30,14 +31,14 @@ struct FilesBrowserView: View {
                     Button {
                         presentShare(for: item.url)
                     } label: {
-                        Label("Share", systemImage: "square.and.arrow.up")
+                        Label(localization.t("button.share"), systemImage: "square.and.arrow.up")
                     }
                     .tint(.blue)
                     Button(role: .destructive) {
                         try? FileManager.default.removeItem(at: item.url)
                         load()
                     } label: {
-                        Label("Delete", systemImage: "trash")
+                        Label(localization.t("dataviewer.delete"), systemImage: "trash")
                     }
                 }
             }

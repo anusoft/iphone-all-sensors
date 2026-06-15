@@ -70,7 +70,7 @@ struct SurfaceLevelView: View {
             hapticEngine = try CHHapticEngine()
             try hapticEngine?.start()
         } catch {
-            print("[Haptics] Engine error: \(error)")
+            appLog("[Haptics] Engine error: \(error)")
         }
     }
 
@@ -84,7 +84,7 @@ struct SurfaceLevelView: View {
             let player = try engine.makePlayer(with: pattern)
             try player.start(atTime: 0)
         } catch {
-            print("[Haptics] Play error: \(error)")
+            appLog("[Haptics] Play error: \(error)")
         }
     }
 }
@@ -102,7 +102,7 @@ struct DeviceMotionDetailView: View {
                 VStack(spacing: 12) {
                     Text(locManager.t("section.attitude"))
 
-                SensorChartView(chartData: chartData, title: locManager.t("section.attitude"), unit: "rad")
+                SensorChartView(chartData: chartData, title: locManager.t("section.attitude"), unit: locManager.t("unit.rad"))
                         .font(.headline)
                     HStack(spacing: 16) {
                         CircularGauge(value: motion.roll * 180 / .pi, maxValue: 180, title: locManager.t("label.roll"), unit: "°", color: .red, size: 100)
@@ -121,27 +121,27 @@ struct DeviceMotionDetailView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(locManager.t("section.gravity"))
                         .font(.headline)
-                    DataRow(label: "X", value: String(format: "%.4f G", motion.gravX), icon: "arrow.left.and.right")
-                    DataRow(label: "Y", value: String(format: "%.4f G", motion.gravY), icon: "arrow.up.and.down")
-                    DataRow(label: "Z", value: String(format: "%.4f G", motion.gravZ), icon: "arrow.up")
+                    DataRow(label: "X", value: LocalizedDisplayValue.number("%.4f", motion.gravX, unitKey: "unit.g", localization: locManager), icon: "arrow.left.and.right")
+                    DataRow(label: "Y", value: LocalizedDisplayValue.number("%.4f", motion.gravY, unitKey: "unit.g", localization: locManager), icon: "arrow.up.and.down")
+                    DataRow(label: "Z", value: LocalizedDisplayValue.number("%.4f", motion.gravZ, unitKey: "unit.g", localization: locManager), icon: "arrow.up")
                 }
                 .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
                     Text(locManager.t("section.userAcceleration"))
                         .font(.headline)
-                    DataRow(label: "X", value: String(format: "%.4f G", motion.userAccX), icon: "arrow.left.and.right")
-                    DataRow(label: "Y", value: String(format: "%.4f G", motion.userAccY), icon: "arrow.up.and.down")
-                    DataRow(label: "Z", value: String(format: "%.4f G", motion.userAccZ), icon: "arrow.up")
+                    DataRow(label: "X", value: LocalizedDisplayValue.number("%.4f", motion.userAccX, unitKey: "unit.g", localization: locManager), icon: "arrow.left.and.right")
+                    DataRow(label: "Y", value: LocalizedDisplayValue.number("%.4f", motion.userAccY, unitKey: "unit.g", localization: locManager), icon: "arrow.up.and.down")
+                    DataRow(label: "Z", value: LocalizedDisplayValue.number("%.4f", motion.userAccZ, unitKey: "unit.g", localization: locManager), icon: "arrow.up")
                 }
                 .glassCard()
 
                 VStack(alignment: .leading, spacing: 12) {
                     Text(locManager.t("section.rotationRate"))
                         .font(.headline)
-                    DataRow(label: "X", value: String(format: "%.4f rad/s", motion.rotX), icon: "arrow.left.and.right")
-                    DataRow(label: "Y", value: String(format: "%.4f rad/s", motion.rotY), icon: "arrow.up.and.down")
-                    DataRow(label: "Z", value: String(format: "%.4f rad/s", motion.rotZ), icon: "arrow.clockwise")
+                    DataRow(label: "X", value: LocalizedDisplayValue.number("%.4f", motion.rotX, unitKey: "unit.rads", localization: locManager), icon: "arrow.left.and.right")
+                    DataRow(label: "Y", value: LocalizedDisplayValue.number("%.4f", motion.rotY, unitKey: "unit.rads", localization: locManager), icon: "arrow.up.and.down")
+                    DataRow(label: "Z", value: LocalizedDisplayValue.number("%.4f", motion.rotZ, unitKey: "unit.rads", localization: locManager), icon: "arrow.clockwise")
                 }
                 .glassCard()
 
@@ -177,7 +177,7 @@ struct DeviceMotionDetailView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                 HStack(spacing: 12) {
                     Button(action: {
-                        exportURL = DataExportManager.shared.exportRecording(dataPoints: chartData.dataPoints, sensorName: "DeviceMotion", unit: "rad", format: .csv)
+                        exportURL = DataExportManager.shared.exportRecording(dataPoints: chartData.dataPoints, sensorName: "DeviceMotion", unit: locManager.t("unit.rad"), format: .csv)
                         showShareSheet = true
                     }) {
                         Image(systemName: "square.and.arrow.up")

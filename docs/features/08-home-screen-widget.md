@@ -1,19 +1,21 @@
 # Feature 08: Add iOS Home Screen Widget
 
-## Status: Code Complete — Requires Manual Xcode Target Addition
+> Status: Future work. The source scaffold exists, but there is no widget target in `iPhoneSensors.xcodeproj`, no matching App Group entitlement, and App Store copy must not claim this feature until those are fixed.
+
+## Status: Deferred — Requires Target, App Group, And Data Bridge
 
 ## Checklist
 
-- [x] Create Widget extension files
-- [x] Small widget: Single sensor value with status dot
-- [x] Medium widget: Sensor name + large value display
+- [x] Create Widget scaffold files
+- [x] Prototype small widget: single sensor value with status dot
+- [x] Prototype medium widget: sensor name + large value display
 - [ ] Large widget: Full sensor dashboard (deferred)
 - [ ] Selectable sensor in widget configuration (deferred)
 - [x] Update every 15 minutes (WidgetKit limit)
 - [x] Dark/light theme support (uses containerBackground)
 - [x] Tap widget to open app (automatic via WidgetKit)
 - [x] Localize widget strings (uses same LocalizationManager pattern)
-- [ ] Add widget to App Store screenshots
+- [ ] Add widget to App Store screenshots after the extension target ships
 
 ## Implementation
 
@@ -26,7 +28,7 @@
 - **Small (systemSmall):** Shows sensor icon, value, unit, and active status dot
 - **Medium (systemMedium):** Shows sensor name, last update time, large value, and unit
 - **Timeline:** Updates every 15 minutes using `UserDefaults(suiteName:)`
-- **Data Source:** Reads from shared `UserDefaults` with suite name `group.com.1moby.iPhoneSensors`
+- **Data Source:** Intended to read from shared `UserDefaults`; reconcile suite name and App Group entitlement before shipping
 
 ## Manual Steps Required in Xcode
 
@@ -71,4 +73,4 @@ sharedDefaults?.set(true, forKey: "widget_sensor_active")
 
 Widgets are highly visible App Store features. They increase "app-like" quality and daily engagement. Apple often features apps with well-designed widgets.
 
-**Note:** The widget code is fully implemented and ready. The only remaining work is the Xcode GUI target setup, which cannot be safely automated via scripts due to `.pbxproj` file complexity.
+**Note:** The widget source is a deferred scaffold, not a shipping feature. Before enabling it, add a real extension target, align the suite name with App Group entitlements, implement app-side data writes, and update App Store copy/screenshots.

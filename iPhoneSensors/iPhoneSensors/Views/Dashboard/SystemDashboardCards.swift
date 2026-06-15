@@ -12,7 +12,7 @@ struct SystemDashboardCards: View {
                 SensorCard(
                     title: locManager.t("sensor.battery"),
                     icon: batteryIcon(level: sys.batteryLevel),
-                    value: String(format: "%.0f%%", sys.batteryLevel * 100),
+                    value: LocalizedDisplayValue.numberNoSpace("%.0f", Double(sys.batteryLevel) * 100, unitKey: "unit.percent", localization: locManager),
                     unit: locManager.t(sys.batteryStateKey),
                     color: batteryColor(level: sys.batteryLevel),
                     isAvailable: sys.isBatteryMonitoringEnabled
@@ -25,7 +25,7 @@ struct SystemDashboardCards: View {
                     title: locManager.t("sensor.processor"),
                     icon: "cpu",
                     value: "\(sys.activeProcessorCount)/\(sys.processorCount)",
-                    unit: "cores",
+                    unit: locManager.t("unit.cores"),
                     color: .purple,
                     isAvailable: true
                 )
@@ -49,7 +49,7 @@ struct SystemDashboardCards: View {
                     title: locManager.t("sensor.storage"),
                     icon: "internaldrive",
                     value: ByteCountFormatter.string(fromByteCount: sys.freeDiskSpace, countStyle: .memory),
-                    unit: "free",
+                    unit: locManager.t("unit.free"),
                     color: .teal,
                     isAvailable: true
                 )

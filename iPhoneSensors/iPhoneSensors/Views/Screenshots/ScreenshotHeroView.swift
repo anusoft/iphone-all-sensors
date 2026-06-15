@@ -498,11 +498,15 @@ private struct HeroSectionTitle: View {
 // MARK: - Page: Dashboard
 
 private struct HeroDashboardPage: View {
+    @EnvironmentObject private var locManager: LocalizationManager
+
+    private func t(_ key: String) -> String { locManager.t(key) }
+
     var body: some View {
         HeroHeader(
             eyebrow: "All Sensors",
-            title: "Every sensor.\nOne dashboard.",
-            subtitle: "Live readings from 21 sensors — motion, location, environment, health and system, all in real time.",
+            title: t("screenshot.dashboard.title"),
+            subtitle: t("screenshot.dashboard.subtitle"),
             systemImage: "sensor.tag.radiowaves.forward",
             accent: Hero.blue
         )
@@ -513,21 +517,21 @@ private struct HeroDashboardPage: View {
             .wave(name: "Y", color: Hero.green, amplitude: 0.5, frequency: 0.36, phase: 1.6, baseline: 0.0),
             .wave(name: "Z", color: Hero.blue, amplitude: 0.4, frequency: 0.5, phase: 3.0, baseline: 0.98)
         ], height: 170)
-        HeroLegend(items: [("Accel X", Hero.red), ("Accel Y", Hero.green), ("Accel Z", Hero.blue)])
+        HeroLegend(items: [(t("screenshot.legend.accelX"), Hero.red), (t("screenshot.legend.accelY"), Hero.green), (t("screenshot.legend.accelZ"), Hero.blue)])
         HeroPageGap()
 
         HeroPageGrid(minimum: 165) {
-            HeroStatTile(icon: "gauge.with.dots.needle.67percent", title: "Accelerometer",
+            HeroStatTile(icon: "gauge.with.dots.needle.67percent", title: t("screenshot.stat.accelerometer"),
                          value: "0.98", unit: "G", accent: Hero.red)
-            HeroStatTile(icon: "gyroscope", title: "Gyroscope",
+            HeroStatTile(icon: "gyroscope", title: t("screenshot.stat.gyroscope"),
                          value: "0.05", unit: "rad/s", accent: Hero.orange)
-            HeroStatTile(icon: "location.fill", title: "GPS Fix",
-                         value: "±4", unit: "m", accent: Hero.green, trend: "live")
-            HeroStatTile(icon: "barometer", title: "Pressure",
+            HeroStatTile(icon: "location.fill", title: t("screenshot.stat.gpsFix"),
+                         value: "±4", unit: "m", accent: Hero.green, trend: t("screenshot.trend.live"))
+            HeroStatTile(icon: "barometer", title: t("screenshot.stat.pressure"),
                          value: "101.3", unit: "kPa", accent: Hero.cyan)
-            HeroStatTile(icon: "heart.fill", title: "Heart Rate",
+            HeroStatTile(icon: "heart.fill", title: t("screenshot.stat.heartRate"),
                          value: "72", unit: "BPM", accent: Hero.pink)
-            HeroStatTile(icon: "battery.75", title: "Battery",
+            HeroStatTile(icon: "battery.75", title: t("screenshot.stat.battery"),
                          value: "85", unit: "%", accent: Hero.green)
         }
     }
@@ -537,12 +541,15 @@ private struct HeroDashboardPage: View {
 
 private struct HeroMotionPage: View {
     @Environment(\.heroScale) private var scale
+    @EnvironmentObject private var locManager: LocalizationManager
+
+    private func t(_ key: String) -> String { locManager.t(key) }
 
     var body: some View {
         HeroHeader(
-            eyebrow: "Motion",
-            title: "Feel every\nmovement.",
-            subtitle: "Accelerometer, gyroscope, and device-motion fused into smooth, high-rate visualizations.",
+            eyebrow: t("screenshot.motion.eyebrow"),
+            title: t("screenshot.motion.title"),
+            subtitle: t("screenshot.motion.subtitle"),
             systemImage: "move.3d",
             accent: Hero.orange
         )
@@ -558,18 +565,18 @@ private struct HeroMotionPage: View {
 
         HStack(spacing: 12 * scale) {
             HeroRing(progress: 0.62, accent: Hero.orange,
-                     centerTop: "31°", centerBottom: "Roll")
+                     centerTop: "31°", centerBottom: t("screenshot.motion.roll"))
             HeroRing(progress: 0.28, accent: Hero.purple,
-                     centerTop: "14°", centerBottom: "Pitch")
+                     centerTop: "14°", centerBottom: t("screenshot.motion.pitch"))
             HeroRing(progress: 0.81, accent: Hero.teal,
-                     centerTop: "146°", centerBottom: "Yaw")
+                     centerTop: "146°", centerBottom: t("screenshot.motion.yaw"))
         }
         .frame(maxWidth: .infinity)
         .glassCard(cornerRadius: 18)
         HeroPageGap()
 
         VStack(spacing: 14 * scale) {
-            HeroSectionTitle(text: "Accelerometer (G)", systemImage: "gauge.with.dots.needle.67percent")
+            HeroSectionTitle(text: t("screenshot.motion.accelerometerG"), systemImage: "gauge.with.dots.needle.67percent")
             HeroAxisBar(label: "X", value: 0.62, color: Hero.red)
             HeroAxisBar(label: "Y", value: -0.18, color: Hero.green)
             HeroAxisBar(label: "Z", value: 0.97, color: Hero.blue)
@@ -582,12 +589,15 @@ private struct HeroMotionPage: View {
 
 private struct HeroHealthPage: View {
     @Environment(\.heroScale) private var scale
+    @EnvironmentObject private var locManager: LocalizationManager
+
+    private func t(_ key: String) -> String { locManager.t(key) }
 
     var body: some View {
         HeroHeader(
-            eyebrow: "Health",
-            title: "Your vitals,\nvisualized.",
-            subtitle: "Heart rate, HRV, blood oxygen and respiratory rate — straight from HealthKit, beautifully presented.",
+            eyebrow: t("screenshot.health.eyebrow"),
+            title: t("screenshot.health.title"),
+            subtitle: t("screenshot.health.subtitle"),
             systemImage: "heart.text.square.fill",
             accent: Hero.pink
         )
@@ -597,16 +607,16 @@ private struct HeroHealthPage: View {
             HeroRing(progress: 0.72, accent: Hero.pink, lineWidth: 14, size: 132,
                      centerTop: "72", centerBottom: "BPM")
             VStack(alignment: .leading, spacing: 6 * scale) {
-                Text("Heart Rate")
+                Text(t("screenshot.stat.heartRate"))
                     .font(.system(size: 14 * scale, weight: .semibold))
                     .foregroundStyle(.secondary)
-                Text("Resting · Normal")
+                Text(t("screenshot.health.restingNormal"))
                     .font(.system(size: 20 * scale, weight: .bold, design: .rounded))
                     .foregroundStyle(Hero.pink)
                 HStack(spacing: 4 * scale) {
                     Image(systemName: "arrow.down.right")
                         .font(.system(size: 11 * scale, weight: .bold))
-                    Text("4 BPM below average")
+                    Text(t("screenshot.health.belowAverage"))
                         .font(.system(size: 12 * scale, weight: .medium))
                 }
                 .foregroundStyle(.secondary)
@@ -624,7 +634,7 @@ private struct HeroHealthPage: View {
         HeroPageGrid(minimum: 105) {
             HeroStatTile(icon: "waveform.path.ecg", title: "HRV", value: "58", unit: "ms", accent: Hero.purple)
             HeroStatTile(icon: "lungs.fill", title: "SpO₂", value: "98", unit: "%", accent: Hero.cyan)
-            HeroStatTile(icon: "wind", title: "Resp.", value: "15", unit: "br/m", accent: Hero.teal)
+            HeroStatTile(icon: "wind", title: t("screenshot.health.resp"), value: "15", unit: "br/m", accent: Hero.teal)
         }
     }
 }
@@ -633,12 +643,15 @@ private struct HeroHealthPage: View {
 
 private struct HeroEnvironmentPage: View {
     @Environment(\.heroScale) private var scale
+    @EnvironmentObject private var locManager: LocalizationManager
+
+    private func t(_ key: String) -> String { locManager.t(key) }
 
     var body: some View {
         HeroHeader(
-            eyebrow: "Environment",
-            title: "Sense the\nworld around you.",
-            subtitle: "Barometric pressure, altitude, ambient light and proximity — your phone is a pocket weather station.",
+            eyebrow: t("screenshot.environment.eyebrow"),
+            title: t("screenshot.environment.title"),
+            subtitle: t("screenshot.environment.subtitle"),
             systemImage: "leaf.fill",
             accent: Hero.green
         )
@@ -648,9 +661,9 @@ private struct HeroEnvironmentPage: View {
             HeroRing(progress: 0.66, accent: Hero.cyan, lineWidth: 13, size: 124,
                      centerTop: "101.3", centerBottom: "kPa")
             VStack(alignment: .leading, spacing: 10 * scale) {
-                HeroMiniStat(title: "Altitude", value: "128 m", icon: "mountain.2.fill", accent: Hero.mint)
-                HeroMiniStat(title: "Brightness", value: "62 %", icon: "sun.max.fill", accent: Hero.yellow)
-                HeroMiniStat(title: "Proximity", value: "Clear", icon: "hand.raised.fill", accent: Hero.indigo)
+                HeroMiniStat(title: t("screenshot.environment.altitude"), value: "128 m", icon: "mountain.2.fill", accent: Hero.mint)
+                HeroMiniStat(title: t("screenshot.environment.brightness"), value: "62 %", icon: "sun.max.fill", accent: Hero.yellow)
+                HeroMiniStat(title: t("screenshot.environment.proximity"), value: t("screenshot.environment.clear"), icon: "hand.raised.fill", accent: Hero.indigo)
             }
             Spacer()
         }
@@ -663,9 +676,9 @@ private struct HeroEnvironmentPage: View {
         HeroPageGap()
 
         HeroPageGrid(minimum: 165) {
-            HeroStatTile(icon: "thermometer.medium", title: "Rel. Altitude",
+            HeroStatTile(icon: "thermometer.medium", title: t("screenshot.environment.relativeAltitude"),
                          value: "+12.4", unit: "m", accent: Hero.mint)
-            HeroStatTile(icon: "speaker.wave.2.fill", title: "Output Vol.",
+            HeroStatTile(icon: "speaker.wave.2.fill", title: t("screenshot.environment.outputVolume"),
                          value: "45", unit: "%", accent: Hero.purple)
         }
     }
@@ -700,12 +713,15 @@ private struct HeroMiniStat: View {
 
 private struct HeroLoggerPage: View {
     @Environment(\.heroScale) private var scale
+    @EnvironmentObject private var locManager: LocalizationManager
+
+    private func t(_ key: String) -> String { locManager.t(key) }
 
     var body: some View {
         HeroHeader(
-            eyebrow: "Data Logger",
-            title: "Record. Export.\nAnalyze.",
-            subtitle: "Capture every sample to CSV, JSON or SQLite — then share full sessions for research and analysis.",
+            eyebrow: t("screenshot.logger.eyebrow"),
+            title: t("screenshot.logger.title"),
+            subtitle: t("screenshot.logger.subtitle"),
             systemImage: "record.circle.fill",
             accent: Hero.red
         )
@@ -720,7 +736,7 @@ private struct HeroLoggerPage: View {
                     .foregroundStyle(Hero.red)
             }
             VStack(alignment: .leading, spacing: 3 * scale) {
-                Text("Recording session")
+                Text(locManager.t("logger.sessionRecording"))
                     .font(.system(size: 13 * scale, weight: .medium))
                     .foregroundStyle(.secondary)
                 Text("00:14:38")
@@ -733,7 +749,7 @@ private struct HeroLoggerPage: View {
                     .font(.system(size: 20 * scale, weight: .bold, design: .rounded))
                     .monospacedDigit()
                     .foregroundStyle(Hero.green)
-                Text("samples")
+                Text(t("screenshot.logger.samples"))
                     .font(.system(size: 12 * scale, weight: .medium))
                     .foregroundStyle(.secondary)
             }
@@ -747,15 +763,15 @@ private struct HeroLoggerPage: View {
         HeroPageGap()
 
         VStack(spacing: 0) {
-            HeroSectionTitle(text: "Active streams", systemImage: "dot.radiowaves.left.and.right")
+            HeroSectionTitle(text: t("screenshot.logger.activeStreams"), systemImage: "dot.radiowaves.left.and.right")
                 .padding(.bottom, 6 * scale)
-            HeroLoggerRow(name: "Accelerometer", format: "CSV", rate: "100 Hz", color: Hero.red)
+            HeroLoggerRow(name: t("screenshot.stat.accelerometer"), format: "CSV", rate: "100 Hz", color: Hero.red)
             Divider().opacity(0.15)
-            HeroLoggerRow(name: "Gyroscope", format: "CSV", rate: "100 Hz", color: Hero.orange)
+            HeroLoggerRow(name: t("screenshot.stat.gyroscope"), format: "CSV", rate: "100 Hz", color: Hero.orange)
             Divider().opacity(0.15)
-            HeroLoggerRow(name: "Location", format: "JSON", rate: "1 Hz", color: Hero.green)
+            HeroLoggerRow(name: t("screenshot.stat.location"), format: "JSON", rate: "1 Hz", color: Hero.green)
             Divider().opacity(0.15)
-            HeroLoggerRow(name: "Barometer", format: "SQLite", rate: "10 Hz", color: Hero.cyan)
+            HeroLoggerRow(name: t("screenshot.stat.barometer"), format: "SQLite", rate: "10 Hz", color: Hero.cyan)
         }
         .glassCard(cornerRadius: 18)
         HeroPageGap()

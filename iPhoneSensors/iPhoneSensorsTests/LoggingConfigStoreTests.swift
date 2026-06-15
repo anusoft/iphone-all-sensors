@@ -4,25 +4,25 @@ import Combine
 
 @MainActor
 final class LoggingConfigStoreTests: XCTestCase {
-    func makeIsolatedDefaults() -> UserDefaults {
+    func makeIsolatedDefaults() throws -> UserDefaults {
         let suite = "test.\(UUID().uuidString)"
-        let d = UserDefaults(suiteName: suite)!
+        let d = try XCTUnwrap(UserDefaults(suiteName: suite))
         d.removePersistentDomain(forName: suite)
         return d
     }
-    func testReturnsAllOffForUnconfiguredSensor() {
+    func testReturnsAllOffForUnconfiguredSensor() throws {
         // Logging is opt-in: a sensor the user has never configured reports
         // fully off (not its curated default, which is only applied on enable).
-        let store = LoggingConfigStore(defaults: makeIsolatedDefaults())
+        let store = LoggingConfigStore(defaults: try makeIsolatedDefaults())
         XCTAssertEqual(store.config(for: .gps), .allOff)
     }
 
-    func testMasterSwitchDefaultsOff() {
-        let store = LoggingConfigStore(defaults: makeIsolatedDefaults())
+    func testMasterSwitchDefaultsOff() throws {
+        let store = LoggingConfigStore(defaults: try makeIsolatedDefaults())
         XCTAssertFalse(store.isLoggingEnabled)
     }
-    func testRoundTripPersistence() {
-        let d = makeIsolatedDefaults()
+    func testRoundTripPersistence() throws {
+        let d = try makeIsolatedDefaults()
         let s1 = LoggingConfigStore(defaults: d)
         var cfg = s1.config(for: .accelerometer)
         cfg.session = .on(format: .csv, intervalMs: 50, options: .default)
@@ -30,8 +30,8 @@ final class LoggingConfigStoreTests: XCTestCase {
         let s2 = LoggingConfigStore(defaults: d)
         XCTAssertEqual(s2.config(for: .accelerometer), cfg)
     }
-    func testPublishedChangesNotify() {
-        let store = LoggingConfigStore(defaults: makeIsolatedDefaults())
+    func testPublishedChangesNotify() throws {
+        let store = LoggingConfigStore(defaults: try makeIsolatedDefaults())
         let exp = expectation(description: "publish")
         let c = store.$version.dropFirst().sink { _ in exp.fulfill() }
         store.set(LoggingConfiguration(continuous: .off, session: .off), for: .battery)

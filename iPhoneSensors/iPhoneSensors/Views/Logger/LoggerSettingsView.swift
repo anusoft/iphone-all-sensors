@@ -21,7 +21,7 @@ struct LoggerSettingsView: View {
                 .disabled(!masterEnabled)
                 Section(header: Text(localization.t("logger.settings.storageSection"))) {
                     Stepper(value: $storageCapMB, in: 256...10240, step: 256) {
-                        Text("\(localization.t("logger.settings.cap")): \(storageCapMB) MB")
+                        Text("\(localization.t("logger.settings.cap")): \(LocalizedDisplayValue.number("%.0f", Double(storageCapMB), unitKey: "unit.mb", localization: localization))")
                     }
                 }
                 Section(header: Text(localization.t("logger.settings.behaviorSection"))) {

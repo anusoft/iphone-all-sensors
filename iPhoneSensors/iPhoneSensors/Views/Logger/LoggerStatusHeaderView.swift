@@ -14,6 +14,14 @@ struct LoggerStatusHeaderView: View {
                      ? localization.t("logger.sessionRecording") + " " + format(elapsed)
                      : localization.t("logger.sessionIdle"))
             }
+
+            if let error = loggingService.lastLoggingError {
+                Label(error, systemImage: "exclamationmark.triangle.fill")
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .lineLimit(3)
+            }
+
             ProgressView(value: storageRatio()) {
                 Text(localization.t("logger.storage") + ": " + storageDescription())
             }
@@ -37,6 +45,6 @@ struct LoggerStatusHeaderView: View {
     private func storageDescription() -> String {
         let used = ByteCountFormatter.string(fromByteCount: loggingService.storage.totalBytes(), countStyle: .file)
         let capMB = max(UserDefaults.standard.integer(forKey: "logger.storageCapMB"), 1024)
-        return "\(used) / \(capMB) MB"
+        return "\(used) / \(LocalizedDisplayValue.number("%.0f", Double(capMB), unitKey: "unit.mb", localization: localization))"
     }
 }

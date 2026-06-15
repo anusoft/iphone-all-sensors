@@ -4,13 +4,20 @@ struct ActivityDetailView: View {
     @EnvironmentObject var locManager: LocalizationManager
     @EnvironmentObject var motion: MotionSensorManager
 
+    private var localizedActivityState: String {
+        motion.activityState
+            .split(separator: ", ")
+            .map { locManager.t(String($0)) }
+            .joined(separator: ", ")
+    }
+
     var body: some View {
         ScrollView {
             AdaptiveCardGrid(spacing: 20) {
                 VStack(spacing: 16) {
                     Text(locManager.t("section.currentActivity"))
                         .font(.headline)
-                    Text(motion.activityState.split(separator: ", ").map { locManager.t(String($0)) }.joined(separator: ", "))
+                    Text(localizedActivityState)
                         .font(.title)
                         .fontWeight(.bold)
                         .foregroundStyle(.blue)

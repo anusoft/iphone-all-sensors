@@ -43,18 +43,50 @@ struct LoggerSessionControl: View {
 }
 
 struct AllSensorsLogSessionBar: View {
+    @EnvironmentObject var loggingService: LoggingService
+    @EnvironmentObject var localization: LocalizationManager
+    @AppStorage(LoggingService.masterEnabledKey) private var masterEnabled = false
+
+    private var isRecording: Bool {
+        loggingService.activeSessionDisplayID != nil
+    }
+
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
+            Image(systemName: isRecording ? "waveform.circle.fill" : "record.circle")
+                .font(.title3.weight(.semibold))
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(isRecording ? .red : (masterEnabled ? .blue : .secondary))
+                .frame(width: 42, height: 42)
+                .background(
+                    (isRecording ? Color.red : Color.blue).opacity(masterEnabled ? 0.14 : 0.08),
+                    in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+                )
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(localization.t("tab.logger"))
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(.primary)
+                Text(statusText)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+            }
+
+            Spacer(minLength: 8)
+
             LoggerSessionControl(
-                style: .fullWidth,
-                startTitleKey: "logger.startAllSensors",
-                stopTitleKey: "logger.stopAllSensors"
+                startTitleKey: "logger.start",
+                stopTitleKey: "logger.stop"
             )
         }
-        .padding(.horizontal)
-        .padding(.vertical, 12)
-        .background(Color.secondary.opacity(0.1))
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .padding(12)
+        .appMaterialSurface(cornerRadius: 18, material: .thinMaterial)
+    }
+
+    private var statusText: String {
+        if !masterEnabled { return localization.t("logger.master.disabledNote") }
+        return isRecording ? localization.t("logger.sessionRecording") : localization.t("logger.sessionIdle")
     }
 }
 
@@ -151,7 +183,7 @@ struct LoggerInlineCard: View {
     }
 
     private func intervalLabel(_ ms: Int) -> String {
-        ms == 0 ? localization.t("logger.interval.everySample") : "\(ms) ms"
+        ms == 0 ? localization.t("logger.interval.everySample") : LocalizedDisplayValue.number("%.0f", Double(ms), unitKey: "unit.ms", localization: localization)
     }
 }
 

@@ -46,17 +46,11 @@ The "Data Not Collected" answer is correct because of how Apple defines collecti
 
 If at any point you add an analytics SDK, a crash reporter, a "send feedback" form that mails data, or a cloud sync feature, **you must update App Privacy** before that build ships. The penalty for a mismatched privacy label is rejection or removal.
 
-> **⚠️ Manifest ↔ listing reconciliation (action needed).** The store listing
-> publishes **"Data Not Collected"**, and the recommended manifest below uses an
-> **empty** `NSPrivacyCollectedDataTypes`. The *shipped* `PrivacyInfo.xcprivacy`
-> currently still declares one collected type (`NSPrivacyCollectedDataTypeHealth`,
-> App-Functionality purpose, not linked / not tracking). These two should agree.
-> Per the "collection" definition above (HealthKit reads are displayed in real
-> time and never persisted or transmitted by the app), the correct, consistent
-> answer is **not collected**, so the Health entry should be removed from the
-> manifest to match the listing. This is an outward-facing App-Store declaration,
-> so it is left for an explicit human decision rather than changed automatically —
-> see Open Question #2 in `AUDIT.md`.
+> **Manifest ↔ listing status.** The store listing publishes **"Data Not
+> Collected"**, and the checked-in `PrivacyInfo.xcprivacy` now uses an empty
+> `NSPrivacyCollectedDataTypes` array to match that stance. If the app later adds
+> analytics, cloud sync, server-side feedback, or HealthKit writes, update both
+> this form and the manifest before shipping that build.
 
 ## Privacy Manifest (`PrivacyInfo.xcprivacy`)
 

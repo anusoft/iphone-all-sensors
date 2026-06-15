@@ -18,6 +18,9 @@ final class LoggingService: ObservableObject {
     /// Mirror of `sessionManager.activeSessionID` for SwiftUI binding.
     @Published var activeSessionDisplayID: UUID?
 
+    /// Last user-visible logging failure. Kept until a successful start or flush clears it.
+    @Published var lastLoggingError: String?
+
     private var scopedSessionConfigSnapshot: [SensorID: LoggingConfiguration]?
     private var cancellables = Set<AnyCancellable>()
 
@@ -70,7 +73,13 @@ final class LoggingService: ObservableObject {
             session: .off), for: .accelerometer)
     }
 
-    func flush() async { await coordinator.flushAll() }
+    func flush() async {
+        if let error = await coordinator.flushAll() {
+            lastLoggingError = error
+        } else {
+            lastLoggingError = nil
+        }
+    }
 }
 
 // MARK: - UI helpers (Logger tab)
@@ -127,16 +136,25 @@ extension LoggingService {
             await coordinator.setActiveSession(id, pool: pool)
             sessionStartedAt = Date()
             activeSessionDisplayID = id
+            lastLoggingError = nil
         } catch {
             restoreScopedSessionConfigIfNeeded()
             sessionStartedAt = nil
             activeSessionDisplayID = nil
+            lastLoggingError = error.localizedDescription
         }
     }
 
     @MainActor
     func stopSessionFromUI() async {
-        try? await sessionManager.stopSession()
+        if let error = await coordinator.flushAll() {
+            lastLoggingError = error
+        }
+        do {
+            try await sessionManager.stopSession()
+        } catch {
+            lastLoggingError = error.localizedDescription
+        }
         await coordinator.setActiveSession(nil, pool: nil)
         restoreScopedSessionConfigIfNeeded()
         sessionStartedAt = nil

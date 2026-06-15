@@ -13,7 +13,7 @@ struct EnvironmentDashboardCards: View {
                     title: locManager.t("sensor.barometer"),
                     icon: "barometer",
                     value: env.pressure > 0 ? String(format: "%.1f", env.pressure) : "",
-                    unit: "kPa",
+                    unit: locManager.t("unit.kpa"),
                     color: .orange,
                     isAvailable: env.isAltimeterAvailable
                 )
@@ -36,7 +36,7 @@ struct EnvironmentDashboardCards: View {
                 SensorCard(
                     title: locManager.t("sensor.brightness"),
                     icon: "sun.max.fill",
-                    value: String(format: "%.0f%%", env.screenBrightness * 100),
+                    value: LocalizedDisplayValue.numberNoSpace("%.0f", env.screenBrightness * 100, unitKey: "unit.percent", localization: locManager),
                     unit: "",
                     color: .yellow,
                     isAvailable: true

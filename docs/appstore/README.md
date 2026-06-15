@@ -20,6 +20,8 @@ Anything tagged **`[FILL: …]`** is something only you can answer (your real na
 | [10-categories-pricing-availability.md](10-categories-pricing-availability.md) | Category, price tier, country availability                                      |
 | [11-build-and-screenshots.md](11-build-and-screenshots.md) | Build upload, app icon, screenshots, app preview                                |
 | [12-final-checklist.md](12-final-checklist.md) | Every Apple form field, what to paste, where it lives                           |
+| [13-api-publish-runbook.md](13-api-publish-runbook.md) | App Store Connect API build/upload/submit runbook and gotchas                   |
+| [14-build-upload-submit-for-review.md](14-build-upload-submit-for-review.md) | Fast checklist for archiving, uploading, attaching, and submitting              |
 
 ## Critical "is-this-a-spam-app?" signals reviewers look for
 
@@ -38,8 +40,8 @@ These never go in App Store Connect form fields, but you can't submit without th
 
 - Apple Developer Program membership (paid, $99/yr) under your real name or DUNS-registered org
 - App Store Connect access for that team
-- A signing certificate + provisioning profile (already wired — your build signs with team `7K4XLR6VD4`)
-- TestFlight build uploaded via Xcode → Product → Archive → Distribute → App Store Connect
+- A signing certificate + provisioning profile for team `D62Y8JVXB9`
+- Build uploaded via Xcode or the headless App Store Connect flow in [14](14-build-upload-submit-for-review.md)
 
 ## Order to fill in App Store Connect
 
@@ -47,11 +49,11 @@ These never go in App Store Connect form fields, but you can't submit without th
 2. Categories + age rating: [01](01-app-information.md), [08](08-age-rating.md)
 3. Pricing & availability: [10](10-categories-pricing-availability.md)
 4. App Privacy: [04](04-app-privacy-labels.md), [05](05-privacy-policy.md)
-5. Upload build via Xcode (TestFlight first if you want internal testers)
+5. Upload build via Xcode or the headless flow in [14](14-build-upload-submit-for-review.md)
 6. Version 1.0 page: paste in description / keywords / promo / what's new from [02](02-description.md), [03](03-promotional-and-keywords.md)
 7. Screenshots: drag from `screenshots/iphone-6.9/` and `screenshots/ipad-13/` ([11](11-build-and-screenshots.md))
 8. App Review Information: [07](07-review-information.md)
 9. Export compliance: [09](09-export-compliance.md)
-10. Submit for Review
+10. Submit for Review using [14](14-build-upload-submit-for-review.md) when automating
 
 When the reviewer comes back with a question, the answer is already in [07](07-review-information.md) or [05](05-privacy-policy.md) — link them.

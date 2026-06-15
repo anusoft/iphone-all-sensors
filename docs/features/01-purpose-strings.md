@@ -8,7 +8,6 @@
 - [ ] Add `NSMicrophoneUsageDescription`
 - [ ] Add `NSBluetoothAlwaysUsageDescription`
 - [ ] Add `NSHealthShareUsageDescription`
-- [ ] Add `NSHealthUpdateUsageDescription`
 - [ ] Verify all strings are localized in 12 languages
 - [ ] Build and confirm no warnings
 
@@ -35,9 +34,6 @@
 
 <key>NSHealthShareUsageDescription</key>
 <string>We read health data such as steps, heart rate, and activity to display in the Health tab.</string>
-
-<key>NSHealthUpdateUsageDescription</key>
-<string>We can write workout and activity data to HealthKit.</string>
 ```
 
 ## App Store Guideline

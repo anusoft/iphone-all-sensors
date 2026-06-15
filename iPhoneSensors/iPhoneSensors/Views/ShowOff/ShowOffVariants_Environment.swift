@@ -19,6 +19,7 @@ struct SOMag: View {
 
 private struct MagStrength: View {
     @ObservedObject var motion: MotionSensorManager
+    @EnvironmentObject private var locManager: LocalizationManager
     private var mag: Double {
         let x = motion.magX, y = motion.magY, z = motion.magZ
         return sqrt(x*x + y*y + z*z)
@@ -34,7 +35,7 @@ private struct MagStrength: View {
                               valueText: String(format: "%.1f", mag),
                               accent: SO.magAccent, ticks: 16, size: 260)
                 Spacer().frame(height: 12)
-                Text("CALIBRATED")
+                SOTextLabel("CALIBRATED")
                     .font(.system(size: 11, weight: .heavy))
                     .tracking(2)
                     .foregroundStyle(SO.magAccent)
@@ -67,7 +68,7 @@ private struct MagFieldAR: View {
                 fieldGhosts.frame(width: 320, height: 360)
                 Spacer().frame(height: 16)
                 SOLabel(text: "FIELD VIZ", size: 9)
-                Text("Hold and rotate to scan")
+                SOTextLabel("Hold and rotate to scan")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(.white.opacity(0.4))
                     .padding(.top, 4)
@@ -497,7 +498,7 @@ private struct AltElevator: View {
                     }
                 }
                 .padding(.top, 4)
-                Text("FLOOR")
+                SOTextLabel("FLOOR")
                     .font(.system(size: 12, weight: .heavy)).tracking(3)
                     .foregroundStyle(.white.opacity(0.4))
                     .padding(.top, 12)
@@ -564,7 +565,7 @@ private struct AltStairs: View {
                 SOHero(text: "\(motion.floorsAscended)", size: 160, color: SO.altAccent,
                        glow: SO.altAccent)
                     .padding(.top, 8)
-                Text("FLIGHTS UP")
+                SOTextLabel("FLIGHTS UP")
                     .font(.system(size: 12, weight: .heavy)).tracking(3)
                     .foregroundStyle(.white.opacity(0.5))
                 Spacer().frame(height: 24)
@@ -603,7 +604,7 @@ private struct AltGeoAlt: View {
 
                 SOHero(text: String(format: "%+.1f", loc.altitude), size: 96, color: SO.altAccent,
                        glow: SO.altAccent)
-                Text("METERS GPS")
+                SOTextLabel("METERS GPS")
                     .font(.system(size: 12, weight: .heavy))
                     .tracking(3)
                     .foregroundStyle(.white.opacity(0.5))
@@ -753,7 +754,7 @@ private struct BaroStation: View {
             RoundedRectangle(cornerRadius: 12).fill(.white.opacity(0.05))
                 .frame(height: 100)
             SOSpark(accent: SO.baroAccent, amp: 0.4, freq: 0.6).padding(8)
-            Text("RISING").font(.system(size: 10, weight: .heavy)).tracking(1.5)
+            SOTextLabel("RISING").font(.system(size: 10, weight: .heavy)).tracking(1.5)
                 .foregroundStyle(SO.baroAccent)
                 .padding(8)
                 .frame(maxWidth: .infinity, alignment: .trailing)
@@ -782,7 +783,7 @@ private struct BaroStormGlass: View {
                 Spacer().frame(height: 18)
                 stormGlass.frame(width: 240, height: 360)
                 Spacer().frame(height: 14)
-                Text("CLEAR · falling")
+                SOTextLabel("CLEAR · falling")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(SO.baroAccent)
                 Text(String(format: "%.1f kPa", env.pressure))
@@ -824,7 +825,7 @@ private struct BaroElev: View {
                 SOLabel(text: "Elevation Δ · barometric")
                 SOHero(text: String(format: "%+.0f", env.relativeAltitude), size: 130, color: SO.baroAccent,
                        glow: SO.baroAccent)
-                Text("METERS")
+                SOTextLabel("METERS")
                     .font(.system(size: 12, weight: .heavy)).tracking(3)
                     .foregroundStyle(.white.opacity(0.5))
                 Spacer().frame(height: 24)
@@ -871,7 +872,7 @@ private struct PedBig: View {
                 Spacer().frame(height: 6)
                 SOHero(text: "\(motion.steps)", size: 160, color: .white,
                        glow: SO.pedAccent.opacity(0.6))
-                Text("OF 10,000 GOAL")
+                SOTextLabel("OF 10,000 GOAL")
                     .font(.system(size: 12, weight: .heavy)).tracking(3)
                     .foregroundStyle(.white.opacity(0.5))
                 Spacer().frame(height: 24)
@@ -939,7 +940,7 @@ private struct PedStreak: View {
                 Spacer().frame(height: 80)
                 SOLabel(text: "7-Day Streak")
                 SOHero(text: "5", size: 160, color: SO.pedAccent, glow: SO.pedAccent)
-                Text("DAYS HIT GOAL")
+                SOTextLabel("DAYS HIT GOAL")
                     .font(.system(size: 12, weight: .heavy)).tracking(3)
                     .foregroundStyle(.white.opacity(0.5))
                 Spacer().frame(height: 18)
@@ -977,7 +978,7 @@ private struct PedStairmaster: View {
                 Spacer().frame(height: 80)
                 SOLabel(text: "Stairs · ascended")
                 SOHero(text: "\(motion.floorsAscended)", size: 160, color: .white)
-                Text("FLIGHTS")
+                SOTextLabel("FLIGHTS")
                     .font(.system(size: 12, weight: .heavy)).tracking(3)
                     .foregroundStyle(.white.opacity(0.5))
                 Spacer().frame(height: 30)
@@ -1016,6 +1017,7 @@ struct SOActivity: View {
 
 private struct ActBadge: View {
     @ObservedObject var motion: MotionSensorManager
+    @EnvironmentObject private var locManager: LocalizationManager
     var body: some View {
         SOVariant(sensor: "ACTIVITY", accent: SO.activityAccent) {
             VStack(spacing: 0) {
@@ -1026,11 +1028,11 @@ private struct ActBadge: View {
                     .font(.system(size: 200, weight: .light))
                     .foregroundStyle(SO.activityAccent)
                     .shadow(color: SO.activityAccent, radius: 24)
-                Text(motion.activityState.uppercased())
+                Text(localizedActivityState.uppercased())
                     .font(.system(size: 36, weight: .heavy)).tracking(4)
                     .foregroundStyle(.white)
                     .padding(.top, 14)
-                Text("HIGH CONFIDENCE")
+                SOTextLabel("HIGH CONFIDENCE")
                     .font(.system(size: 11, weight: .heavy)).tracking(3)
                     .foregroundStyle(SO.activityAccent)
                     .padding(.horizontal, 12).padding(.vertical, 4)
@@ -1040,6 +1042,13 @@ private struct ActBadge: View {
             }
         }
     }
+    private var localizedActivityState: String {
+        motion.activityState
+            .split(separator: ", ")
+            .map { Translations.get(String($0), language: locManager.currentLanguage) }
+            .joined(separator: ", ")
+    }
+
     private func iconFor(_ s: String) -> String {
         switch s.lowercased() {
         case let v where v.contains("walk"):     return "figure.walk"
@@ -1130,7 +1139,7 @@ private struct ActConfidence: View {
                 }
                 .padding(.horizontal, 18)
                 Spacer()
-                Text("WINNER: WALKING")
+                SOTextLabel("WINNER: WALKING")
                     .font(.system(size: 13, weight: .heavy)).tracking(3)
                     .foregroundStyle(SO.activityAccent)
                 Spacer().frame(height: 110)

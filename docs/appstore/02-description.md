@@ -28,7 +28,7 @@ Tap the Show-Off banner on any sensor detail screen and the device transforms. T
 A real recorder. Pick any subset of sensors, set a sample rate (60 Hz down to 1 Hz, per sensor), tap record, walk around. When you stop, your session shows up in a browser with timeline, sensor-by-sensor breakdown, and one-tap export to CSV or JSON for analysis in Numbers, Excel, Python, R, or whatever you use. Logs are stored in a local SQLite database under your app's Documents folder; nothing is uploaded.
 
 ▼ HealthKit
-The Health tab shows your steps, heart rate, active energy, distance, and sleep — read directly from HealthKit with a permission scope that's read-only by default. Toggle write access on if you want the app to record workouts.
+The Health tab shows HealthKit metrics such as heart rate, blood oxygen, respiratory rate, steps, energy, distance, body measurements, and profile values when you grant read access. The app does not write to HealthKit.
 
 ▼ Siri & Shortcuts
 "Get Sensor Reading", "Start Sensor Recording", "Stop Sensor Recording", and "Export Sensor Data" are wired as App Intents. Add them to a Shortcut, ask Siri, automate from Focus modes.

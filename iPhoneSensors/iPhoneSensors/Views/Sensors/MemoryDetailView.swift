@@ -23,7 +23,7 @@ struct MemoryDetailView: View {
                     Text(locManager.t("section.info"))
                         .font(.headline)
                     DataRow(label: locManager.t("label.physicalMemory"), value: ByteCountFormatter.string(fromByteCount: Int64(sys.physicalMemory), countStyle: .memory), icon: "memorychip")
-                    DataRow(label: locManager.t("label.formatted"), value: String(format: "%.2f GB", Double(sys.physicalMemory) / 1_073_741_824), icon: "memorychip")
+                    DataRow(label: locManager.t("label.formatted"), value: ByteCountFormatter.string(fromByteCount: Int64(sys.physicalMemory), countStyle: .memory), icon: "memorychip")
                 }
                 .glassCard()
             }

@@ -17,7 +17,7 @@
 6. [Sensor Recording](#6-sensor-recording)
 7. [Device Diagnostics](#7-device-diagnostics)
 8. [App Intents & Siri](#8-app-intents--siri-shortcuts)
-9. [Widget Extension](#9-widget-extension)
+9. [Future Widget Scaffold](#9-future-widget-scaffold)
 10. [Localization](#10-localization--12-languages)
 11. [UI/UX Features](#11-uiux-features)
 12. [Permission System](#12-permission-system)
@@ -257,19 +257,18 @@
 
 ---
 
-## 9. Widget Extension
+## 9. Future Widget Scaffold
 
-### Widget Configuration (Code Ready)
-- [x] **Small widget** — Shows sensor icon, value, unit, active status dot
-- [x] **Medium widget** — Shows sensor name, last update time, large value, unit
-- [x] **Timeline provider** — Updates every 15 minutes (WidgetKit limit)
-- [x] **Data source** — Reads from shared UserDefaults (`group.com.1moby.iPhoneSensors`)
-- [x] **Dark/light theme** — Uses `containerBackground` for automatic adaptation
+### Widget Scaffold (Not Shipping)
+- [x] **Source scaffold** — `iPhoneSensors/iPhoneSensorsWidget/` contains WidgetKit prototype files
+- [ ] **Extension target** — not present in `xcodebuild -list`; not part of the current build
+- [ ] **App Group** — suite name and entitlements must be reconciled before shipping
+- [ ] **App data bridge** — app-side `widget_sensor_*` writes must be implemented before enabling
 
 ### Widget Files
-- `iPhoneSensorsWidget/iPhoneSensorsWidget.swift` — Widget implementation
-- `iPhoneSensorsWidget/Info.plist` — Extension configuration
-- Status: Code complete, needs manual Xcode target addition
+- `iPhoneSensorsWidget/iPhoneSensorsWidget.swift` — future widget scaffold
+- `iPhoneSensorsWidget/Info.plist` — future extension configuration
+- Status: deferred; do not list as a current App Store feature until the target builds
 
 ---
 
@@ -416,7 +415,7 @@
 | **Recording** | 1 | 10Hz multi-sensor recording |
 | **Diagnostics** | 12 | Full hardware test suite |
 | **App Intents** | 3 | Siri shortcuts |
-| **Widget** | 2 | Small + Medium (code ready) |
+| **Widget** | 0 | Future scaffold only; no target in current build |
 | **Localization** | 12 | 318 keys, 12 languages |
 | **UI/UX** | 15 | Glass cards, dark/light, animations |
 | **Permissions** | 7 | Guided onboarding flow |

@@ -27,7 +27,7 @@ private struct BtRadar: View {
                 Spacer().frame(height: 18)
                 radar.frame(width: 320, height: 320)
                 Spacer().frame(height: 14)
-                Text("\(conn.discoveredPeripherals.count) DEVICES")
+                SOFormattedTextLabel(format: "%d devices", value: conn.discoveredPeripherals.count)
                     .font(.system(size: 18, weight: .heavy)).tracking(3)
                     .foregroundStyle(SO.btAccent)
                 Spacer()
@@ -148,7 +148,7 @@ private struct BtBeacon: View {
                 Spacer().frame(height: 18)
                 beacon.frame(width: 320, height: 320)
                 Spacer().frame(height: 14)
-                Text("BROADCASTING")
+                SOTextLabel("BROADCASTING")
                     .font(.system(size: 16, weight: .heavy)).tracking(3)
                     .foregroundStyle(SO.btAccent)
                 Spacer()
@@ -199,6 +199,19 @@ struct SONetwork: View {
 
 private struct NetSignalCity: View {
     @ObservedObject var conn: ConnectivitySensorManager
+    @EnvironmentObject private var locManager: LocalizationManager
+
+    private var localizedNetworkType: String {
+        locManager.t("network." + conn.networkType.lowercased().replacingOccurrences(of: "-", with: ""))
+    }
+
+    private func displayNetworkValue(_ value: String) -> String {
+        if value == "N/A" || value == "Unknown" || value.isEmpty {
+            return locManager.t("compass.unknown")
+        }
+        return value
+    }
+
     var body: some View {
         SOVariant(sensor: "NET", accent: SO.netAccent, bg: .custom(
             LinearGradient(colors: [Color(red: 0.0, green: 0.10, blue: 0.18),
@@ -207,7 +220,7 @@ private struct NetSignalCity: View {
             VStack(spacing: 0) {
                 Spacer().frame(height: 80)
                 SOLabel(text: "Signal City")
-                Text(conn.networkType.uppercased())
+                Text(localizedNetworkType.uppercased())
                     .font(.system(size: 32, weight: .heavy)).tracking(2)
                     .foregroundStyle(SO.netAccent)
                     .shadow(color: SO.netAccent, radius: 12)
@@ -215,14 +228,14 @@ private struct NetSignalCity: View {
                 Spacer().frame(height: 18)
                 skyline.frame(width: 320, height: 280)
                 Spacer().frame(height: 14)
-                Text(conn.wifiSSID)
+                Text(displayNetworkValue(conn.wifiSSID))
                     .font(.system(size: 14, weight: .semibold, design: .monospaced))
                     .foregroundStyle(.white)
                 Spacer()
                 SOTickerBar(accent: SO.netAccent, items: [
-                    .init(label: "TYPE",     value: conn.networkType),
+                    .init(label: "TYPE",     value: localizedNetworkType),
                     .init(label: "ONLINE",   value: conn.isConnectedToNetwork ? "YES" : "NO", accent: true),
-                    .init(label: "CARRIER",  value: conn.cellularCarrier),
+                    .init(label: "CARRIER",  value: displayNetworkValue(conn.cellularCarrier)),
                 ])
                 .padding(.horizontal, 18)
                 Spacer().frame(height: 110)
@@ -280,7 +293,7 @@ private struct NetThroughput: View {
                 }
                 .padding(.horizontal, 18)
                 Spacer().frame(height: 14)
-                Text("EST")
+                SOTextLabel("EST")
                     .font(.system(size: 11, weight: .heavy)).tracking(2)
                     .foregroundStyle(SO.netAccent)
                     .padding(.horizontal, 12).padding(.vertical, 4)
@@ -319,16 +332,25 @@ private struct NetThroughput: View {
 
 private struct NetTree: View {
     @ObservedObject var conn: ConnectivitySensorManager
+    @EnvironmentObject private var locManager: LocalizationManager
+
+    private func displayNetworkValue(_ value: String) -> String {
+        if value == "N/A" || value == "Unknown" || value.isEmpty {
+            return locManager.t("compass.unknown")
+        }
+        return value
+    }
+
     var body: some View {
         SOVariant(sensor: "NET", accent: SO.netAccent) {
             VStack(spacing: 18) {
                 Spacer().frame(height: 80)
                 SOLabel(text: "Network Path · iPhone → World")
-                node(icon: "iphone", text: "iPhone", subtext: conn.wifiSSID)
+                node(icon: "iphone", text: "iPhone", subtext: displayNetworkValue(conn.wifiSSID))
                 connector
                 node(icon: "wifi.router", text: "Router", subtext: "192.168.1.1")
                 connector
-                node(icon: "globe", text: "ISP",  subtext: conn.cellularCarrier)
+                node(icon: "globe", text: "ISP",  subtext: displayNetworkValue(conn.cellularCarrier))
                 connector
                 node(icon: "network", text: "WORLD", subtext: "1.1.1.1 · OK", accent: true)
                 Spacer().frame(height: 110)
@@ -577,7 +599,7 @@ private struct LightLuxMeter: View {
                               valueText: String(format: "%.0f", val * 1000),
                               accent: SO.lightAccent, ticks: 14, size: 260)
                 Spacer().frame(height: 8)
-                Text("EST · brightness proxy")
+                SOTextLabel("EST · brightness proxy")
                     .font(.system(size: 11, weight: .heavy)).tracking(2)
                     .foregroundStyle(SO.lightAccent)
                     .padding(.horizontal, 12).padding(.vertical, 4)
@@ -644,7 +666,7 @@ private struct LightCamLux: View {
                 SOLabel(text: "Camera Luminance")
                 Spacer().frame(height: 14)
                 SOHero(text: "0xA8", size: 130, color: SO.lightAccent, glow: SO.lightAccent)
-                Text("FRONT-CAM AVG LUMA")
+                SOTextLabel("FRONT-CAM AVG LUMA")
                     .font(.system(size: 12, weight: .heavy)).tracking(3)
                     .foregroundStyle(.white.opacity(0.5))
                 Spacer().frame(height: 26)
@@ -876,7 +898,7 @@ private struct TorchLighthouse: View {
                 Spacer().frame(height: 18)
                 lighthouse.frame(width: 280, height: 320)
                 Spacer().frame(height: 14)
-                Text("SOS · MORSE")
+                SOTextLabel("SOS · MORSE")
                     .font(.system(size: 16, weight: .heavy)).tracking(3)
                     .foregroundStyle(SO.torchAccent)
                 HStack(spacing: 6) {
@@ -953,7 +975,7 @@ private struct TorchColorTemp: View {
                         .onTapGesture { temp = k }
                 }
             }
-            Text("warmer · cooler")
+            SOTextLabel("warmer · cooler")
                 .font(.system(size: 9, weight: .heavy)).tracking(2)
                 .foregroundStyle(.white.opacity(0.4))
         }

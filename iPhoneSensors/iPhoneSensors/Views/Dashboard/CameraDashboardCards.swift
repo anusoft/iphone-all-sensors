@@ -24,7 +24,7 @@ struct CameraDashboardCards: View {
                 SensorCard(
                     title: locManager.t("sensor.torch"),
                     icon: "flashlight.on.fill",
-                    value: cam.isTorchAvailable ? String(format: "%.0f%%", cam.torchLevel * 100) : "",
+                    value: cam.isTorchAvailable ? LocalizedDisplayValue.numberNoSpace("%.0f", Double(cam.torchLevel) * 100, unitKey: "unit.percent", localization: locManager) : "",
                     unit: "",
                     color: .orange,
                     isAvailable: cam.isTorchAvailable

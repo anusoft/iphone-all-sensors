@@ -36,7 +36,7 @@ struct SessionsListView: View {
                             }
                             .font(.caption)
                         }
-                        Text("\(item.entryCount) entries · \(ByteCountFormatter.string(fromByteCount: item.bytes, countStyle: .file))")
+                        Text("\(item.entryCount) \(localization.t("dataviewer.entries")) · \(ByteCountFormatter.string(fromByteCount: item.bytes, countStyle: .file))")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
